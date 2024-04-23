@@ -1,0 +1,1 @@
+A design aid for DC solar hot water systems. 
