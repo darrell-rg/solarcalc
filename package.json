@@ -1,6 +1,6 @@
 {
-  "name": "diysolar",
-  "version": "0.0.1",
+  "name": "solarcalc",
+  "version": "0.0.2",
   "description": "Solar Hot Water",
   "scripts": {
     "dev": "svelte-kit dev",
@@ -11,15 +11,14 @@
     "format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. ."
   },
   "devDependencies": {
-    "@sveltejs/adapter-auto": "next",
-    "@sveltejs/adapter-cloudflare": "^1.0.0-next.9",
-    "@sveltejs/kit": "next",
+    "@sveltejs/adapter-static": "^3.0.1",
+    "@sveltejs/kit": "^2.0.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-svelte3": "^3.2.1",
+    "eslint-plugin-svelte": "^2.38.0",
     "prettier": "^2.5.1",
     "prettier-plugin-svelte": "^2.5.0",
-    "svelte": "^3.46.0"
+    "svelte": "^4.0.0"
   },
   "type": "module",
   "dependencies": {
