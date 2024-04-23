@@ -19,8 +19,12 @@
 		the devtools network panel and reloading.
 	</p>
 
+
+	<h1>Solar Hot Water Links</h1>
+
+
 	<p>
-		The <a href="/sverdle">Sverdle</a> page illustrates SvelteKit's data loading and form handling. Try
-		using it with JavaScript disabled!
+		<a href="http://www.freehotwater.com/engineers-architects-developers/solar-calculators-and-tools/">freehotwater.com</a> 
 	</p>
+	
 </div>
