@@ -98,7 +98,7 @@
 		height: 100%;
 	}
 
-	li.active::before {
+	li[aria-current='page']::before {
 		--size: 6px;
 		content: '';
 		width: 0;
@@ -107,7 +107,7 @@
 		top: 0;
 		left: calc(50% - var(--size));
 		border: var(--size) solid transparent;
-		border-top: var(--size) solid var(--accent-color);
+		border-top: var(--size) solid var(--color-theme-1);
 	}
 
 	nav a {
