@@ -1,7 +1,6 @@
-import { readable, derived ,writable} from 'svelte/store';
+import { readable, derived, writable } from 'svelte/store';
 //https://github.com/MacFJA/svelte-persistent-store
 //import { persist, localStorage } from "@macfja/svelte-persistent-store"
-
 
 export const Vmpp = writable(42.8);
 export const Impp = writable(8.06);
@@ -11,7 +10,6 @@ function round(num) {
 	var m = Number((Math.abs(num) * 100).toPrecision(15));
 	return (Math.round(m) / 100) * Math.sign(num);
 }
-
 
 export const time = readable(new Date(), function start(set) {
 	const interval = setInterval(() => {
@@ -23,19 +21,8 @@ export const time = readable(new Date(), function start(set) {
 	};
 });
 
+export const elapsed = derived(time, ($time) => Math.round(($time - start) / 1000));
 
-export const elapsed = derived(
-	time,
-	$time => Math.round(($time - start) / 1000)
-);
-
-
-
-export const Rmpp = derived(
-	[Vmpp,Impp],
-    ([$Vmpp, $Impp]) =>  round($Vmpp/$Impp)
-);
-
+export const Rmpp = derived([Vmpp, Impp], ([$Vmpp, $Impp]) => round($Vmpp / $Impp));
 
 const start = new Date();
-

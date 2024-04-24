@@ -1,3 +1,21 @@
+<script>
+	import { Sheet, Toolbar } from 'svelte-sheets';
+
+	let style = {
+		// A1: 'background-color: red'
+	};
+	let mergeCells = {
+		//A1: [5, 0] // 5 horizontally merged cell (colspan), 0 vertically merged cells (rowspan)
+	};
+	let columns = [{ width: '50px' }];
+	let data = [
+	['Part Number', 'Desc', 'Qty Req', 'Price', 'Total', 'Link'],
+	['', 'Solar Panel', '4', '150', '=D2*C2']];
+	let sheetNames;
+	let sheets;
+	let active;
+</script>
+
 <svelte:head>
 	<title>About</title>
 	<meta name="description" content="About this app" />
@@ -19,12 +37,8 @@
 		the devtools network panel and reloading.
 	</p>
 
+	<h1>Bill Of Materials Spreadsheet</h1>
 
-	<h1>Solar Hot Water Links</h1>
-
-
-	<p>
-		<a href="http://www.freehotwater.com/engineers-architects-developers/solar-calculators-and-tools/">freehotwater.com</a> 
-	</p>
-	
+	<!-- <Toolbar bind:sheetNames bind:sheets bind:active />  -->
+	<Sheet {style} {mergeCells} {columns} {data} />
 </div>
