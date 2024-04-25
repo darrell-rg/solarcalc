@@ -42,7 +42,7 @@ import PySAM.PySSC as pssc
 
 # Download PySAM here: https://pypi.org/project/NREL-PySAM/
 # You must request an NSRDB api key from the link above
-api_key = os.getenv('NRDSBAPIKEY', "UF7nTkUNme6EZw09aZhSG0HZeaPVHcmrBohZLdHX")
+api_key = os.getenv('NRDSBAPIKEY', "UF7n")
 # Set the attributes to extract (e.g., dhi, ghi, etc.), separated by commas.
 attributes = "ghi,dhi,dni,wind_speed,air_temperature,solar_zenith_angle"
 # Set leap year to true or false. True will return leap day data if present, false will not.
@@ -63,6 +63,8 @@ your_affiliation = "none"
 your_email = "darrell@realgo.com"
 # Please join our mailing list so we can keep you up-to-date on new developments.
 mailing_list = "false"
+
+folder = "/tmp"
 
 
 def downloadWeatherData(lat=40.57, lon=-105.07, year=2010, folder="/tmp"):
@@ -90,17 +92,6 @@ def downloadWeatherData(lat=40.57, lon=-105.07, year=2010, folder="/tmp"):
     filename = os.path.join(folder, hash + ".csv")
     if not os.path.exists(filename):
         urllib.request.urlretrieve(url, filename)
-
-    # # Return just the first 2 lines to get metadata:
-    # info = pd.read_csv(filename, nrows=1)
-    # # See metadata for specified properties, e.g., timezone and elevation
-    # timezone, elevation = info['Local Time Zone'], info['Elevation']
-
-    # # Return all but first 2 lines of csv to get data:
-    # df = pd.read_csv(filename, skiprows=2)
-
-    # # Set the time index in the pandas dataframe:
-    # df = df.set_index(pd.date_range('1/1/{yr}'.format(yr=year), freq=interval+'Min', periods=525600/int(interval)))
 
     return filename, hash
 
@@ -228,13 +219,6 @@ def nsrdb_plot(df, day, filename):
     return filename
 
 
-# defines initial reservations
-with open("data.txt") as f:
-    reservations = ast.literal_eval(f.read())
-
-folder = "/tmp"
-
-
 @app.route("/sim/graph", methods=["POST", "GET"])
 @app.route("/graph", methods=["POST", "GET"])
 def getGraph():
@@ -253,6 +237,7 @@ def getGraph():
         return response
 
     return "error making graph"
+
 
 @app.route("/sim/csv", methods=["POST", "GET"])
 @app.route("/csv", methods=["POST", "GET"])
@@ -276,6 +261,7 @@ def getCsv():
 @app.route("/", methods=["GET"])
 def health_check_root():
     return "Hello, the server is alive!"
+
 
 if __name__ == "__main__":
     app.run()

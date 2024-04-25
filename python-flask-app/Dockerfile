@@ -16,7 +16,7 @@
 
 # for local testing:
 # docker build -t solarcalc .
-# docker run -p 5000:5000 -d --name solarcalc solarcalc 
+# docker run -p 5000:5000 -d -e NRDSBAPIKEY=UF7n --name solarcalc solarcalc
 
 # dont use alpine! https://pythonspeed.com/articles/alpine-docker-python/
 FROM python:3.8-slim
