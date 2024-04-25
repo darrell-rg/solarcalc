@@ -1,6 +1,5 @@
-click==8.0.3
-Flask==2.0.2
-itsdangerous==2.0.1
-Jinja2==3.0.2
-MarkupSafe==2.0.1
-Werkzeug==2.0.2
+Flask==3.0.3
+
+pandas==1.5.1
+matplotlib==3.8.4
+nrel-pysam==5.1.0

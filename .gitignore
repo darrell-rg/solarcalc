@@ -8,5 +8,6 @@ node_modules
 !.env.example
 .vercel
 .output
-backend/tmp/*.csv
-backend/tmp/*.png
+python-flask-app/tmp/*.csv
+python-flask-app/tmp/*.png
+python-flask-app/__pycache__/
