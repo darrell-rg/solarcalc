@@ -14,7 +14,9 @@
 # specific language governing permissions and limitations
 # under the License.
 
-FROM python:alpine
+
+# dont use alpine! https://pythonspeed.com/articles/alpine-docker-python/
+FROM python:3.8-slim
 
 WORKDIR /python-docker
 
@@ -29,6 +31,7 @@ RUN addgroup -g 10016 choreo && \
 
 # make a tmp dir to hold csv and png files
 RUN rm -rf tmp 
+RUN python --version
 RUN mkdir tmp
 RUN chmod -0644 tmp
 run chown choreo tmp
