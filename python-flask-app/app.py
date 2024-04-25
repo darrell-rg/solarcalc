@@ -18,11 +18,13 @@ import json
 import ast
 from flask import Flask, request, send_file
 from types import SimpleNamespace
+
 app = Flask(__name__)
 import sys, os
 import pandas as pd
 import numpy as np
 import hashlib
+
 # from IPython.display import display
 import urllib.request
 import os
@@ -36,8 +38,6 @@ from matplotlib import pyplot as plt
 plt.style.use("ggplot")
 
 import PySAM.PySSC as pssc
-
-
 
 
 # Download PySAM here: https://pypi.org/project/NREL-PySAM/
@@ -87,7 +87,7 @@ def downloadWeatherData(lat=40.57, lon=-105.07, year=2010, folder="tmp"):
     )
 
     hash = hashlib.shake_128(url.encode()).hexdigest(32)
-    filename = os.path.join(folder,hash + ".csv")
+    filename = os.path.join(folder, hash + ".csv")
     if not os.path.exists(filename):
         urllib.request.urlretrieve(url, filename)
 
@@ -189,7 +189,7 @@ def runSim(lat=40.57, lon=-105.07, year=2010, folder="tmp"):
 
     print(f"total_energy = {total_energy}")
 
-    filename_sim = os.path.join(folder , "sim_" + hash + ".csv")
+    filename_sim = os.path.join(folder, "sim_" + hash + ".csv")
     df.to_csv(filename_sim)
     return df, filename_sim
 
@@ -228,39 +228,36 @@ def nsrdb_plot(df, day, filename):
     return filename
 
 
-
-
 # defines initial reservations
-with open('data.txt') as f:
+with open("data.txt") as f:
     reservations = ast.literal_eval(f.read())
 
-folder="tmp"
+folder = "tmp"
 
-@app.route('/graph', methods=['POST', 'GET'])
+
+@app.route("/graph", methods=["POST", "GET"])
 def getGraph():
 
-    lat = float(request.args.get('lat', '40.57'))
-    lon = float(request.args.get('lon', '-105.07'))
-    year = int(request.args.get('year', '2020'))
-    day = int(request.args.get('day', '180'))
+    lat = float(request.args.get("lat", "40.57"))
+    lon = float(request.args.get("lon", "-105.07"))
+    year = int(request.args.get("year", "2020"))
+    day = int(request.args.get("day", "180"))
 
     df, filename = runSim(lat, lon, year)
-    
+
     graph = nsrdb_plot(df, day, filename)
 
-
     if os.path.exists(graph):
-        response =  send_file(graph, mimetype='image/png')
+        response = send_file(graph, mimetype="image/png")
         return response
 
     return "error making graph"
 
 
 # route relevant to the hello world
-@app.route('/rs/healthCheck', methods=['GET'])
+@app.route("/rs/healthCheck", methods=["GET"])
 def health_check():
     return "Hello, the server is alive!"
-
 
 
 if __name__ == "__main__":
