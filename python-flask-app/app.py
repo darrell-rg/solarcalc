@@ -257,7 +257,7 @@ def getCsv():
 
 
 @app.route("/sim/healthCheck", methods=["GET"])
-@app.route("/sim", methods=["GET"])
+@app.route("/sim/", methods=["GET"])
 @app.route("/", methods=["GET"])
 def health_check_root():
     return "Hello, the server is alive!"
