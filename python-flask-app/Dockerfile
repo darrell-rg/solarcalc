@@ -14,6 +14,9 @@
 # specific language governing permissions and limitations
 # under the License.
 
+# for local testing:
+# docker build -t solarcalc .
+# docker run -p 5000:5000 -d --name solarcalc solarcalc 
 
 # dont use alpine! https://pythonspeed.com/articles/alpine-docker-python/
 FROM python:3.8-slim
@@ -30,11 +33,8 @@ RUN addgroup --gid 10016 choreo && \
     adduser  --disabled-password  --no-create-home --uid 10016 --ingroup choreo choreouser
 
 # make a tmp dir to hold csv and png files
-RUN rm -rf tmp 
-RUN python --version
-RUN mkdir tmp
-RUN chmod -0644 tmp
-run chown choreouser tmp
+# RUN chmod 644 tmp
+# RUN chown choreouser:choreo tmp
 
 USER 10016
 EXPOSE 5000

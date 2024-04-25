@@ -65,7 +65,7 @@ your_email = "darrell@realgo.com"
 mailing_list = "false"
 
 
-def downloadWeatherData(lat=40.57, lon=-105.07, year=2010, folder="tmp"):
+def downloadWeatherData(lat=40.57, lon=-105.07, year=2010, folder="/tmp"):
     # Declare all variables as strings. Spaces must be replaced with '+', i.e., change 'John Smith' to 'John+Smith'.
     # Define the lat, long of the location and the year
 
@@ -105,7 +105,7 @@ def downloadWeatherData(lat=40.57, lon=-105.07, year=2010, folder="tmp"):
     return filename, hash
 
 
-def runSim(lat=40.57, lon=-105.07, year=2010, folder="tmp"):
+def runSim(lat=40.57, lon=-105.07, year=2010, folder="/tmp"):
 
     filename, hash = downloadWeatherData(lat, lon, year, folder)
     # load the data
@@ -232,7 +232,7 @@ def nsrdb_plot(df, day, filename):
 with open("data.txt") as f:
     reservations = ast.literal_eval(f.read())
 
-folder = "tmp"
+folder = "/tmp"
 
 
 @app.route("/sim/graph", methods=["POST", "GET"])
@@ -244,7 +244,7 @@ def getGraph():
     year = int(request.args.get("year", "2020"))
     day = int(request.args.get("day", "180"))
 
-    df, filename = runSim(lat, lon, year)
+    df, filename = runSim(lat, lon, year, folder)
 
     graph = nsrdb_plot(df, day, filename)
 
