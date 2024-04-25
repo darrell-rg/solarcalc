@@ -34,7 +34,7 @@ RUN rm -rf tmp
 RUN python --version
 RUN mkdir tmp
 RUN chmod -0644 tmp
-run chown choreo tmp
+run chown choreouser tmp
 
 USER 10016
 EXPOSE 5000
