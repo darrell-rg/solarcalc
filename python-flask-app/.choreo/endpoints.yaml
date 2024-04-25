@@ -20,7 +20,7 @@ version: 0.1
 # +required List of endpoints to create
 endpoints:
 # +required Unique name for the endpoint. (This name will be used when generating the managed API)
-  - name: Reservation Management
+  - name: Solar Sim
     # +required Numeric port value that gets exposed via this endpoint
     port: 5000
     # +required Type of the traffic this endpoint is accepting. Example: REST, GraphQL, etc.
@@ -34,4 +34,4 @@ endpoints:
     schemaFilePath: openapi.yaml
 
     # represents context relevant to the service
-    context: /rs
+    context: /sim

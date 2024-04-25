@@ -16,140 +16,32 @@
 
 openapi: 3.0.3
 info:
-  title: Reservation Management - Python REST API
+  title: Solar SIm - Python REST API
   description: >-
-    This is a sample API specification for a simple reservation application with in-memory cache
+    This is a sample API specification for a simple application with in-memory cache
     written in Python.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.0
-externalDocs:
-  description: Choreo
-  url: https://choreo.dev
 servers:
   - url: http://localhost:5000
 tags:
-  - name: reservations
-    description: In-memory reservations list cache API
+  - name: solar
+    description: In-memory solar pv sim 
 paths:
-  /reservations:
-    summary: List all reservations
+  /graph:
+    summary: generate a graph
     get:
-      summary: List all reservations
-      operationId: ListAllReservations
+      summary: generate a graph
+      operationId: MakeGraph
       tags:
-        - reservations
+        - solar
       responses:
         "200":
           description: Successful operation
           content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ReservationArray"
-  /reservation/{reservationId}:
-    summary: Get reservation by ID
-    get:
-      tags:
-        - Reservation Management
-      summary: Get reservation by ID
-      operationId: GetReservationById
-      parameters:
-        - name: reservationId
-          in: path
-          description: Reservation ID related to the requiring reservation
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/reservationPayload"
-        "404":
-          description: id not found
-    
-    post:
-      tags:
-        - Reservation Management
-      summary: Create reservation providing an id and a payload
-      description: Creates reservation based on the id supplied
-      operationId: CreateReservationById
-      parameters:
-        - name: reservationId
-          in: path
-          description: ID of reservation to create
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Successful operation
-        "404":
-          description: Reservation ID not found
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/reservationPayload"    
-    put:
-      tags:
-        - Reservation Management
-      summary: Update reservation status by giving the reservation ID
-      description: Updates the status of the reservation based on the id supplied
-      operationId: UpdateReservationById
-      parameters:
-        - name: reservationId
-          in: path
-          description: ID of reservation to update
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Successful operation
-        "404":
-          description: id not found
-      requestBody:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/reservationPayload"
-    delete:
-      tags:
-        - Reservation Management
-      summary: Delete reservation by reservation ID
-      description: Deletes a reservation based on the id supplied
-      operationId: DeleteReservationById
-      parameters:
-        - name: reservationId
-          in: path
-          description: ID of reservation to delete
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Successful operation
-        "404":
-          description: Id not found
-components:
-  schemas:
-    reservationPayload:
-      type: object
-      properties:
-        reservationCreator:
-          type: string
-          example: "Billy Wilson"
-        reservationId:
-          type: string
-          example: "1233"
-        contact:
-          type: string
-          example: "011-123-4567"
-    ReservationArray:
-      type: array
-      items:
-        type: object
+            image/png:
+              schema: 
+                  type: string
+                  format: binary

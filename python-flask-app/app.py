@@ -235,7 +235,7 @@ with open("data.txt") as f:
 folder = "tmp"
 
 
-@app.route("/graph", methods=["POST", "GET"])
+@app.route("/sim/graph", methods=["POST", "GET"])
 def getGraph():
 
     lat = float(request.args.get("lat", "40.57"))
@@ -255,7 +255,7 @@ def getGraph():
 
 
 # route relevant to the hello world
-@app.route("/rs/healthCheck", methods=["GET"])
+@app.route("/sim/healthCheck", methods=["GET"])
 def health_check():
     return "Hello, the server is alive!"
 
