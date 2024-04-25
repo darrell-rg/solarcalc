@@ -26,7 +26,7 @@ RUN pip3 install -r requirements.txt
 COPY . .
 RUN ls
 # Create a new user with UID 10016
-RUN addgroup -g 10016 choreo && \
+RUN addgroup --gid 10016 choreo && \
     adduser  --disabled-password  --no-create-home --uid 10016 --ingroup choreo choreouser
 
 # make a tmp dir to hold csv and png files
