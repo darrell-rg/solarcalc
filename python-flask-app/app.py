@@ -42,7 +42,7 @@ import PySAM.PySSC as pssc
 
 # Download PySAM here: https://pypi.org/project/NREL-PySAM/
 # You must request an NSRDB api key from the link above
-api_key = "UF7nTkUNme6EZw09aZhSG0HZeaPVHcmrBohZLdHX"
+api_key = os.getenv('NRDSBAPIKEY', "UF7nTkUNme6EZw09aZhSG0HZeaPVHcmrBohZLdHX")
 # Set the attributes to extract (e.g., dhi, ghi, etc.), separated by commas.
 attributes = "ghi,dhi,dni,wind_speed,air_temperature,solar_zenith_angle"
 # Set leap year to true or false. True will return leap day data if present, false will not.
@@ -236,6 +236,7 @@ folder = "tmp"
 
 
 @app.route("/sim/graph", methods=["POST", "GET"])
+@app.route("/graph", methods=["POST", "GET"])
 def getGraph():
 
     lat = float(request.args.get("lat", "40.57"))
@@ -253,12 +254,28 @@ def getGraph():
 
     return "error making graph"
 
+@app.route("/sim/csv", methods=["POST", "GET"])
+@app.route("/csv", methods=["POST", "GET"])
+def getCsv():
 
-# route relevant to the hello world
+    lat = float(request.args.get("lat", "40.57"))
+    lon = float(request.args.get("lon", "-105.07"))
+    year = int(request.args.get("year", "2020"))
+
+    df, filename = runSim(lat, lon, year)
+
+    if os.path.exists(filename):
+        response = send_file(filename, mimetype="text/csv")
+        return response
+
+    return "error making csv"
+
+
 @app.route("/sim/healthCheck", methods=["GET"])
-def health_check():
+@app.route("/sim", methods=["GET"])
+@app.route("/", methods=["GET"])
+def health_check_root():
     return "Hello, the server is alive!"
-
 
 if __name__ == "__main__":
     app.run()

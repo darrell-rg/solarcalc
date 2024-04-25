@@ -45,3 +45,31 @@ paths:
               schema: 
                   type: string
                   format: binary
+
+  /csv:
+    summary: generate a csv
+    get:
+      summary: generate a csv
+      operationId: MakeCSV
+      tags:
+        - solar
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/csv:
+              schema: 
+                  type: string
+          
+  /:
+    summary: health check
+    get:
+      summary: health check
+      operationId: HealthCheck
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            text/plain:
+              schema: 
+                  type: string

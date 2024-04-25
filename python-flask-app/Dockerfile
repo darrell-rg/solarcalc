@@ -26,6 +26,13 @@ RUN ls
 # Create a new user with UID 10016
 RUN addgroup -g 10016 choreo && \
     adduser  --disabled-password  --no-create-home --uid 10016 --ingroup choreo choreouser
+
+# make a tmp dir to hold csv and png files
+RUN rm -rf tmp 
+RUN mkdir tmp
+RUN chmod -0644 tmp
+run chown choreo tmp
+
 USER 10016
 EXPOSE 5000
 CMD [ "flask", "run", "--host=0.0.0.0"]
