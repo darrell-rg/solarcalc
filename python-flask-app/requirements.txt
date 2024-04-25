@@ -1,5 +1,5 @@
 Flask==3.0.3
 
 pandas==1.5.1
-matplotlib==3.8.4
-nrel-pysam==5.1.0
+matplotlib==3.7.5
+NREL-PySAM==5.1.0
