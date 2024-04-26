@@ -8,9 +8,11 @@
 	import Output from '$lib/components/Output.svelte';
 	import { time, elapsed, Vmpp, Voc, Impp, Rmpp } from '$lib/components/stores.js';
 	import { element } from 'svelte/internal';
+	import Map from '$lib/components/Map.svelte';
+	import LeafletMap from '$lib/components/LeafletMap.svelte';
 
-	let lat = 20;
-	let lng = -104.9;
+	let lat = 40.5;
+	let lng = -105.7;
 
 	let useCityPower = false;
 
@@ -131,6 +133,8 @@
 	// does not listen to changes happening inside components
 	$: wireResistance = (selectedWire.r * wireLength) / 1000;
 	$: energyToHeatOneTank = heatCapOfWater * tankSize * (hotWaterOutTemp - groundTemp);
+
+
 </script>
 
 <svelte:head>
@@ -139,10 +143,27 @@
 
 <h1>Free Hot Water!</h1>
 
-<figure>
-	<img alt="SolarShed" src="solarShed/PanelsInSun.jpg" />
-	<figcaption>Cheap and simple DIY solar hot water!</figcaption>
-</figure>
+<ul class="smol-css-grid">
+	<li style="max-width: 300px;">
+		<figure>
+			<img alt="SolarShed" src="solarShed/PanelsInSun.jpg" />
+			<figcaption>Make your shed pay!</figcaption>
+		</figure>
+	</li>
+	<li style="max-width: 300px;">
+		<figure>
+			<HousePic />
+			<figcaption>Simple</figcaption>
+		</figure>
+	</li>
+
+	<li style="max-width: 300px;">
+		<figure>
+			<img alt="SolarShed" src="solarShed/firstPower.jpg" />
+			<figcaption>Free power!</figcaption>
+		</figure>
+	</li>
+</ul>
 
 <!-- <div class="smol-flexbox-grid">
 	<div> -->
@@ -196,6 +217,10 @@
 			<Output val={$Rmpp} label="City Power Price/day" units="$" />
 		</Box>
 	</span>
+<span>
+<span>
+	<Map location=[40.57,-105.07]/>
+</span>
 </div>
 
 <div class="smol-sidebar">
@@ -244,6 +269,10 @@
 			<Output val={round($Impp * $Impp * wireResistance)} label="Wire Losses at Mpp" units="w" />
 		</Box>
 	</span>
+	<span>
+
+		<div id="map" style="height: 250px;"></div>
+	</span>
 </div>
 
 <div class="smol-sidebar">
@@ -274,6 +303,28 @@
 				label="Power Cost/day"
 				units="$"
 			/>
+		</Box>
+	</span>
+</div>
+
+<div class="smol-sidebar">
+	<span data-text>
+		<h2>Step 4</h2>
+		Run simulator, view pretty graphs and numbers.
+
+		<button> Run random week in spring</button>
+		<button> Run random week in summer</button>
+		<button> Run random week in fall</button>
+		<button> Run random week in winter</button>
+	</span>
+	<span>
+		<Box>
+			<h2>Summer Sim results</h2>
+
+			<figure>
+				<img alt="SolarShed" src="day44.png" />
+				<figcaption>Cheap and simple DIY solar hot water!</figcaption>
+			</figure>
 		</Box>
 	</span>
 </div>
@@ -310,7 +361,6 @@
 
 </div> -->
 <div>
-	<HousePic />
 	<!-- <TestSvg/> -->
 	<table class="monthTable">
 		<tr>
@@ -337,9 +387,13 @@
 </div>
 <!-- </div> -->
 
-<Counter />
+<!-- <Counter /> -->
 
 <style>
+
+	.map{
+		height: 300px;
+	}
 	h1,
 	figure,
 	p {
@@ -376,6 +430,22 @@
 		background-color: #d6eeee;
 	}
 
+	.smol-css-grid li {
+		list-style: none;
+		margin: 0;
+	}
+
+	.smol-css-grid {
+		--min: 15ch;
+		--gap: 1rem;
+
+		display: grid;
+		grid-gap: var(--gap);
+		/* min() with 100% prevents overflow
+		in extra narrow spaces */
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--min)), 1fr));
+	}
+
 	.smol-flexbox-grid {
 		--min: 10ch;
 		--gap: 1rem;
@@ -397,7 +467,7 @@
 
 	.smol-sidebar {
 		display: grid;
-		grid-template-columns: fit-content(30ch) minmax(min(50vw, 30ch), 1fr);
+		grid-template-columns: fit-content(20ch) minmax(min(50vw, 30ch), 1fr) minmax(min(50vw, 30ch), 1fr);
 	}
 
 	img {
