@@ -70,6 +70,14 @@
     <p>Deciduous trees are not that bad because they block light in the summer when there is too much, and allow more through in the winter when there is not enough.  If you have some evergreen trees that will block the sun for half the day, you can add more panels to compensate.  </p>
   </article>
 
+  <article class="faq">
+    <h2>How much hot water do I use?</h2>
+    <p> According  <a href="https://www.fsec.ucf.edu/en/publications/pdf/fsec-pf-464-15.pdf">Estimating Daily Domestic HotWater Use in North American Homes</a> people use about 64L per day in a four person household. </p>
+  </article>
+
+
+
+  https://www.fsec.ucf.edu/en/publications/pdf/fsec-pf-464-15.pdf
 
 </div>
 

@@ -94,20 +94,28 @@
 	//heat capacity Cp of water is 4.186kJ/kg-K
 	let heatCapOfWater = 4186; // j/l/k
 	let hotWaterOutTemp = 50;
-	let hotWaterPerPersonDay = 50; // l/person/day
+	let hotWaterPerPersonDay = 64; // l/person/day
 	let personsInHoushold = 4;
 	let groundTemp = 5;
-	let avgPowerPrice = 0.2;
 	let energyFactor = 0.91;
 	let powerPerPanel = $Vmpp * $Impp;
 	let nominalPower = powerPerPanel*panelsPerString*parallelStrings;
 	let energyToHeatOneTank = heatCapOfWater * tankSize * (hotWaterOutTemp - groundTemp);
 
+	let peakPrice = 0.2352;
+	let offPeakPrice = 0.0716;
+	let peakHours = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0];
+	let peakHourCount = peakHours.reduce((accumulator, currentValue) => {
+  			return accumulator + currentValue;
+		}, 0);
+	let avgPowerPrice = ((0.0+peakHourCount/24.0) * peakPrice) + (((24.0-peakHourCount)/24.0) * offPeakPrice);
+
+
 	let year = new Date().getFullYear();
 
 	let monthData = [];
 
-	let peakHours = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0];
+	
 
 	months.forEach((month, index) => {
 		let m = {
@@ -129,8 +137,13 @@
 		monthData.push(m);
 	});
 
+
 	// the `$:` means 're-run whenever these values change'
 	// does not listen to changes happening inside components
+	$: peakHourCount = peakHours.reduce((accumulator, currentValue) => {
+  			return accumulator + currentValue;
+		}, 0);
+	$: avgPowerPrice = ((peakHourCount/24.0) * peakPrice) + (((24-peakHourCount)/24.0) * offPeakPrice);
 	$: wireResistance = (selectedWire.r * wireLength) / 1000;
 	$: energyToHeatOneTank = heatCapOfWater * tankSize * (hotWaterOutTemp - groundTemp) * 1/energyFactor;
 	$: costToHeatOneTank = round((avgPowerPrice * energyToHeatOneTank) / 3600e3);
@@ -184,8 +197,8 @@
 			<Input val={round($lat)} label="Latitude" units="°North" readonly />
 			<Input val={round($lng)} label="Longitude" units="°West" readonly />
 			<Input val={groundTemp} label="GroundTemp" units="°C" />
-			<Input val={0.0716} label="Off Peak Price" units="$/kwh" />
-			<Input val={0.2352} label="Peak Price" units="$/kwh" />
+			<Input val={offPeakPrice} label="Off Peak Price" units="$/kwh" />
+			<Input val={peakPrice} label="Peak Price" units="$/kwh" />
 
 			<label>
 				PeakHours <br />
@@ -201,6 +214,7 @@
 				<input type="checkbox" bind:checked={peakHours[9]} />
 				<input type="checkbox" bind:checked={peakHours[10]} />
 				<input type="checkbox" bind:checked={peakHours[11]} />
+				<br>
 				<input type="checkbox" bind:checked={peakHours[12]} />
 				<input type="checkbox" bind:checked={peakHours[13]} />
 				<input type="checkbox" bind:checked={peakHours[14]} />
@@ -215,6 +229,8 @@
 				<input type="checkbox" bind:checked={peakHours[23]} />
 			</label>
 			<hr />
+			<Output val={peakHourCount} label="Peak Hour Count" units="H" />
+			<Output val={avgPowerPrice} label="Average power price" units="$" />
 		</Box>
 	</span>
 	<span>
@@ -262,26 +278,29 @@
 			<Output val={$Vmpp * panelsPerString} label="Vmpp of full string" units="v" />
 			<Output val={$Voc * panelsPerString} label="Voc of full string" units="v" />
 			<Output val={wireResistance} label="Resistance of wire" units="Ω" />
-			<Output
-				val={round(nominalPower)}
-				label="Nominal power of string"
-				units="w"
-			/>
+			<Output val={round(nominalPower)} label="Nominal power of string" units="w" />
 			<Output val={round($Impp * $Impp * wireResistance)} label="Wire Losses at Mpp" units="w" />
 		</Box>
 	</span>
 	<span>
 		<Box>
 			<p>
-				If you use large panels you can run a single series string and keep things simple.  If you are using small panels you may need to run parallel strings to keep the voltage down.  Normal solar wire is rated to 600V.  I would stay well below that.
+				<b>Vmpp, Impp</b>, find these in the spec sheet of your solar panels. This is the volts and amps your panel will make, brand new, clean, in full sun. 
 			</p>
 
 			<p>
-				<b>Rmpp of full string</b> is the resistance value you want for your lower water heater element. This number is the ideal Impedance for maximum power transfer in full sun.
+				<b>Voc</b> this is max voltage your panels can make.  Everything in your system needs to be rated to at least Voc * panels per string.   Common solar wire and connectors are rated to 600V. 
 			</p>
-			
-			
-			
+
+			<p>
+				<b>Panels per string, Parallel Strings</b> I kept things simple using a single string of large size panels. If
+				are using small panels you may need to run parallel strings to keep the voltage down. 
+			</p>
+
+			<p>
+				<b>Rmpp of full string</b> is the resistance value you want for your lower water heater element.
+				This number is the ideal impedance for maximum power transfer in full sun.
+			</p>
 		</Box>
 	</span>
 </div>
@@ -307,7 +326,7 @@
 			<hr />
 			<Output val={round(energyToHeatOneTank / 3600e3)} label="Energy to heat 1 tank" units="kWh" />
 			<Output val={costToHeatOneTank} label="Cost to heat one tank" units="$" />
-			<Output val={tanksUsedPerDay} label="Tanks used per day" units="ea" />
+			<Output val={tanksUsedPerDay} label="Tanks used per day" units="" />
 			<Output
 				val={round((tanksUsedPerDay * energyToHeatOneTank) / 3600e3)}
 				label="Daily Energy Demand"
@@ -322,21 +341,23 @@
 	</span>
 	<span>
 		<Box>
-			
 			<p>
-				There are about 4 liters in a gallon. Most water heaters are 30-60 gallons in size. For showers, you want water around 40C, but for washing dishes it helps to have it at 50C.
-			</p>
-			
-			<p>
-				<b>Energy Factor (ef)</b> this is an estimate of how much efficient your water heater is.  Most electric heaters have an <b>ef</b> of about 0.9, which means they waste about 10% of the energy used. The main losses are standby losses, where heat leaks through the insulation to the air.
+				There are about 4 liters in a gallon. Most water heaters are 30-60 gallons in size. For
+				showers, you want water around 40C, but for washing dishes it helps to have it at 50C.
 			</p>
 
-			
 			<p>
-				<b> Daily Energy Demand</b> this is how much power your solar panels will need to make each day to completely replace city power. Every day you meet this target you will save the amount in <b>Hot water cost per day</b>
+				<b>Energy Factor (ef)</b> this is rating of how efficient your water heater is.
+				Most electric heaters have an <b>ef</b> of about 0.9, which means they waste about 10% of the
+				energy used. The main losses are standby losses, where heat leaks through the insulation to the
+				air.
 			</p>
-			
-			
+
+			<p>
+				<b> Daily Energy Demand</b> this is how much power your solar panels will need to make each
+				day to completely replace city power. Every day you meet this target you will save the
+				amount in <b>Hot water cost per day</b>
+			</p>
 		</Box>
 	</span>
 </div>
@@ -360,8 +381,6 @@
 		</figure>
 	</span>
 </div>
-
-
 
 <!-- <h5>The time is ss {formatter.format($time)}</h5>
 
