@@ -87,6 +87,9 @@
 	let azimuth = 180;
 	let elevation = 40;
 	let wireLength = 100;
+	let useMixingValve = 1;
+
+	let mixingValveConstant = 1.5;
 
 	let wireResistance = 2.1;
 
@@ -323,10 +326,10 @@
 			<!-- <Input val={50} label="ThermostatSetting" units="°C" /> -->
 			<Input bind:val={hotWaterPerPersonDay} label="Hot Water/Person/Day" units="l" />
 			<Input bind:val={personsInHoushold} label="Persons In Houshold" units="" />
-			<!-- <label>
-				<input type="checkbox" bind:checked={useCityPower} />
-				Use city power for top element
-			</label>-->
+			<label>
+				<input type="checkbox" bind:checked={useMixingValve} />
+				Use Thermostatic mixing valve
+			</label>
 			<hr />
 			<Output val={round(energyToHeatOneTank / 3600e3)} label="Energy to heat 1 tank" units="kWh" />
 			<Output val={costToHeatOneTank} label="Cost to heat one tank" units="$" />
@@ -346,8 +349,10 @@
 	<span>
 		<Box>
 			<p>
-				There are about 4 liters in a gallon. Most water heaters are 30-60 gallons in size. For
-				showers, you want water around 40C, but for washing dishes it helps to have it at 50C.
+				<b>TankSize</b> Most water heaters are 30-60 gallons in size. A bigger water heater can store
+				more energy to bridge cloudy days. For showers, you want water at around 40C, but for washing
+				dishes it helps to have it at 50C. If you install a thermostatic mixing valve you can increase
+				the effective size of the tank.
 			</p>
 
 			<p>
@@ -502,7 +507,7 @@
 	.smol-sidebar {
 		margin-top: 2rem;
 		display: grid;
-		grid-template-columns: fit-content(20ch) minmax(min(50vw, 30ch), 1fr) minmax(
+		grid-template-columns: fit-content(20ch) minmax(min(50vw, 30ch), 45ch) minmax(
 				min(50vw, 30ch),
 				1fr
 			);
