@@ -99,7 +99,7 @@
 	let groundTemp = 5;
 	let energyFactor = 0.91;
 	let powerPerPanel = $Vmpp * $Impp;
-	let nominalPower = powerPerPanel*panelsPerString*parallelStrings;
+	let nominalPower = powerPerPanel * panelsPerString * parallelStrings;
 	let energyToHeatOneTank = heatCapOfWater * tankSize * (hotWaterOutTemp - groundTemp);
 
 	let peakPrice = 0.2352;
@@ -107,16 +107,14 @@
 	let offPeakPrice = 0.0716;
 	let peakHours = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0];
 	let peakHourCount = peakHours.reduce((accumulator, currentValue) => {
-  			return accumulator + currentValue;
-		}, 0);
-	let avgPowerPrice = ((0.0+peakHourCount/24.0) * peakPrice) + (((24.0-peakHourCount)/24.0) * offPeakPrice);
-
+		return accumulator + currentValue;
+	}, 0);
+	let avgPowerPrice =
+		(0.0 + peakHourCount / 24.0) * peakPrice + ((24.0 - peakHourCount) / 24.0) * offPeakPrice;
 
 	let year = new Date().getFullYear();
 
 	let monthData = [];
-
-	
 
 	months.forEach((month, index) => {
 		let m = {
@@ -138,18 +136,19 @@
 		monthData.push(m);
 	});
 
-
 	// the `$:` means 're-run whenever these values change'
 	// does not listen to changes happening inside components
 	$: peakHourCount = peakHours.reduce((accumulator, currentValue) => {
-  			return accumulator + currentValue;
-		}, 0);
-	$: avgPowerPrice = ((peakHourCount/24.0) * peakPrice) + (((24-peakHourCount)/24.0) * offPeakPrice);
+		return accumulator + currentValue;
+	}, 0);
+	$: avgPowerPrice =
+		(peakHourCount / 24.0) * peakPrice + ((24 - peakHourCount) / 24.0) * offPeakPrice;
 	$: wireResistance = (selectedWire.r * wireLength) / 1000;
-	$: energyToHeatOneTank = heatCapOfWater * tankSize * (hotWaterOutTemp - groundTemp) * 1/energyFactor;
+	$: energyToHeatOneTank =
+		(heatCapOfWater * tankSize * (hotWaterOutTemp - groundTemp) * 1) / energyFactor;
 	$: costToHeatOneTank = round((avgPowerPrice * energyToHeatOneTank) / 3600e3);
 	$: tanksUsedPerDay = round((hotWaterPerPersonDay * personsInHoushold) / tankSize);
-	$: nominalPower = powerPerPanel*panelsPerString*parallelStrings;
+	$: nominalPower = powerPerPanel * panelsPerString * parallelStrings;
 	$: stringVoc = $Voc * panelsPerString;
 </script>
 
@@ -216,7 +215,7 @@
 				<input type="checkbox" bind:checked={peakHours[9]} />
 				<input type="checkbox" bind:checked={peakHours[10]} />
 				<input type="checkbox" bind:checked={peakHours[11]} />
-				<br>
+				<br />
 				<input type="checkbox" bind:checked={peakHours[12]} />
 				<input type="checkbox" bind:checked={peakHours[13]} />
 				<input type="checkbox" bind:checked={peakHours[14]} />
@@ -272,31 +271,34 @@
 
 			<Input bind:val={wireLength} label="Total wire length" units="m" />
 			<hr />
+			<Output val={stringVoc} label="Voc of full string" units="v" />
+			<Output val={$Vmpp * panelsPerString} label="Vmpp of full string" units="v" />
+			<Output val={wireResistance} label="Resistance of wire" units="Ω" />
+			<Output val={round(nominalPower)} label="Nominal power of string" units="w" />
+			<Output val={round($Impp * $Impp * wireResistance)} label="Wire Losses at Mpp" units="w" />
 			<Output
 				val={round(($Vmpp * panelsPerString) / $Impp)}
 				label="Rmpp of full string"
 				units="Ω"
 			/>
-			<Output val={$Vmpp * panelsPerString} label="Vmpp of full string" units="v" />
-			<Output val={stringVoc} label="Voc of full string" units="v" />
-			<Output val={wireResistance} label="Resistance of wire" units="Ω" />
-			<Output val={round(nominalPower)} label="Nominal power of string" units="w" />
-			<Output val={round($Impp * $Impp * wireResistance)} label="Wire Losses at Mpp" units="w" />
 		</Box>
 	</span>
 	<span>
 		<Box>
 			<p>
-				<b>Vmpp, Impp</b>, find these in the spec sheet of your solar panels. This is the volts and amps your panel will make, brand new, clean, in full sun. 
+				<b>Vmpp, Impp</b>, find these in the spec sheet of your solar panels. This is the volts and
+				amps your panel will make, brand new, clean, in full sun.
 			</p>
 
 			<p>
-				<b>Voc</b> this is max voltage your panels can make.  Everything in your system needs to be rated to at least <b>Voc of full string</b>   Common solar wire and connectors are rated to 600V. 
+				<b>Voc</b> this is max voltage your panels can make. Everything in your system needs to be
+				rated to at least <b>Voc of full string</b> Common solar wire and connectors are rated to 600V.
 			</p>
 
 			<p>
-				<b>Panels per string, Parallel Strings</b> I kept things simple using a single string of large size panels. If
-				are using small panels you may need to run parallel strings to keep the voltage down. 
+				<b>Panels per string, Parallel Strings</b> I kept things simple using a single string of large
+				size panels. If are using small panels you may need to run parallel strings to keep the voltage
+				down.
 			</p>
 
 			<p>
@@ -349,10 +351,9 @@
 			</p>
 
 			<p>
-				<b>Energy Factor (ef)</b> this is rating of how efficient your water heater is.
-				Most electric heaters have an <b>ef</b> of about 0.9, which means they waste about 10% of the
-				energy used. The main losses are standby losses, where heat leaks through the insulation to the
-				air.
+				<b>Energy Factor (ef)</b> this is rating of how efficient your water heater is. Most
+				electric heaters have an <b>ef</b> of about 0.9, which means they waste about 10% of the energy
+				used. The main losses are standby losses, where heat leaks through the insulation to the air.
 			</p>
 
 			<p>
