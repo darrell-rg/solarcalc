@@ -99,6 +99,8 @@
 	let groundTemp = 5;
 	let avgPowerPrice = 0.2;
 	let energyFactor = 0.91;
+	let powerPerPanel = $Vmpp * $Impp;
+	let nominalPower = powerPerPanel*panelsPerString*parallelStrings;
 	let energyToHeatOneTank = heatCapOfWater * tankSize * (hotWaterOutTemp - groundTemp);
 
 	let year = new Date().getFullYear();
@@ -133,6 +135,7 @@
 	$: energyToHeatOneTank = heatCapOfWater * tankSize * (hotWaterOutTemp - groundTemp) * 1/energyFactor;
 	$: costToHeatOneTank = round((avgPowerPrice * energyToHeatOneTank) / 3600e3);
 	$: tanksUsedPerDay = round((hotWaterPerPersonDay * personsInHoushold) / tankSize);
+	$: nominalPower = powerPerPanel*panelsPerString*parallelStrings;
 </script>
 
 <svelte:head>
@@ -151,7 +154,7 @@
 	<li style="max-width: 300px;">
 		<figure>
 			<HousePic />
-			<figcaption>Simple</figcaption>
+			<figcaption>Simple DC only heating</figcaption>
 		</figure>
 	</li>
 
@@ -233,10 +236,10 @@
 			<Input val={$Voc} label="Voc" units="v" />
 			<Input val={$Rmpp} label="Vmpp" units="v" />
 			<Input val={$Impp} label="Impp" units="a" />
-			<Input val={panelsPerString} label="Panels per string" units="" />
-			<Input val={parallelStrings} label="Parallel strings" units="" />
-			<Input val={azimuth} label="Azimuth  180=South" units="°" />
-			<Input val={elevation} label="Elevation 0=Flat" units="°" />
+			<Input bind:val={panelsPerString} label="Panels per string" units="" />
+			<Input bind:val={parallelStrings} label="Parallel strings" units="" />
+			<Input bind:val={azimuth} label="Azimuth  180=South" units="°" />
+			<Input bind:val={elevation} label="Elevation 0=Flat" units="°" />
 			<label>
 				<select bind:value={selectedWire}>
 					{#each wireGuages as g}
@@ -260,7 +263,7 @@
 			<Output val={$Voc * panelsPerString} label="Voc of full string" units="v" />
 			<Output val={wireResistance} label="Resistance of wire" units="Ω" />
 			<Output
-				val={round($Vmpp * panelsPerString * $Impp)}
+				val={round(nominalPower)}
 				label="Nominal power of string"
 				units="w"
 			/>
@@ -268,7 +271,18 @@
 		</Box>
 	</span>
 	<span>
-		<div id="map" style="height: 250px;"></div>
+		<Box>
+			<p>
+				If you use large panels you can run a single series string and keep things simple.  If you are using small panels you may need to run parallel strings to keep the voltage down.  Normal solar wire is rated to 600V.  I would stay well below that.
+			</p>
+
+			<p>
+				<b>Rmpp of full string</b> is the resistance value you want for your lower water heater element. This number is the ideal Impedance for maximum power transfer in full sun.
+			</p>
+			
+			
+			
+		</Box>
 	</span>
 </div>
 
@@ -306,6 +320,25 @@
 			/>
 		</Box>
 	</span>
+	<span>
+		<Box>
+			
+			<p>
+				There are about 4 liters in a gallon. Most water heaters are 30-60 gallons in size. For showers, you want water around 40C, but for washing dishes it helps to have it at 50C.
+			</p>
+			
+			<p>
+				<b>Energy Factor (ef)</b> this is an estimate of how much efficient your water heater is.  Most electric heaters have an <b>ef</b> of about 0.9, which means they waste about 10% of the energy used. The main losses are standby losses, where heat leaks through the insulation to the air.
+			</p>
+
+			
+			<p>
+				<b> Daily Energy Demand</b> this is how much power your solar panels will need to make each day to completely replace city power. Every day you meet this target you will save the amount in <b>Hot water cost per day</b>
+			</p>
+			
+			
+		</Box>
+	</span>
 </div>
 
 <div class="sim-sidebar">
@@ -328,27 +361,7 @@
 	</span>
 </div>
 
-<!-- 
-<Box>
-	<h2>Usage Specs</h2>
-	<Input val={4} label="Persons In Houshold" units="" />
-	<Input val={4} label="Shower GPM" units="" />
-	<Input val={4} label="Shower Time/day" units="min" />
 
-	<input type=radio bind:group={wireResistPerKm} value={2.1}>8AWG
-	<input type=radio bind:group={wireResistPerKm} value={3.35}>10AWG
-	<input type=radio bind:group={wireResistPerKm} value={5.31}>12AWG 
-</Box>
-
-
-<Box>
-	<h2>Material Costs</h2>
-	<Input val={110} label="Price per panel" units="$" />
-	<Input val={600} label="Other expenses" units="$" />
-	Racking, Conduit, Cutoffswitch, GroundRod, Brackets, Wire, Panel Clamps, MixingValue, CrimpTool, GroundWire, GroundClamp
-  <br>
-	<Input val={600} label="Total Material" units="$" />
-</Box> -->
 
 <!-- <h5>The time is ss {formatter.format($time)}</h5>
 
@@ -396,7 +409,7 @@
 	h1,
 	figure,
 	p {
-		text-align: center;
+		/* text-align: center; */
 		margin: 0 auto;
 	}
 
@@ -465,6 +478,7 @@
 	}
 
 	.smol-sidebar {
+		margin-top: 2rem;
 		display: grid;
 		grid-template-columns: fit-content(20ch) minmax(min(50vw, 30ch), 1fr) minmax(
 				min(50vw, 30ch),
