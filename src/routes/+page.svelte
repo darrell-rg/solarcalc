@@ -6,13 +6,10 @@
 	import HousePic from '$lib/components/HousePic.svelte';
 	import TestSvg from '$lib/components/TestSvg.svelte';
 	import Output from '$lib/components/Output.svelte';
-	import { time, elapsed, Vmpp, Voc, Impp, Rmpp } from '$lib/components/stores.js';
+	import { time, elapsed, Vmpp, Voc, Impp, Rmpp, lat, lng } from '$lib/components/stores.js';
 	import { element } from 'svelte/internal';
 	import Map from '$lib/components/Map.svelte';
 	import LeafletMap from '$lib/components/LeafletMap.svelte';
-
-	let lat = 40.5;
-	let lng = -105.7;
 
 	let useCityPower = false;
 
@@ -101,6 +98,7 @@
 	let personsInHoushold = 4;
 	let groundTemp = 5;
 	let avgPowerPrice = 0.2;
+	let energyFactor = 0.91;
 	let energyToHeatOneTank = heatCapOfWater * tankSize * (hotWaterOutTemp - groundTemp);
 
 	let year = new Date().getFullYear();
@@ -132,9 +130,9 @@
 	// the `$:` means 're-run whenever these values change'
 	// does not listen to changes happening inside components
 	$: wireResistance = (selectedWire.r * wireLength) / 1000;
-	$: energyToHeatOneTank = heatCapOfWater * tankSize * (hotWaterOutTemp - groundTemp);
-
-
+	$: energyToHeatOneTank = heatCapOfWater * tankSize * (hotWaterOutTemp - groundTemp) * 1/energyFactor;
+	$: costToHeatOneTank = round((avgPowerPrice * energyToHeatOneTank) / 3600e3);
+	$: tanksUsedPerDay = round((hotWaterPerPersonDay * personsInHoushold) / tankSize);
 </script>
 
 <svelte:head>
@@ -180,11 +178,11 @@
 				<button on:click="{getCurrentPosition()}">Get Current Position</button>
 				<br> 
 			-->
-			<Input val={lat} label="Lattitude" units="°North" />
+			<Input val={round($lat)} label="Latitude" units="°North" readonly />
+			<Input val={round($lng)} label="Longitude" units="°West" readonly />
 			<Input val={groundTemp} label="GroundTemp" units="°C" />
-			<Input val={50} label="Cloudy days per year" units="days" />
-			<Input val={7.16} label="Off Peak Price" units="$/kwh" />
-			<Input val={23.52} label="Peak Price" units="$/kwh" />
+			<Input val={0.0716} label="Off Peak Price" units="$/kwh" />
+			<Input val={0.2352} label="Peak Price" units="$/kwh" />
 
 			<label>
 				PeakHours <br />
@@ -214,13 +212,13 @@
 				<input type="checkbox" bind:checked={peakHours[23]} />
 			</label>
 			<hr />
-			<Output val={$Rmpp} label="City Power Price/day" units="$" />
 		</Box>
 	</span>
-<span>
-<span>
-	<Map location=[40.57,-105.07]/>
-</span>
+	<span>
+		<span>
+			<Map />
+		</span>
+	</span>
 </div>
 
 <div class="smol-sidebar">
@@ -251,7 +249,7 @@
 			</label>
 			<br />
 
-			<Input val={wireLength} label="Total wire length" units="m" />
+			<Input bind:val={wireLength} label="Total wire length" units="m" />
 			<hr />
 			<Output
 				val={round(($Vmpp * panelsPerString) / $Impp)}
@@ -270,7 +268,6 @@
 		</Box>
 	</span>
 	<span>
-
 		<div id="map" style="height: 250px;"></div>
 	</span>
 </div>
@@ -278,54 +275,56 @@
 <div class="smol-sidebar">
 	<span data-text>
 		<h2>Step 3</h2>
-		Impedance matching calculator. Use this to figure out the optimal resistance for your water heater
-		element.
+		Hot water Usage calculator, use this to estimate how much you are paying to heat water.
 	</span>
 	<span>
 		<Box>
 			<h2>Water Heater Specs</h2>
-			<Input val={4} label="Heating Element Resistance" units="Ω" />
-			<Input val={tankSize} label="TankSize" units="liter" />
-			<Input val={4} label="StandbyLoss" units="W" />
-			<Input val={hotWaterOutTemp} label="Desired Output Temp" units="°C" />
+			<Input bind:val={tankSize} label="TankSize" units="liter" />
+			<Input bind:val={energyFactor} label="Energy Factor" units="ef" />
+			<Input bind:val={hotWaterOutTemp} label="Desired Output Temp" units="°C" />
 			<!-- <Input val={50} label="ThermostatSetting" units="°C" /> -->
-			<Input val={hotWaterPerPersonDay} label="Hot Water/Person/Day" units="l" />
-			<Input val={personsInHoushold} label="Persons In Houshold" units="" />
-			<label>
+			<Input bind:val={hotWaterPerPersonDay} label="Hot Water/Person/Day" units="l" />
+			<Input bind:val={personsInHoushold} label="Persons In Houshold" units="" />
+			<!-- <label>
 				<input type="checkbox" bind:checked={useCityPower} />
 				Use city power for top element
-			</label>
+			</label>-->
 			<hr />
 			<Output val={round(energyToHeatOneTank / 3600e3)} label="Energy to heat 1 tank" units="kWh" />
-
+			<Output val={costToHeatOneTank} label="Cost to heat one tank" units="$" />
+			<Output val={tanksUsedPerDay} label="Tanks used per day" units="ea" />
 			<Output
-				val={round((avgPowerPrice * energyToHeatOneTank) / 3600e3)}
-				label="Power Cost/day"
+				val={round((tanksUsedPerDay * energyToHeatOneTank) / 3600e3)}
+				label="Daily Energy Demand"
+				units="kWh"
+			/>
+			<Output
+				val={round(tanksUsedPerDay * costToHeatOneTank)}
+				label="Hot water cost per day"
 				units="$"
 			/>
 		</Box>
 	</span>
 </div>
 
-<div class="smol-sidebar">
+<div class="sim-sidebar">
 	<span data-text>
 		<h2>Step 4</h2>
-		Run simulator, view pretty graphs and numbers.
+		Run simulator. This will feed the simulator with solar panel data you entered above and historical
+		weather data for the year 2010.
 
+		<hr />
 		<button> Run random week in spring</button>
 		<button> Run random week in summer</button>
 		<button> Run random week in fall</button>
 		<button> Run random week in winter</button>
 	</span>
 	<span>
-		<Box>
-			<h2>Summer Sim results</h2>
-
-			<figure>
-				<img alt="SolarShed" src="day44.png" />
-				<figcaption>Cheap and simple DIY solar hot water!</figcaption>
-			</figure>
-		</Box>
+		<figure>
+			<img alt="SolarShed" src="day44.png" />
+			<figcaption>Cheap and simple DIY solar hot water!</figcaption>
+		</figure>
 	</span>
 </div>
 
@@ -385,13 +384,13 @@
 		{/each}
 	</table>
 </div>
+
 <!-- </div> -->
 
 <!-- <Counter /> -->
 
 <style>
-
-	.map{
+	.map {
 		height: 300px;
 	}
 	h1,
@@ -467,12 +466,15 @@
 
 	.smol-sidebar {
 		display: grid;
-		grid-template-columns: fit-content(20ch) minmax(min(50vw, 30ch), 1fr) minmax(min(50vw, 30ch), 1fr);
+		grid-template-columns: fit-content(20ch) minmax(min(50vw, 30ch), 1fr) minmax(
+				min(50vw, 30ch),
+				1fr
+			);
 	}
 
 	img {
 		width: 100%;
-		max-width: 400px;
+		/* max-width: 400px; */
 		margin: 0 0 1em 0;
 	}
 
