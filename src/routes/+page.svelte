@@ -103,6 +103,7 @@
 	let energyToHeatOneTank = heatCapOfWater * tankSize * (hotWaterOutTemp - groundTemp);
 
 	let peakPrice = 0.2352;
+	let stringVoc = $Voc * panelsPerString;
 	let offPeakPrice = 0.0716;
 	let peakHours = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0];
 	let peakHourCount = peakHours.reduce((accumulator, currentValue) => {
@@ -149,6 +150,7 @@
 	$: costToHeatOneTank = round((avgPowerPrice * energyToHeatOneTank) / 3600e3);
 	$: tanksUsedPerDay = round((hotWaterPerPersonDay * personsInHoushold) / tankSize);
 	$: nominalPower = powerPerPanel*panelsPerString*parallelStrings;
+	$: stringVoc = $Voc * panelsPerString;
 </script>
 
 <svelte:head>
@@ -196,9 +198,9 @@
 			-->
 			<Input val={round($lat)} label="Latitude" units="°North" readonly />
 			<Input val={round($lng)} label="Longitude" units="°West" readonly />
-			<Input val={groundTemp} label="GroundTemp" units="°C" />
-			<Input val={offPeakPrice} label="Off Peak Price" units="$/kwh" />
-			<Input val={peakPrice} label="Peak Price" units="$/kwh" />
+			<Input bind:val={groundTemp} label="GroundTemp" units="°C" />
+			<Input bind:val={offPeakPrice} label="Off Peak Price" units="$/kwh" />
+			<Input bind:val={peakPrice} label="Peak Price" units="$/kwh" />
 
 			<label>
 				PeakHours <br />
@@ -249,9 +251,9 @@
 	<span>
 		<Box>
 			<h2>Solar Panel Specs</h2>
-			<Input val={$Voc} label="Voc" units="v" />
-			<Input val={$Rmpp} label="Vmpp" units="v" />
-			<Input val={$Impp} label="Impp" units="a" />
+			<Input bind:val={$Voc} label="Voc" units="v" />
+			<Input bind:val={$Vmpp} label="Vmpp" units="v" />
+			<Input bind:val={$Impp} label="Impp" units="a" />
 			<Input bind:val={panelsPerString} label="Panels per string" units="" />
 			<Input bind:val={parallelStrings} label="Parallel strings" units="" />
 			<Input bind:val={azimuth} label="Azimuth  180=South" units="°" />
@@ -276,7 +278,7 @@
 				units="Ω"
 			/>
 			<Output val={$Vmpp * panelsPerString} label="Vmpp of full string" units="v" />
-			<Output val={$Voc * panelsPerString} label="Voc of full string" units="v" />
+			<Output val={stringVoc} label="Voc of full string" units="v" />
 			<Output val={wireResistance} label="Resistance of wire" units="Ω" />
 			<Output val={round(nominalPower)} label="Nominal power of string" units="w" />
 			<Output val={round($Impp * $Impp * wireResistance)} label="Wire Losses at Mpp" units="w" />
@@ -289,7 +291,7 @@
 			</p>
 
 			<p>
-				<b>Voc</b> this is max voltage your panels can make.  Everything in your system needs to be rated to at least Voc * panels per string.   Common solar wire and connectors are rated to 600V. 
+				<b>Voc</b> this is max voltage your panels can make.  Everything in your system needs to be rated to at least <b>Voc of full string</b>   Common solar wire and connectors are rated to 600V. 
 			</p>
 
 			<p>
