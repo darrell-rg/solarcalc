@@ -96,7 +96,7 @@ def downloadWeatherData(lat=40.57, lon=-105.07, year=2010, folder="/tmp"):
     return filename, hash
 
 
-def runSim(lat=40.57, lon=-105.07, year=2010, folder="/tmp"):
+def runSim(lat=40.57, lon=-105.07, year=2010, power_kW=2000, tilt=40, azimuth=180, folder="/tmp"):
 
     filename, hash = downloadWeatherData(lat, lon, year, folder)
     # load the data
@@ -142,21 +142,21 @@ def runSim(lat=40.57, lon=-105.07, year=2010, folder="/tmp"):
     ssc.data_free(wfd)
 
     # Specify the system Configuration
-    # Set system capacity in MW
-    system_capacity = 1500.0 / 1.0e6
+    # Set system capacity in kW
+    system_capacity = power_kW
     ssc.data_set_number(dat, b"system_capacity", system_capacity)
     # Set DC/AC ratio (or power ratio). See https://sam.nrel.gov/sites/default/files/content/virtual_conf_july_2013/07-sam-virtual-conference-2013-woodcock.pdf
     ssc.data_set_number(dat, b"dc_ac_ratio", 1.0)
     # Set tilt of system in degrees
-    ssc.data_set_number(dat, b"tilt", 25)
+    ssc.data_set_number(dat, b"tilt", tilt)
     # Set azimuth angle (in degrees) from north (0 degrees)
-    ssc.data_set_number(dat, b"azimuth", 180)
+    ssc.data_set_number(dat, b"azimuth", azimuth)
     # Set the inverter efficency
     ssc.data_set_number(dat, b"inv_eff", 96)
     # Set the system losses, in percent
     ssc.data_set_number(dat, b"losses", 14.0757)
     # Specify fixed tilt system (0=Fixed, 1=Fixed Roof, 2=1 Axis Tracker, 3=Backtracted, 4=2 Axis Tracker)
-    ssc.data_set_number(dat, b"array_type", 0)
+    ssc.data_set_number(dat, b"array_type", 1)
     # Set ground coverage ratio
     ssc.data_set_number(dat, b"gcr", 0.4)
     # Set constant loss adjustment
@@ -225,10 +225,13 @@ def getGraph():
 
     lat = float(request.args.get("lat", "40.57"))
     lon = float(request.args.get("lon", "-105.07"))
-    year = int(request.args.get("year", "2020"))
+    year = int(request.args.get("year", "2010"))
     day = int(request.args.get("day", "180"))
-
-    df, filename = runSim(lat, lon, year, folder)
+    power_kW = float(request.args.get("pwr", "1000"))
+    tilt = float(request.args.get("tilt", "40"))
+    azimuth = float(request.args.get("azimuth", "180"))
+    
+    df, filename = runSim(lat, lon, year,power_kW,tilt,azimuth, folder)
 
     graph = nsrdb_plot(df, day, filename)
 
@@ -245,9 +248,13 @@ def getCsv():
 
     lat = float(request.args.get("lat", "40.57"))
     lon = float(request.args.get("lon", "-105.07"))
-    year = int(request.args.get("year", "2020"))
+    year = int(request.args.get("year", "2010"))
+    power_kW = float(request.args.get("pwr", "1000"))
+    tilt = float(request.args.get("tilt", "40"))
+    azimuth = float(request.args.get("azimuth", "180"))
 
-    df, filename = runSim(lat, lon, year)
+
+    df, filename = runSim(lat, lon, year,power_kW,tilt,azimuth, folder)
 
     if os.path.exists(filename):
         response = send_file(filename, mimetype="text/csv")

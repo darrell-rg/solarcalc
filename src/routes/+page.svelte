@@ -9,7 +9,7 @@
 	import { time, elapsed, Vmpp, Voc, Impp, Rmpp, lat, lng } from '$lib/components/stores.js';
 	import { element } from 'svelte/internal';
 	import Map from '$lib/components/Map.svelte';
-	import LeafletMap from '$lib/components/LeafletMap.svelte';
+	import { PUBLIC_API_URL } from '$env/static/public';
 
 	let useCityPower = false;
 
@@ -153,6 +153,21 @@
 	$: tanksUsedPerDay = round((hotWaterPerPersonDay * personsInHoushold) / tankSize);
 	$: nominalPower = powerPerPanel * panelsPerString * parallelStrings;
 	$: stringVoc = $Voc * panelsPerString;
+
+	let graphUrlBase = '/sim/graph?';
+	function makeGraphUrl(day = 45) {
+		let url = PUBLIC_API_URL + graphUrlBase;
+
+		let pwr = nominalPower / 1000.0;
+		url =
+			url +
+			`day=${day}&lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}`;
+
+		const elem = document.getElementById("solarGraph");	
+
+		elem?.setAttribute("src",url);
+		return url;
+	}
 </script>
 
 <svelte:head>
@@ -253,9 +268,9 @@
 	<span>
 		<Box>
 			<h2>Solar Panel Specs</h2>
-			<Input bind:val={$Voc} label="Voc" units="v" />
-			<Input bind:val={$Vmpp} label="Vmpp" units="v" />
-			<Input bind:val={$Impp} label="Impp" units="a" />
+			<Input bind:val={$Voc} label="Voc" units="V" />
+			<Input bind:val={$Vmpp} label="Vmpp" units="V" />
+			<Input bind:val={$Impp} label="Impp" units="A" />
 			<Input bind:val={panelsPerString} label="Panels per string" units="" />
 			<Input bind:val={parallelStrings} label="Parallel strings" units="" />
 			<Input bind:val={azimuth} label="Azimuth  180=South" units="°" />
@@ -274,11 +289,11 @@
 
 			<Input bind:val={wireLength} label="Total wire length" units="m" />
 			<hr />
-			<Output val={stringVoc} label="Voc of full string" units="v" />
-			<Output val={$Vmpp * panelsPerString} label="Vmpp of full string" units="v" />
+			<Output val={stringVoc} label="Voc of full string" units="V" />
+			<Output val={$Vmpp * panelsPerString} label="Vmpp of full string" units="V" />
 			<Output val={wireResistance} label="Resistance of wire" units="Ω" />
-			<Output val={round(nominalPower)} label="Nominal power of string" units="w" />
-			<Output val={round($Impp * $Impp * wireResistance)} label="Wire Losses at Mpp" units="w" />
+			<Output val={round(nominalPower)} label="Nominal power of string" units="W" />
+			<Output val={round($Impp * $Impp * wireResistance)} label="Wire Losses at Mpp" units="W" />
 			<Output
 				val={round(($Vmpp * panelsPerString) / $Impp)}
 				label="Rmpp of full string"
@@ -377,15 +392,15 @@
 		weather data for the year 2010.
 
 		<hr />
-		<button> Run random week in spring</button>
-		<button> Run random week in summer</button>
-		<button> Run random week in fall</button>
-		<button> Run random week in winter</button>
+		<button on:click={()=>makeGraphUrl(50)}> Run random week in spring </button>
+		<button on:click={()=>makeGraphUrl(100)}> Run random week in summer</button>
+		<button on:click={()=>makeGraphUrl(200)}>Run random week in fall</button>
+		<button on:click={()=>makeGraphUrl(350)}> Run random week in winter</button>
 	</span>
 	<span>
 		<figure>
-			<img alt="SolarShed" src="day44.png" />
-			<figcaption>Cheap and simple DIY solar hot water!</figcaption>
+			<img alt="SolarSimGraph" src="day44.png" id="solarGraph"/>
+			<figcaption id="solarGraphCaption">Cheap and simple DIY solar hot water!</figcaption>
 		</figure>
 	</span>
 </div>
