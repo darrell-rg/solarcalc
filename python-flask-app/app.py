@@ -295,7 +295,8 @@ def getJson():
     filename, hash = runSimJson(lat, lon, power_kW, tilt,azimuth, folder)
 
     if os.path.exists(filename):
-        response = send_file(filename, mimetype="application/json")
+        response = send_file(filename, mimetype="application/json" )
+        response.access_control_allow_origin = "*"
         return response
 
     return "error making json"

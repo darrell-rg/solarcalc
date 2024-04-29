@@ -104,6 +104,8 @@
 	let powerPerPanel = $Vmpp * $Impp;
 	let nominalPower = powerPerPanel * panelsPerString * parallelStrings;
 	let energyToHeatOneTank = heatCapOfWater * tankSize * (hotWaterOutTemp - groundTemp);
+	let tanksUsedPerDay = round((hotWaterPerPersonDay * personsInHoushold) / tankSize);
+	let dailyDemand = round((tanksUsedPerDay * energyToHeatOneTank) / 3600e3);
 
 	let peakPrice = 0.2352;
 	let stringVoc = $Voc * panelsPerString;
@@ -119,23 +121,20 @@
 
 	let monthData = [];
 
+	let yearlySavings = 0;
+
 	months.forEach((month, index) => {
 		let m = {
 			month: months[index],
 			days: daysInMonth(year, index),
-			insolation: 0.5 + Math.random() * 0.5,
+			insolation: 0,
 			Edemand: 0,
-			Esolar: 456 * Math.random(),
-			Ecity: -1,
-			savings: -1
+			Esolar: 0,
+			Ecity:0,
+			Epercent: 0,
+			savings: 0
 		};
 
-		m.Edemand = tokWh(
-			m.days * ((hotWaterPerPersonDay * personsInHoushold) / tankSize) * energyToHeatOneTank
-		);
-		m.Ecity = clamp(m.Edemand - m.Esolar, 0, 999999999);
-
-		m.savings = (m.Edemand - m.Ecity) * avgPowerPrice;
 		monthData.push(m);
 	});
 
@@ -154,19 +153,65 @@
 	$: nominalPower = powerPerPanel * panelsPerString * parallelStrings;
 	$: stringVoc = $Voc * panelsPerString;
 
+	$: dailyDemand = round((tanksUsedPerDay * energyToHeatOneTank) / 3600e3);
+
 	let graphUrlBase = '/sim/graph?';
-	function makeGraphUrl(day = 45) {
+	function makeGraphUrl(startDay = 45) {
+		//pick a random day in the season
+		let day = Math.floor(Math.random() * 90) + startDay;
+
 		let url = PUBLIC_API_URL + graphUrlBase;
 
+		//pwr should be in kW
 		let pwr = nominalPower / 1000.0;
 		url =
 			url +
 			`day=${day}&lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}`;
 
-		const elem = document.getElementById("solarGraph");	
+		const elem = document.getElementById('solarGraph');
 
-		elem?.setAttribute("src",url);
+		elem?.setAttribute('src', url);
 		return url;
+	}
+
+	let jsonUrlBase = '/sim/json?';
+	function updateMonthlyTable() {
+		let url = PUBLIC_API_URL + jsonUrlBase;
+
+		//pwr should be in W
+		let pwr = nominalPower / 1000.0;
+		url = url + `lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}`;
+
+		let newYearlySavings = 0;
+		fetch(url)
+			.then((response) => response.json())
+			.then((data) => {
+				let newMonthData = [];
+				months.forEach((month, index) => {
+					let m = {
+						month: months[index],
+						days: daysInMonth(year, index),
+						insolation: data.outputs.solrad_monthly[index],
+						Edemand: dailyDemand * daysInMonth(year, index),
+						Esolar: data.outputs.dc_monthly[index] /1000.0,
+						savings: data.outputs.dc_monthly[index]/1000.0 * avgPowerPrice
+					};
+
+					// m.Edemand = tokWh(
+					// 	m.days * ((hotWaterPerPersonDay * personsInHoushold) / tankSize) * energyToHeatOneTank
+					// );
+					m.Epercent = clamp((m.Esolar/ m.Edemand)*100.0, 0, 200);
+
+					m.Ecity = clamp(100-m.Epercent,0, 100);
+
+					newYearlySavings = newYearlySavings + m.savings;
+
+					// m.savings = (m.Edemand - m.Ecity) * avgPowerPrice;
+					newMonthData.push(m);
+				});
+				monthData = newMonthData;
+				yearlySavings = newYearlySavings;
+			});
 	}
 </script>
 
@@ -392,15 +437,14 @@
 		weather data for the year 2010.
 
 		<hr />
-		<button on:click={()=>makeGraphUrl(50)}> Show random day in spring </button>
-		<button on:click={()=>makeGraphUrl(100)}> Show random day in summer</button>
-		<button on:click={()=>makeGraphUrl(200)}> Show random day in fall</button>
-		<button on:click={()=>makeGraphUrl(350)}> Show random day in winter</button>
+		<button on:click={() => makeGraphUrl(0)}> Show random day in spring </button>
+		<button on:click={() => makeGraphUrl(90)}> Show random day in summer</button>
+		<button on:click={() => makeGraphUrl(180)}> Show random day in fall</button>
+		<button on:click={() => makeGraphUrl(270)}> Show random day in winter</button>
 	</span>
 	<span>
 		<figure>
-			<img alt="SolarSimGraph" src="day67.png" id="solarGraph"/>
-			<figcaption id="solarGraphCaption">Cheap and simple DIY solar hot water!</figcaption>
+			<img alt="SolarSimGraph" src="day67.png" id="solarGraph" />
 		</figure>
 	</span>
 </div>
@@ -414,6 +458,8 @@
 </p>
 
 </div> -->
+
+<button on:click={() => updateMonthlyTable()}>Simulate Monthly Generation Totals</button>
 <div>
 	<!-- <TestSvg/> -->
 	<table class="monthTable">
@@ -423,7 +469,8 @@
 			<th>Insolation</th>
 			<th>Energy Demand (kWh)</th>
 			<th>Solar Energy (kWh)</th>
-			<th>City Energy (kWh)</th>
+			<th>Solar Power Used (%)</th>
+			<th>City Power Used (%)</th>
 			<th>Savings ($)</th>
 		</tr>
 		{#each monthData as m}
@@ -433,11 +480,14 @@
 				<td>{round(m.insolation)}</td>
 				<td>{round(m.Edemand)}</td>
 				<td>{round(m.Esolar)}</td>
+				<td>{round(m.Epercent)}</td>
 				<td>{round(m.Ecity)}</td>
 				<td>{round(m.savings)}</td>
 			</tr>
 		{/each}
 	</table>
+	<br>
+	Total Yearly Power Bill Savings (estimated) = ${round(yearlySavings)}
 </div>
 
 <!-- </div> -->
