@@ -392,14 +392,14 @@
 		weather data for the year 2010.
 
 		<hr />
-		<button on:click={()=>makeGraphUrl(50)}> Run random week in spring </button>
-		<button on:click={()=>makeGraphUrl(100)}> Run random week in summer</button>
-		<button on:click={()=>makeGraphUrl(200)}>Run random week in fall</button>
-		<button on:click={()=>makeGraphUrl(350)}> Run random week in winter</button>
+		<button on:click={()=>makeGraphUrl(50)}> Show random day in spring </button>
+		<button on:click={()=>makeGraphUrl(100)}> Show random day in summer</button>
+		<button on:click={()=>makeGraphUrl(200)}> Show random day in fall</button>
+		<button on:click={()=>makeGraphUrl(350)}> Show random day in winter</button>
 	</span>
 	<span>
 		<figure>
-			<img alt="SolarSimGraph" src="day44.png" id="solarGraph"/>
+			<img alt="SolarSimGraph" src="day67.png" id="solarGraph"/>
 			<figcaption id="solarGraphCaption">Cheap and simple DIY solar hot water!</figcaption>
 		</figure>
 	</span>

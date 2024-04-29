@@ -96,7 +96,24 @@ def downloadWeatherData(lat=40.57, lon=-105.07, year=2010, folder="/tmp"):
     return filename, hash
 
 
-def runSim(lat=40.57, lon=-105.07, year=2010, power_kW=2000, tilt=40, azimuth=180, folder="/tmp"):
+
+def runSimJson(lat=40.57, lon=-105.07, power_kW=1, tilt=40, azimuth=180, folder="/tmp"):
+
+    # this will run PvWatts V8 on nrel's api
+
+    url= f"https://developer.nrel.gov/api/pvwatts/v8.json?api_key={api_key}&azimuth={azimuth}&system_capacity={power_kW}&losses=14&array_type=1&module_type=0&gcr=0.4&dc_ac_ratio=1.2&inv_eff=96.0&radius=0&dataset=nsrdb&tilt={tilt}&lat={lat}&lon={lon}"
+
+
+    # print(url)
+    hash = hashlib.shake_128(url.encode()).hexdigest(32)
+    filename = os.path.join(folder, hash + ".json")
+    if not os.path.exists(filename):
+        urllib.request.urlretrieve(url, filename)
+
+    return filename, hash
+
+
+def runSim(lat=40.57, lon=-105.07, year=2010, power_kW=1, tilt=40, azimuth=180, folder="/tmp"):
 
     filename, hash = downloadWeatherData(lat, lon, year, folder)
     # load the data
@@ -165,18 +182,18 @@ def runSim(lat=40.57, lon=-105.07, year=2010, power_kW=2000, tilt=40, azimuth=18
     # execute and put generation results back into dataframe
     mod = ssc.module_create(b"pvwattsv5")
     ssc.module_exec(mod, dat)
-    df[b"generation"] = np.array(ssc.data_get_array(dat, b"gen"))
+    df["generation"] = np.array(ssc.data_get_array(dat, b"gen"))
 
     # free the memory
     ssc.data_free(dat)
     ssc.module_free(mod)
 
     # Divide sum of generation by the number of periods times the system size
-    cap_factor = df[b"generation"].sum() / (525600 / int(interval) * system_capacity)
+    cap_factor = df["generation"].sum() / (525600 / int(interval) * system_capacity)
 
     print(f"cap_factor = {cap_factor}")
 
-    total_energy = df[b"generation"].sum()
+    total_energy = df["generation"].sum()
 
     print(f"total_energy = {total_energy}")
 
@@ -207,12 +224,13 @@ def nsrdb_plot(df, day, filename):
         },
         legend=False,
     )
-    df[b"generation"][i : i + 30].plot(
-        ax=ax2, yticks=(np.arange(0, 4.5, 0.5)), style={"generation": "y-o"}
+    df["generation"][i : i + 30].plot(
+        ax=ax2, style={"generation": "y-o"}
     )
+    # , yticks=(np.arange(0, 4.5, 0.5))
     ax.grid()
-    ax.set_ylabel("W/m2")
-    ax2.set_ylabel("kW")
+    ax.set_ylabel("W/m2 (solar radiation)")
+    ax2.set_ylabel("W (output from array)")
     ax.legend(loc=2, ncol=5, frameon=False)
     ax2.legend(loc=1, frameon=False)
     fig.savefig(filename)
@@ -230,8 +248,8 @@ def getGraph():
     power_kW = float(request.args.get("pwr", "1000"))
     tilt = float(request.args.get("tilt", "40"))
     azimuth = float(request.args.get("azimuth", "180"))
-    
-    df, filename = runSim(lat, lon, year,power_kW,tilt,azimuth, folder)
+
+    df, filename = runSim(lat, lon, year, power_kW,tilt,azimuth, folder)
 
     graph = nsrdb_plot(df, day, filename)
 
@@ -263,6 +281,27 @@ def getCsv():
     return "error making csv"
 
 
+@app.route("/sim/json", methods=["POST", "GET"])
+@app.route("/json", methods=["POST", "GET"])
+def getJson():
+
+    lat = float(request.args.get("lat", "40.57"))
+    lon = float(request.args.get("lon", "-105.07"))
+    power_kW = float(request.args.get("pwr", "1000"))
+    tilt = float(request.args.get("tilt", "40"))
+    azimuth = float(request.args.get("azimuth", "180"))
+
+
+    filename, hash = runSimJson(lat, lon, power_kW, tilt,azimuth, folder)
+
+    if os.path.exists(filename):
+        response = send_file(filename, mimetype="application/json")
+        return response
+
+    return "error making json"
+
+
+
 @app.route("/sim/healthCheck", methods=["GET"])
 @app.route("/sim/", methods=["GET"])
 @app.route("/", methods=["GET"])
@@ -272,3 +311,4 @@ def health_check_root():
 
 if __name__ == "__main__":
     app.run()
+    # runSimJson()
