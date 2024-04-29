@@ -307,6 +307,65 @@
 <div class="smol-sidebar">
 	<span data-text>
 		<h2>Step 2</h2>
+		Hot water Usage calculator, use this to estimate how much you are paying to heat water.
+	</span>
+	<span>
+		<Box>
+			<h2>Water Heater Specs</h2>
+			<Input bind:val={tankSize} label="TankSize" units="liter" />
+			<Input bind:val={energyFactor} label="Energy Factor" units="ef" />
+			<Input bind:val={hotWaterOutTemp} label="Desired Output Temp" units="°C" />
+			<!-- <Input val={50} label="ThermostatSetting" units="°C" /> -->
+			<Input bind:val={hotWaterPerPersonDay} label="Hot Water/Person/Day" units="l" />
+			<Input bind:val={personsInHoushold} label="Persons In Houshold" units="" />
+			<label>
+				<input type="checkbox" bind:checked={useMixingValve} />
+				Use Thermostatic mixing valve
+			</label>
+			<hr />
+			<Output val={round(energyToHeatOneTank / 3600e3)} label="Energy to heat 1 tank" units="kWh" />
+			<Output val={costToHeatOneTank} label="Cost to heat one tank" units="$" />
+			<Output val={tanksUsedPerDay} label="Tanks used per day" units="" />
+			<Output
+				val={round((tanksUsedPerDay * energyToHeatOneTank) / 3600e3)}
+				label="Daily Energy Demand"
+				units="kWh"
+			/>
+			<Output
+				val={round(tanksUsedPerDay * costToHeatOneTank)}
+				label="Hot water cost per day"
+				units="$"
+			/>
+		</Box>
+	</span>
+	<span>
+		<Box>
+			<p>
+				<b>TankSize</b> Most water heaters are 30-60 gallons in size. A bigger water heater can store
+				more energy to bridge cloudy days. For showers, you want water at around 40C, but for washing
+				dishes it helps to have it at 50C. If you install a thermostatic mixing valve you can increase
+				the effective size of the tank.
+			</p>
+
+			<p>
+				<b>Energy Factor (ef)</b> this is rating of how efficient your water heater is. Most
+				electric heaters have an <b>ef</b> of about 0.9, which means they waste about 10% of the energy
+				used. The main losses are standby losses, where heat leaks through the insulation to the air.
+			</p>
+
+			<p>
+				<b> Daily Energy Demand</b> this is how much power your solar panels will need to make each
+				day to completely replace city power. Every day you meet this target you will save the
+				amount in <b>Hot water cost per day</b>
+			</p>
+		</Box>
+	</span>
+</div>
+
+
+<div class="smol-sidebar">
+	<span data-text>
+		<h2>Step 3</h2>
 		Impedance matching calculator. Use this to figure out the optimal resistance for your water heater
 		element.
 	</span>
@@ -372,63 +431,6 @@
 	</span>
 </div>
 
-<div class="smol-sidebar">
-	<span data-text>
-		<h2>Step 3</h2>
-		Hot water Usage calculator, use this to estimate how much you are paying to heat water.
-	</span>
-	<span>
-		<Box>
-			<h2>Water Heater Specs</h2>
-			<Input bind:val={tankSize} label="TankSize" units="liter" />
-			<Input bind:val={energyFactor} label="Energy Factor" units="ef" />
-			<Input bind:val={hotWaterOutTemp} label="Desired Output Temp" units="°C" />
-			<!-- <Input val={50} label="ThermostatSetting" units="°C" /> -->
-			<Input bind:val={hotWaterPerPersonDay} label="Hot Water/Person/Day" units="l" />
-			<Input bind:val={personsInHoushold} label="Persons In Houshold" units="" />
-			<label>
-				<input type="checkbox" bind:checked={useMixingValve} />
-				Use Thermostatic mixing valve
-			</label>
-			<hr />
-			<Output val={round(energyToHeatOneTank / 3600e3)} label="Energy to heat 1 tank" units="kWh" />
-			<Output val={costToHeatOneTank} label="Cost to heat one tank" units="$" />
-			<Output val={tanksUsedPerDay} label="Tanks used per day" units="" />
-			<Output
-				val={round((tanksUsedPerDay * energyToHeatOneTank) / 3600e3)}
-				label="Daily Energy Demand"
-				units="kWh"
-			/>
-			<Output
-				val={round(tanksUsedPerDay * costToHeatOneTank)}
-				label="Hot water cost per day"
-				units="$"
-			/>
-		</Box>
-	</span>
-	<span>
-		<Box>
-			<p>
-				<b>TankSize</b> Most water heaters are 30-60 gallons in size. A bigger water heater can store
-				more energy to bridge cloudy days. For showers, you want water at around 40C, but for washing
-				dishes it helps to have it at 50C. If you install a thermostatic mixing valve you can increase
-				the effective size of the tank.
-			</p>
-
-			<p>
-				<b>Energy Factor (ef)</b> this is rating of how efficient your water heater is. Most
-				electric heaters have an <b>ef</b> of about 0.9, which means they waste about 10% of the energy
-				used. The main losses are standby losses, where heat leaks through the insulation to the air.
-			</p>
-
-			<p>
-				<b> Daily Energy Demand</b> this is how much power your solar panels will need to make each
-				day to completely replace city power. Every day you meet this target you will save the
-				amount in <b>Hot water cost per day</b>
-			</p>
-		</Box>
-	</span>
-</div>
 
 <div class="sim-sidebar">
 	<span data-text>
