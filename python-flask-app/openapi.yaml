@@ -60,6 +60,21 @@ paths:
             text/csv:
               schema: 
                   type: string
+
+  /json:
+    summary: get Monthly output from PvWatts V8
+    get:
+      summary: get monthly data from sym
+      operationId: MakeJson
+      tags:
+        - solar
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema: 
+                  type: object
           
   /:
     summary: health check
