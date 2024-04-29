@@ -155,7 +155,7 @@
 
 	$: dailyDemand = round((tanksUsedPerDay * energyToHeatOneTank) / 3600e3);
 
-	let graphUrlBase = '/sim/graph?';
+	let graphUrlBase = '/graph?';
 	function makeGraphUrl(startDay = 45) {
 		//pick a random day in the season
 		let day = Math.floor(Math.random() * 90) + startDay;
@@ -174,7 +174,7 @@
 		return url;
 	}
 
-	let jsonUrlBase = '/sim/json?';
+	let jsonUrlBase = '/json?';
 	function updateMonthlyTable() {
 		let url = PUBLIC_API_URL + jsonUrlBase;
 
