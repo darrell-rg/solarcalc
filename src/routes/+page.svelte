@@ -43,7 +43,7 @@
 	// month. So passing in 1 as the month number will return the last day
 	// of January, not February
 	function daysInMonth(year, month) {
-		return new Date(year, month, 0).getDate();
+		return new Date(year, month + 1, 0).getDate();
 	}
 
 	function tokWh(j) {
@@ -130,7 +130,7 @@
 			insolation: 0,
 			Edemand: 0,
 			Esolar: 0,
-			Ecity:0,
+			Ecity: 0,
 			Epercent: 0,
 			savings: 0
 		};
@@ -150,17 +150,24 @@
 		(heatCapOfWater * tankSize * (hotWaterOutTemp - groundTemp) * 1) / energyFactor;
 	$: costToHeatOneTank = round((avgPowerPrice * energyToHeatOneTank) / 3600e3);
 	$: tanksUsedPerDay = round((hotWaterPerPersonDay * personsInHoushold) / tankSize);
+	$: powerPerPanel = $Vmpp * $Impp;
 	$: nominalPower = powerPerPanel * panelsPerString * parallelStrings;
 	$: stringVoc = $Voc * panelsPerString;
 
 	$: dailyDemand = round((tanksUsedPerDay * energyToHeatOneTank) / 3600e3);
 
 	let graphUrlBase = '/graph?';
-	function makeGraphUrl(startDay = 45) {
+	function makeGraphUrl(startDay = 45, event) {
 		//pick a random day in the season
 		let day = Math.floor(Math.random() * 90) + startDay;
 
 		let url = PUBLIC_API_URL + graphUrlBase;
+
+		let reEnable = function () {
+			// console.log('reEnableing ', event.srcElement);
+			event.srcElement.removeAttribute('disabled');
+		};
+		event.srcElement.setAttribute('disabled', true);
 
 		//pwr should be in kW
 		let pwr = nominalPower / 1000.0;
@@ -169,13 +176,14 @@
 			`day=${day}&lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}`;
 
 		const elem = document.getElementById('solarGraph');
-
+		elem.onload = reEnable;
 		elem?.setAttribute('src', url);
 		return url;
 	}
 
 	let jsonUrlBase = '/json?';
-	function updateMonthlyTable() {
+
+	function updateMonthlyTable(runMonthlySimButton) {
 		let url = PUBLIC_API_URL + jsonUrlBase;
 
 		//pwr should be in W
@@ -183,26 +191,31 @@
 		url = url + `lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}`;
 
 		let newYearlySavings = 0;
+		let newMonthData = [];
+
+		// console.log(runMonthlySimButton)
+		runMonthlySimButton.srcElement.setAttribute('disabled', true);
+
 		fetch(url)
 			.then((response) => response.json())
 			.then((data) => {
-				let newMonthData = [];
+				runMonthlySimButton.srcElement.removeAttribute('disabled');
 				months.forEach((month, index) => {
 					let m = {
 						month: months[index],
 						days: daysInMonth(year, index),
 						insolation: data.outputs.solrad_monthly[index],
 						Edemand: dailyDemand * daysInMonth(year, index),
-						Esolar: data.outputs.dc_monthly[index] /1000.0,
-						savings: data.outputs.dc_monthly[index]/1000.0 * avgPowerPrice
+						Esolar: data.outputs.dc_monthly[index] / 1000.0,
+						savings: (data.outputs.dc_monthly[index] / 1000.0) * avgPowerPrice
 					};
 
 					// m.Edemand = tokWh(
 					// 	m.days * ((hotWaterPerPersonDay * personsInHoushold) / tankSize) * energyToHeatOneTank
 					// );
-					m.Epercent = clamp((m.Esolar/ m.Edemand)*100.0, 0, 200);
+					m.Epercent = clamp((m.Esolar / m.Edemand) * 100.0, 0, 200);
 
-					m.Ecity = clamp(100-m.Epercent,0, 100);
+					m.Ecity = clamp(100 - m.Epercent, 0, 100);
 
 					newYearlySavings = newYearlySavings + m.savings;
 
@@ -362,7 +375,6 @@
 	</span>
 </div>
 
-
 <div class="smol-sidebar">
 	<span data-text>
 		<h2>Step 3</h2>
@@ -409,7 +421,8 @@
 		<Box>
 			<p>
 				<b>Vmpp, Impp</b>, find these in the spec sheet of your solar panels. This is the volts and
-				amps your panel will make, brand new, clean, in full sun.  All your wires/connectors/switches must be rated above the Impp. 
+				amps your panel will make, brand new, clean, in full sun. All your wires/connectors/switches
+				must be rated above the Impp.
 			</p>
 
 			<p>
@@ -431,18 +444,61 @@
 	</span>
 </div>
 
-
 <div class="sim-sidebar">
 	<span data-text>
 		<h2>Step 4</h2>
-		Run simulator. This will feed the simulator with solar panel data you entered above and historical
-		weather data for the year 2010.
+		<p>
+			Click "Simulate Monthly Totals". This will feed the simulator with the solar panel data you
+			entered above and Typical Meteorological Year Data (TMY) for your lat/lng. This calls a python
+			api rate limited to 1000/day so you may have to try again tomorrow if it is not working.
+		</p>
 
 		<hr />
-		<button on:click={() => makeGraphUrl(0)}> Show random day in spring </button>
-		<button on:click={() => makeGraphUrl(90)}> Show random day in summer</button>
-		<button on:click={() => makeGraphUrl(180)}> Show random day in fall</button>
-		<button on:click={() => makeGraphUrl(270)}> Show random day in winter</button>
+
+		<button on:click={(e) => updateMonthlyTable(e)}>Simulate Monthly Generation Totals</button>
+		<div>
+			<!-- <TestSvg/> -->
+			<table class="monthTable">
+				<tr>
+					<th>Month</th>
+					<th>Days</th>
+					<th>Insolation</th>
+					<th>Energy Demand (kWh)</th>
+					<th>Solar Energy (kWh)</th>
+					<th>Solar Power Used (%)</th>
+					<th>City Power Used (%)</th>
+					<th>Savings ($)</th>
+				</tr>
+				{#each monthData as m}
+					<tr>
+						<td>{m.month}</td>
+						<td>{round(m.days)}</td>
+						<td>{round(m.insolation)}</td>
+						<td>{round(m.Edemand)}</td>
+						<td>{round(m.Esolar)}</td>
+						<td>{round(m.Epercent)}</td>
+						<td>{round(m.Ecity)}</td>
+						<td>{round(m.savings)}</td>
+					</tr>
+				{/each}
+				<tfoot>
+					<tr>
+						<th scope="row" colspan="7">Estimated Yearly Total Savings:</th>
+						<th colspan="1">${round(yearlySavings)}</th>
+					</tr>
+				</tfoot>
+			</table>
+			<br />
+		</div>
+		<hr />
+		<p>
+			Here you can graph your simulated daily power production using Typical Meteorological Year
+			Data (TMY)
+		</p>
+		<button on:click={(e) => makeGraphUrl(0, e)}> Graph random day in spring </button>
+		<button on:click={(e) => makeGraphUrl(90, e)}> Graph random day in summer</button>
+		<button on:click={(e) => makeGraphUrl(180, e)}> Graph random day in fall</button>
+		<button on:click={(e) => makeGraphUrl(270, e)}> Graph random day in winter</button>
 	</span>
 	<span>
 		<figure>
@@ -460,37 +516,6 @@
 </p>
 
 </div> -->
-
-<button on:click={() => updateMonthlyTable()}>Simulate Monthly Generation Totals</button>
-<div>
-	<!-- <TestSvg/> -->
-	<table class="monthTable">
-		<tr>
-			<th>Month</th>
-			<th>Days</th>
-			<th>Insolation</th>
-			<th>Energy Demand (kWh)</th>
-			<th>Solar Energy (kWh)</th>
-			<th>Solar Power Used (%)</th>
-			<th>City Power Used (%)</th>
-			<th>Savings ($)</th>
-		</tr>
-		{#each monthData as m}
-			<tr>
-				<td>{m.month}</td>
-				<td>{round(m.days)}</td>
-				<td>{round(m.insolation)}</td>
-				<td>{round(m.Edemand)}</td>
-				<td>{round(m.Esolar)}</td>
-				<td>{round(m.Epercent)}</td>
-				<td>{round(m.Ecity)}</td>
-				<td>{round(m.savings)}</td>
-			</tr>
-		{/each}
-	</table>
-	<br>
-	Total Yearly Power Bill Savings (estimated) = ${round(yearlySavings)}
-</div>
 
 <!-- </div> -->
 
@@ -531,6 +556,10 @@
 	}
 	tr {
 		border-bottom: 1px solid #ddd;
+	}
+	th {
+		border-bottom: 1px solid #000;
+		min-width: 8em;
 	}
 	tr:nth-child(even) {
 		background-color: #d6eeee;

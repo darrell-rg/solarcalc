@@ -3,8 +3,6 @@
 	import { read, utils, writeFileXLSX } from 'xlsx';
 	import { _bomData } from './+page';
 
-
-
 	function round(num) {
 		// rounds to two digits
 		var m = Number((Math.abs(num) * 100).toPrecision(15));
@@ -21,7 +19,7 @@
 	// 	html = utils.sheet_to_html(ws); // generate HTML and update state
 	// });
 
-	let tbl = {}; 
+	let tbl = {};
 
 	/* get state data and export to XLSX */
 	function exportFile() {
@@ -33,22 +31,19 @@
 	// const ws = _bomSheet; // get the first worksheet
 	// html = utils.sheet_to_html(ws); // generate HTML and update state
 
-	let data = _bomData.map((r)=>{
+	let data = _bomData.map((r) => {
 		return {
-			"PN": "",
-			"Desc": r.Desc,
-			"Qty": r.Qty,
-			"Price": r.Price,
-			"Source":  "",
-			"Total": r.Price * r.Qty,
-    	}
+			PN: '',
+			Desc: r.Desc,
+			Qty: r.Qty,
+			Price: r.Price,
+			Source: '',
+			Total: r.Price * r.Qty
+		};
 	});
 
-	$: totalPrice = data.reduce(
-  (accumulator, currentValue) => accumulator + currentValue.Total,
-  0,
-); 
-	console.log(data)
+	$: totalPrice = data.reduce((accumulator, currentValue) => accumulator + currentValue.Total, 0);
+	// console.log(data);
 </script>
 
 <svelte:head>
@@ -63,7 +58,7 @@
 		You can use this sheet to help figure out what you need to buy and how much everything will
 		cost.
 	</p>
-	<table class="bomTable" id="bomTable" bind:this={tbl} >
+	<table class="bomTable" id="bomTable" bind:this={tbl}>
 		<tr>
 			<th>PN</th>
 			<th>DESC</th>
@@ -85,20 +80,18 @@
 
 		<tfoot>
 			<tr>
-			  <th scope="row" colspan="4">Total Cost</th>
-			  <th colspan="2">${round(totalPrice)}</th>
+				<th scope="row" colspan="4">Total Cost</th>
+				<th colspan="2">${round(totalPrice)}</th>
 			</tr>
-		  </tfoot>
+		</tfoot>
 	</table>
-
-	
 
 	<!-- <button on:click={exportFile}>Export XLSX</button> -->
 </div>
 
 <style>
 	.bomTable {
-		border-collapse:collapse;
+		border-collapse: collapse;
 		border: 1px solid #000;
 		text-align: left;
 		padding: 8 px;
@@ -106,7 +99,7 @@
 	tr {
 		border-bottom: 1px solid #ddd;
 	}
-	
+
 	th {
 		border-bottom: 1px solid #000;
 		min-width: 10em;
