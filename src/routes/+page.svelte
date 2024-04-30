@@ -259,10 +259,10 @@
 				<br> 
 			-->
 			<Input val={round($lat)} label="Latitude" units="°North" readonly />
-			<Input val={round($lng)} label="Longitude" units="°West" readonly />
+			<Input val={round($lng)} label="Longitude" units="°East" readonly />
 			<Input bind:val={groundTemp} label="GroundTemp" units="°C" />
-			<Input bind:val={offPeakPrice} label="Off Peak Price" units="$/kwh" />
-			<Input bind:val={peakPrice} label="Peak Price" units="$/kwh" />
+			<Input bind:val={offPeakPrice} label="Off Peak Price" units="$/kWh" />
+			<Input bind:val={peakPrice} label="Peak Price" units="$/kWh" />
 
 			<label>
 				PeakHours <br />
@@ -409,7 +409,7 @@
 		<Box>
 			<p>
 				<b>Vmpp, Impp</b>, find these in the spec sheet of your solar panels. This is the volts and
-				amps your panel will make, brand new, clean, in full sun.
+				amps your panel will make, brand new, clean, in full sun.  All your wires/connectors/switches must be rated above the Impp. 
 			</p>
 
 			<p>
