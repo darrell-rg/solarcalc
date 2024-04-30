@@ -10,7 +10,7 @@
 </main>
 
 <footer>
-	<p>made with <a href="https://kit.svelte.dev">svelte</a></p>
+	<p>Thanks for visiting!</p>
 </footer>
 
 <style>
