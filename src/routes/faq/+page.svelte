@@ -14,7 +14,7 @@
   <article class="faq">
     <figure>
       <HousePic style="float:right; width: 400px;"/>
-      <figcaption>DC to heating element. Note Thermostatic Mixing Valve</figcaption>
+      <figcaption>DC only, Note thermostatic mixing valve</figcaption>
     </figure>
     <h2>What are we even doing here?</h2>
     <p>This site teaches you how to hook some solar panels to the bottom element of your water heater.  Cheap solar power with energy storage. I did this DIY and cut my household electric use in half. </p>
@@ -100,7 +100,7 @@
       <figcaption>P&T Valve</figcaption>
     </figure>
     <h2>Really you don't need a thermostat?</h2>
-    <p> I have been running for three years with the no thermostat. I am using solar DC power hooked directly to the bottom heater element. As long as you don't overdo it with the number of panels this works fine. If you do overheat, your P&T valve will open and let some hot water out.  You can hear this if it happens. Make sure you test your P&T valve yearly by pulling the lever and listening for water flow.  </p>
+    <p> My system has been running for three years with no thermostat. I am using solar DC power hooked directly to the bottom heater element. As long as you don't overdo it with the number of panels this works fine. If you do overheat, your P&T valve will open and let some hot water out.  You can hear this if it happens. Make sure you test your P&T valve yearly by pulling the lever and listening for water flow.  </p>
   </article>
 
 
@@ -146,7 +146,7 @@
 
   
   <article class="faq">
-    <h2>How do I complain about an error/typo/bug with this website?</h2>
+    <h2>How do I fix/complain about an error/typo/bug with this website?</h2>
     <p> Open a ticket on the <a href="https://github.com/darrell-rg/solarcalc">github</a>. </p>
   </article>
 

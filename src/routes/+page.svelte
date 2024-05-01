@@ -4,7 +4,6 @@
 
 	import Input from '$lib/components/Input.svelte';
 	import HousePic from '$lib/components/HousePic.svelte';
-	import TestSvg from '$lib/components/TestSvg.svelte';
 	import Output from '$lib/components/Output.svelte';
 	import { time, elapsed, Vmpp, Voc, Impp, Rmpp, lat, lng } from '$lib/components/stores.js';
 	import { element } from 'svelte/internal';
@@ -241,9 +240,9 @@
 			<figcaption>Make your shed pay!</figcaption>
 		</figure>
 	</li>
-	<li style="max-width: 300px;">
+	<li style="">
 		<figure>
-			<HousePic />
+			<HousePic style ="max-width: 300px;"/>
 			<figcaption>Simple DC only heating</figcaption>
 		</figure>
 	</li>

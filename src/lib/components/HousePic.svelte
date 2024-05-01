@@ -88,6 +88,9 @@
 		<rect class="conduit" x="-34" y="30" width="5" height="4" rx="0.2" />
 	</g>
 
+
+
+
 	<g id="waterPipes">
 		<polyline class="coldWater" points="50,46 -23,46 -23,37 " />
 
@@ -96,7 +99,7 @@
 
 		<polyline class="pipe" points="0,-10 22,-10 22,-8" fill="none" />
 		<ellipse class="shower" cx="22" cy="-8" rx="6" ry="3" />
-		<rect class="valve" x="0" y="-12" width="4" height="4" rx="0.2" />
+		<rect class="valve" x="0" y="-12" width="8" height="8" rx="0.2" />
 
 		{#each Array(10) as _, i}
 			<path
@@ -107,12 +110,35 @@
 		{/each}
 	</g>
 
+
+	<g id="thermometer" transform="translate(-0.4 -12.5) scale(0.3)">
+		<style type="text/css">
+			.st0{fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+			.st1{fill:none;stroke:#000000;stroke-width:2;stroke-linejoin:round;stroke-miterlimit:10;}
+		</style>
+		<path class="st0" d="M15,17.81V6c0-1.66-1.34-3-3-3S9,4.34,9,6v11.81C7.21,18.85,6,20.78,6,23c0,3.31,2.69,6,6,6s6-2.69,6-6
+	C18,20.78,16.79,18.85,15,17.81z"/>
+		<circle class="st0" cx="12" cy="23" r="3"/>
+		<line class="st0" x1="12" y1="13" x2="12" y2="20"/>
+		<line class="st0" x1="20" y1="6" x2="25" y2="6"/>
+		<line class="st0" x1="20" y1="10" x2="22" y2="10"/>
+		<line class="st0" x1="20" y1="14" x2="25" y2="14"/>
+		<line class="st0" x1="20" y1="18" x2="22" y2="18"/>
+	</g>
+
 	<!-- <polyline class='conduit' points ='-33,30 -33,-30  ' /> -->
 	<polyline class="blackWire" points="-33,31 -33,-31" transform="translate(-0.6 0) " />
 	<polyline class="redWire" points="-33,31 -33,-31" transform="translate(0.6, 0) " />
 
 	<polyline class="greenWire" points="-40,71 -40,-29" transform="translate(-1, 0) " />
 
+	{#each Array(10) as _, i}
+		<path
+			class="bubbles"
+			d="M {i}, {(i % 2) / 2} v 18 "
+			transform="translate(-26 17) scale(0.9)"
+		/>
+	{/each}
 	<path
 		class="heatingElement"
 		d="
@@ -170,6 +196,18 @@
 		stroke: none;
 	}
 
+	.bubbles {
+		stroke-dasharray: 1;
+		stroke: rgb(139, 0, 23);
+		stroke-width: 0.5;
+		animation: dashup 30s linear infinite;
+	}
+
+	@keyframes dashup {
+		to {
+			stroke-dashoffset: 100;
+		}
+	}
 	.waterheater {
 		stroke: #666;
 		stroke-width: 1.2;
