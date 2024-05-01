@@ -362,8 +362,8 @@
 			</p>
 
 			<p>
-				<b> Element Resistance</b> Often elements are rated by Volts and Watts instead of Ohms. You
-				can put in the <b>Element Power Rating</b> and <b>Element Voltage Rating</b> to calculate the
+				<b> Element Resistance</b> Often water heater elements are rated by Volts and Watts instead of Ohms. You
+				can put in <b>Element Power Rating</b> and <b>Element Voltage Rating</b> to calculate the
 				Ohms.
 			</p>
 		</Box>
@@ -453,7 +453,7 @@
 
 			<p>
 				<b>Source Impedance</b> is the resistance value you want to match with your lower heating
-				element. I suggest a <b>Mismatch</b> below 20% is good enough;
+				element. I suggest a <b>Mismatch</b> below 20% is good enough; the heater elements are not made to a very precise resistance anyway. 
 			</p>
 		</Box>
 	</span>
