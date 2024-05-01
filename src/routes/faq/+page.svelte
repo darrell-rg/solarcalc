@@ -17,13 +17,13 @@
       <figcaption>Simple DC direct setup</figcaption>
     </figure>
     <h2>What are we even doing here?</h2>
-    <p>This site teaches you how to hook some solar panels to the bottom element of your water heater.  Cheap solar power with energy storage. I did this DIY and cut my household electric use in half.    </p>
+    <p>This site teaches you how to hook some solar panels to the bottom element of your water heater.  Cheap solar power with energy storage. I did this DIY and cut my household electric use in half. </p>
  
   </article>
 
   <article class="faq">
     <h2>What is the payback period?</h2>
-    <p>This depends a lot on how expensive your power is and how much hot water you use. In my case, it was costing me about a buck day to heat water.  I was able to build a PV system for about $1600.   I calcuated my payback at around 5 years.  There are some places with expensive power where your payback could be less then 2 years.</p>
+    <p>This depends a lot on how expensive your power is and how much hot water you use. In my case, it was costing me about a buck day to heat water.  I was able to build a PV system for about $1600.   I calculated my payback at around 5 years.  There are some places with expensive power where your payback could be closer to 2 years.</p>
   </article>
 
   <article class="faq">
@@ -72,7 +72,7 @@
 
   <article class="faq">
     <h2>How much energy can I store in my water heater?</h2>
-    <p> Heating 50 gallons of water from  5C to 70C stores about 14kWh of energy.  A Tesla Powerwall, stores about 13.5kWh of energy.  For both the water heater and the powerwall, you can expect an efficiency of about 90%.  The powerwall cost around $9,300,  and you should be able to DIY this system for well less then $2,000.  </p>
+    <p> Heating 50 gallons of water from  5C to 70C stores about 14kWh of energy.  A Tesla Powerwall, stores about 13.5kWh of energy.  For both the water heater and the Powerwall, you can expect an efficiency of about 90%.  The powerwall cost around $9,300,  and you should be able to DIY this system for well less then $2,000.  </p>
   </article>
 
   <article class="faq">
@@ -91,7 +91,7 @@
 
   <article class="faq">
     <h2>Do I need a thermostat?</h2>
-    <p> The AC thermostat built into the water heater will not last long if you try to use it on DC power. DC arcs a lot more since there is no zero-crossing to extinguish the arc.  An HVDC thermostat can be expensive and hard to source.  If your array is not too oversized you can make do with only a mixing valve and no thermostat. The standby losses of the water heater <a href="https://en.wikipedia.org/wiki/Newton%27s_law_of_cooling">increase proportionally</a> with the hot water temperature. This helps to bring the system into equilibrium so it will not activate your P&T valve.   In the summer, the water will get hotter then is safe so you need a hot/cold mixing valve to prevent scalds.   This extra hot water in the tank increases the amount of energy you can store.  I have made it through three cloudy days in a row before I need to use city power to heat the water.  </p>
+    <p> The AC thermostat built into the water heater will not last long if you try to use it on DC power. DC arcs a lot worse then AC since there is no zero-crossing to extinguish the arc.  An HVDC thermostat can be expensive and hard to source.  If your array is not too oversized you can make do with only a mixing valve and no thermostat. The standby losses of the water heater <a href="https://en.wikipedia.org/wiki/Newton%27s_law_of_cooling">increase proportionally</a> with the hot water temperature. This helps to bring the system into equilibrium so it will not activate your P&T valve.   In the summer, the water will get hotter then is safe so you definitely need a thermostatic mixing valve to prevent scalds.   The extra hot water in the tank increases the amount of energy you can store.  I have made it through three cloudy days in a row before I need to use city power to heat the water.  </p>
   </article>
 
   <article class="faq">
@@ -100,7 +100,7 @@
       <figcaption>P&T Valve</figcaption>
     </figure>
     <h2>Really you don't need a thermostat?</h2>
-    <p> I have been running for three years with the no thermostat.  DC power hooked directly to the bottom heater element. As long as you don't overdo it with the number of pannels you install this works fine. If you do overheat , your P&T valve will pop and you will hear it. Make sure you test your P&T valve yearly by pulling the lever and listening for water flow.    This is a good way to go because there are no fancy electronics that can fail. </p>
+    <p> I have been running for three years with the no thermostat. I am using solar DC power hooked directly to the bottom heater element. As long as you don't overdo it with the number of panels this works fine. If you do overheat, your P&T valve will open and let some hot water out.  You can hear this if it happens. Make sure you test your P&T valve yearly by pulling the lever and listening for water flow.  </p>
   </article>
 
 
@@ -122,6 +122,11 @@
   <article class="faq">
     <h2>What kind of panels should I get?</h2>
     <p>I recommend getting some used panels from somewhere close to you on eBay, facebook marketplace, craigslist, etc.  You want the largest panels you can fit as this will result in less mounting hardware and connector losses. As an example currently on eBay you can get panels as big as 655W for $250, they are 2.4m x 1.3m, so about the size of a sheet of plywood.  Three or four of these 655W panels would do the job. </p>
+  </article>
+
+  <article class="faq">
+    <h2>What is the difference between commercial and residential panels?</h2>
+    <p>Commercial panels are bigger and often have shorter wires. Residential panels are small enough to be handled by one person and have longer wires to make the install a bit easier. Either one will work, I got some used commercial panels because they were the cheapest option. </p>
   </article>
 
   <article class="faq">
