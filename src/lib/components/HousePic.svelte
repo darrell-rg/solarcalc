@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from "svelte";
-
+	export let style;
 	let time = new Date();
 
 	let houseWidth = 80;
@@ -24,7 +24,7 @@
 	});
 </script>
 
-<svg viewBox="-50 -50 100 100">
+<svg viewBox="-50 -50 100 100" style="{style}">
 	<mask id="myMask">
 		<!-- Everything under a white pixel will be visible -->
 		<rect x="0" y="0" width="100" height="100" fill="white" />

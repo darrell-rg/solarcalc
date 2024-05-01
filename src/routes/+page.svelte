@@ -449,8 +449,8 @@
 		<h2>Step 4</h2>
 		<p>
 			Click "Simulate Monthly Totals". This will feed the simulator with the solar panel data you
-			entered above and Typical Meteorological Year Data (TMY) for your lat/lng. This calls a python
-			api rate limited to 1000/day so you may have to try again tomorrow if it is not working.
+			entered above and Typical Meteorological Year Data (TMY) for your lat/lng. This calls a NREL PVwatts API rate
+			limited to 1000 req/day so you may have to try again tomorrow if it is not working.
 		</p>
 
 		<hr />

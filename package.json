@@ -1,7 +1,7 @@
 {
 	"name": "solarcalc",
-	"version": "0.0.2",
-	"description": "Solar Hot Water",
+	"version": "0.0.3",
+	"description": "Solar PV Hot Water Simulator Tool",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
@@ -35,9 +35,7 @@
 		"@lukeed/uuid": "^2.0.0",
 		"cookie": "^0.4.1",
 		"leaflet": "^1.9.4",
-		"svelte-map-leaflet": "^0.5.0",
 		"svelte-maplibre": "^0.8.5",
-		"svelte-sheets": "^1.0.0",
 		"xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
 	}
 }
