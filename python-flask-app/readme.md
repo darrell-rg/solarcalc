@@ -1,6 +1,6 @@
 # Flask Application for Solar PV hot water simulator
 
-This is a simple Flask application developed to simulate solar PV with PVWAtts
+This is a simple Flask application developed to simulate solar PV with PVwatts
 
 ## Deploying the application in Choreo
 1. Fork this repository.
@@ -12,9 +12,11 @@ This is a simple Flask application developed to simulate solar PV with PVWAtts
 
 Invoke the following endpoints to test the application. Make sure to change the `<endpoint-url>` to the URL of the deployed component.
 
-### Viewing all the available endpoints
+### Testing all the available endpoints
 
 ```
+pip install -r requirements.txt
+
 set NRDSBAPIKEY = "your api key from NREL"
 
 flask run dev

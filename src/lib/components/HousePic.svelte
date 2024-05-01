@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from "svelte";
+	import { onMount } from 'svelte';
 	export let style;
 	let time = new Date();
 
@@ -24,7 +24,7 @@
 	});
 </script>
 
-<svg viewBox="-50 -50 100 100" style="{style}">
+<svg viewBox="-50 -50 100 100" {style}>
 	<mask id="myMask">
 		<!-- Everything under a white pixel will be visible -->
 		<rect x="0" y="0" width="100" height="100" fill="white" />
@@ -63,12 +63,7 @@
 		transform="rotate(90)"
 	/>
 
-	<circle
-		class="sun"
-		r="8"
-		fill="url('#sunGradient')"
-		transform="translate(-36 -45.5) "
-	/>
+	<circle class="sun" r="8" fill="url('#sunGradient')" transform="translate(-36 -45.5) " />
 
 	<polygon
 		class="wall"
@@ -113,16 +108,10 @@
 	</g>
 
 	<!-- <polyline class='conduit' points ='-33,30 -33,-30  ' /> -->
-	<polyline
-		class="redWire"
-		points="-33,31 -33,-31"
-		transform="translate(-0.3 0) "
-	/>
-	<polyline
-		class="blackWire"
-		points="-33,31 -33,-31"
-		transform="translate(0.3 0) "
-	/>
+	<polyline class="blackWire" points="-33,31 -33,-31" transform="translate(-0.6 0) " />
+	<polyline class="redWire" points="-33,31 -33,-31" transform="translate(0.6, 0) " />
+
+	<polyline class="greenWire" points="-40,71 -40,-29" transform="translate(-1, 0) " />
 
 	<path
 		class="heatingElement"
@@ -133,6 +122,10 @@
 	"
 		transform="translate(-16 32) scale(0.7)"
 	/>
+
+	<rect class="conduit" x="-42" y="-11" width="10" height="9" rx="0.2" />
+	<line class="onOff" x1="-37" y1="-5" x2="-37" y2="-10.5" />
+	<circle class="onOff" r="3" transform="translate(-37, -6) "></circle>
 
 	<line class="panel" x1="-5" y1="-41" x2="-43" y2="-28" />
 
@@ -166,7 +159,7 @@
 		stroke-dasharray: 1;
 		stroke: darkblue;
 		stroke-width: 0.25;
-		animation: dash 15s linear;
+		animation: dash 30s linear infinite;
 	}
 	@keyframes dash {
 		to {
@@ -204,7 +197,7 @@
 	.pipe {
 		stroke: #444;
 		fill: none;
-		stroke-width: 1;
+		stroke-width: 1.5;
 	}
 
 	.valve {
@@ -216,25 +209,37 @@
 	.hotWater {
 		stroke: red;
 		fill: none;
-		stroke-width: 1;
+		stroke-width: 1.5;
 	}
 
 	.coldWater {
 		stroke: blue;
 		fill: none;
-		stroke-width: 1;
+		stroke-width: 1.5;
 	}
 
 	.redWire {
 		stroke: red;
 		fill: none;
-		stroke-width: 0.3;
+		stroke-width: 0.7;
 	}
 
 	.blackWire {
 		stroke: black;
 		fill: none;
-		stroke-width: 0.3;
+		stroke-width: 0.7;
+	}
+
+	.greenWire {
+		stroke: green;
+		fill: none;
+		stroke-width: 0.7;
+	}
+
+	.onOff {
+		stroke: black;
+		fill: none;
+		stroke-width: 0.8;
 	}
 
 	.heatingElement {

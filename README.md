@@ -2,9 +2,11 @@
 
 A design aid for DC solar hot water systems.
 
+![Screenshot](/static/Screenshot.png)
+
 ## Developing
 
-First start the flask backend app in /python-flask-app.  See the readme.
+First start the flask backend app in /python-flask-app.  See /python-flask-app/README.md
 
 Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 

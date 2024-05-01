@@ -23,7 +23,7 @@
 
   <article class="faq">
     <h2>What is the payback period?</h2>
-    <p>This depends a lot on how expensive your power is and how much hot water you use. In my case, it was costing me about a buck day to heat water.  I was able to build a PV system for about $1600.   I calculated my payback at around 5 years.  There are some places with expensive power where your payback could be closer to 2 years.</p>
+    <p>This depends a lot on how expensive your power is and how much hot water you use. In my case, it was costing me a bit over buck day to heat water.  I was able to build a PV system for less then $2000.   I calculated my payback at around 5 years.  There are some places with expensive power where your payback could be closer to 2 years.</p>
   </article>
 
   <article class="faq">
@@ -91,12 +91,12 @@
 
   <article class="faq">
     <h2>Do I need a thermostat?</h2>
-    <p> The AC thermostat built into the water heater will not last long if you try to use it on DC power. DC arcs a lot worse then AC since there is no zero-crossing to extinguish the arc.  An HVDC thermostat can be expensive and hard to source.  If your array is not too oversized you can make do with only a mixing valve and no thermostat. The standby losses of the water heater <a href="https://en.wikipedia.org/wiki/Newton%27s_law_of_cooling">increase proportionally</a> with the hot water temperature. This helps to bring the system into equilibrium so it will not activate your P&T valve.   In the summer, the water will get hotter then is safe so you definitely need a thermostatic mixing valve to prevent scalds.   The extra hot water in the tank increases the amount of energy you can store.  I have made it through three cloudy days in a row before I need to use city power to heat the water.  </p>
+    <p> The AC thermostat built into the water heater will not last long if you try to use it on DC power. DC arcs a lot worse then AC since there is no zero-crossing to extinguish the arc.  A 600V, DC rated thermostat is hard to find.  If your array is not too oversized you can make do with only a mixing valve and no thermostat. The standby losses of the water heater <a href="https://en.wikipedia.org/wiki/Newton%27s_law_of_cooling">increase proportionally</a> with the hot water temperature. This helps to bring the system into equilibrium so it will not activate your P&T valve.   In the summer, the water will get hotter then is safe so you definitely need a thermostatic mixing valve to prevent scalds.   The extra hot water in the tank increases the amount of energy you can store.  I have made it through three cloudy days in a row before I need to use city power to heat the water.  </p>
   </article>
 
   <article class="faq">
     <figure >
-      <img alt="mixing valve" src="pAndTValve.png" style="max-width: 300px;"/>
+      <img alt="mixing valve" src="solarShed/pAndTValve.webp" style="max-width: 300px;"/>
       <figcaption>P&T Valve</figcaption>
     </figure>
     <h2>Really you don't need a thermostat?</h2>
@@ -121,7 +121,7 @@
 
   <article class="faq">
     <h2>What kind of panels should I get?</h2>
-    <p>I recommend getting some used panels from somewhere close to you on eBay, facebook marketplace, craigslist, etc.  You want the largest panels you can fit as this will result in less mounting hardware and connector losses. As an example currently on eBay you can get panels as big as 655W for $250, they are 2.4m x 1.3m, so about the size of a sheet of plywood.  Three or four of these 655W panels would do the job. </p>
+    <p>I recommend getting some used panels from somewhere close to you on eBay, facebook marketplace, craigslist, etc.  You want the largest panels you can fit as this will result in less mounting hardware and connector losses. As an example currently on eBay you can get panels as big as 655W for $250, they are 2.4m x 1.3m, so about the size of a sheet of plywood.  Just three of those 655W panels would do the job. </p>
   </article>
 
   <article class="faq">
@@ -136,7 +136,7 @@
 
   <article class="faq">
     <h2>What about trees or other shading?</h2>
-    <p>Deciduous trees are not that bad because they block light in the summer when there is too much, and allow more through in the winter when there is not enough.  If you have some evergreen trees that will block the sun for half the day, you can add more panels to compensate.  </p>
+    <p>Deciduous trees are not that bad because they block light in the summer when there is too much, and allow more through in the winter when there is not enough.  If you have some evergreen trees that will block the sun for half the day, you can add more panels to compensate.  That said, the most important thing for solar to work, is of course sunshine.  If you do not have a spot you can mount the panels where they will be in direct sunlight for at least half the day,  then this system will not work work for you. </p>
   </article>
 
   <article class="faq">
