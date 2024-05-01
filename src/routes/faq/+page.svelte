@@ -42,7 +42,7 @@
       <figcaption>Rs = RL for MAX POWER </figcaption>
     </figure>
     <h2>What is impedance matching and why does it matter?</h2>
-    <p> <a href="https://en.wikipedia.org/wiki/Maximum_power_transfer_theorem">Maximum Power Transfer theorem</a> says we want to match the load impedance to the source impedance.   To get the full capacity of the panels, it necessary to choose a water heater element that matches the source impedance(Vmpp/Immp) of the solar panel array.  You can also use DC solar optimizers for this, they will match the impedance for you (within reason).   If you have a lot of partial shading, the optimizers MIGHT be worth it.  In most cases, carefully selecting the resistance of your heater element is good enough.  There is a calculator on the simulator page to help you with this. 
+    <p> <a href="https://en.wikipedia.org/wiki/Maximum_power_transfer_theorem">Maximum Power Transfer theorem</a> says we want to match the load impedance to the source impedance.   To get the full capacity of the panels, it necessary to choose a water heater element that matches the source impedance(Vmp/Immp) of the solar panel array.  You can also use DC solar optimizers for this, they will match the impedance for you (within reason).   If you have a lot of partial shading, the optimizers MIGHT be worth it.  In most cases, carefully selecting the resistance of your heater element is good enough.  There is a calculator on the simulator page to help you with this. 
     </p>
   </article>
 

@@ -97,11 +97,11 @@ def downloadWeatherData(lat=40.57, lon=-105.07, year=2010, folder="/tmp"):
 
 
 
-def runSimJson(lat=40.57, lon=-105.07, power_kW=1, tilt=40, azimuth=180, folder="/tmp"):
+def runSimJson(lat=40.57, lon=-105.07, power_kW=1, tilt=40, azimuth=180, module_type=0, losses=14, folder="/tmp"):
 
     # this will run PvWatts V8 on nrel's api
 
-    url= f"https://developer.nrel.gov/api/pvwatts/v8.json?api_key={api_key}&azimuth={azimuth}&system_capacity={power_kW}&losses=14&array_type=1&module_type=0&gcr=0.4&dc_ac_ratio=1.2&inv_eff=96.0&radius=0&dataset=nsrdb&tilt={tilt}&lat={lat}&lon={lon}"
+    url= f"https://developer.nrel.gov/api/pvwatts/v8.json?api_key={api_key}&azimuth={azimuth}&system_capacity={power_kW}&losses={losses}&array_type=1&module_type={module_type}&gcr=0.4&dc_ac_ratio=1.2&inv_eff=96.0&radius=0&dataset=nsrdb&tilt={tilt}&lat={lat}&lon={lon}"
 
 
     # print(url)
@@ -113,7 +113,7 @@ def runSimJson(lat=40.57, lon=-105.07, power_kW=1, tilt=40, azimuth=180, folder=
     return filename, hash
 
 
-def runSim(lat=40.57, lon=-105.07, year=2010, power_kW=1, tilt=40, azimuth=180, folder="/tmp"):
+def runSim(lat=40.57, lon=-105.07, year=2010, power_kW=1, tilt=40, azimuth=180, module_type=0, losses=14, folder="/tmp"):
 
     filename, hash = downloadWeatherData(lat, lon, year, folder)
     # load the data
@@ -171,7 +171,9 @@ def runSim(lat=40.57, lon=-105.07, year=2010, power_kW=1, tilt=40, azimuth=180, 
     # Set the inverter efficency
     ssc.data_set_number(dat, b"inv_eff", 96)
     # Set the system losses, in percent
-    ssc.data_set_number(dat, b"losses", 14.0757)
+    ssc.data_set_number(dat, b"losses", losses)
+    
+    ssc.data_set_number(dat, b"module_type", module_type)
     # Specify fixed tilt system (0=Fixed, 1=Fixed Roof, 2=1 Axis Tracker, 3=Backtracted, 4=2 Axis Tracker)
     ssc.data_set_number(dat, b"array_type", 1)
     # Set ground coverage ratio
@@ -180,7 +182,7 @@ def runSim(lat=40.57, lon=-105.07, year=2010, power_kW=1, tilt=40, azimuth=180, 
     ssc.data_set_number(dat, b"adjust:constant", 0)
 
     # execute and put generation results back into dataframe
-    mod = ssc.module_create(b"pvwattsv5")
+    mod = ssc.module_create(b"pvwattsv8")
     ssc.module_exec(mod, dat)
     df["generation"] = np.array(ssc.data_get_array(dat, b"gen"))
 
@@ -248,8 +250,10 @@ def getGraph():
     power_kW = float(request.args.get("pwr", "1000"))
     tilt = float(request.args.get("tilt", "40"))
     azimuth = float(request.args.get("azimuth", "180"))
+    losses = float(request.args.get("losses", "14"))
+    module_type = int(request.args.get("module_type", "0"))
 
-    df, filename = runSim(lat, lon, year, power_kW,tilt,azimuth, folder)
+    df, filename = runSim(lat, lon, year, power_kW,tilt,azimuth, module_type, losses, folder)
 
     graph = nsrdb_plot(df, day, filename)
 
@@ -270,9 +274,11 @@ def getCsv():
     power_kW = float(request.args.get("pwr", "1000"))
     tilt = float(request.args.get("tilt", "40"))
     azimuth = float(request.args.get("azimuth", "180"))
+    losses = float(request.args.get("losses", "14"))
+    module_type = int(request.args.get("module_type", "0"))
 
 
-    df, filename = runSim(lat, lon, year,power_kW,tilt,azimuth, folder)
+    df, filename = runSim(lat, lon, year,power_kW,tilt,azimuth, module_type, losses, folder)
 
     if os.path.exists(filename):
         response = send_file(filename, mimetype="text/csv")
@@ -290,9 +296,11 @@ def getJson():
     power_kW = float(request.args.get("pwr", "1000"))
     tilt = float(request.args.get("tilt", "40"))
     azimuth = float(request.args.get("azimuth", "180"))
+    losses = float(request.args.get("losses", "14"))
+    module_type = int(request.args.get("module_type", "0"))
 
 
-    filename, hash = runSimJson(lat, lon, power_kW, tilt,azimuth, folder)
+    filename, hash = runSimJson(lat, lon, power_kW, tilt, azimuth, module_type, losses, folder)
 
     if os.path.exists(filename):
         response = send_file(filename, mimetype="application/json" )

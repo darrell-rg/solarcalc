@@ -1,13 +1,10 @@
 <script>
-	import Counter from '$lib/Counter.svelte';
 	import Box from '$lib/components/Box.svelte';
-
 	import Input from '$lib/components/Input.svelte';
 	import HousePic from '$lib/components/HousePic.svelte';
 	import Output from '$lib/components/Output.svelte';
-	import { time, elapsed, Vmpp, Voc, Impp, Rmpp, lat, lng } from '$lib/components/stores.js';
-	import { element } from 'svelte/internal';
-	import {round,tokWh,clamp} from '$lib/components/util'
+	import { Vmp, Voc, Imp, Isc, lat, lng } from '$lib/components/stores.js';
+	import { round, tokWh, clamp, vpToR } from '$lib/components/util';
 	import Map from '$lib/components/Map.svelte';
 	import { PUBLIC_API_URL } from '$env/static/public';
 
@@ -18,11 +15,10 @@
 		second: '2-digit'
 	});
 
-
 	function getCurrentPosition() {
 		navigator.geolocation.getCurrentPosition(function (position) {
-			lat = round(position.coords.latitude);
-			lng = round(position.coords.longitude);
+			$lat = round(position.coords.latitude);
+			$lng = round(position.coords.longitude);
 		});
 	}
 
@@ -41,7 +37,15 @@
 		{ id: 4, r: 8.46, text: `14AWG,  8.46  Ω/km` }
 	];
 
-	let selectedWire = wireGuages[0];
+	let moduleTypes = [
+		{ id: 0, text: `Standard, 19% eff` },
+		{ id: 1, text: `Premium, 21% eff` },
+		{ id: 2, text: `Thin Film,  18% eff` }
+	];
+
+	let selectedWire = wireGuages[1];
+
+	let selectedModuleType = moduleTypes[1];
 
 	let months = [
 		'January',
@@ -65,7 +69,12 @@
 	let useMixingValve = 1;
 	let mixingValveConstant = 1.5;
 
+	let losses = 12;
 	let wireResistance = 2.1;
+
+	let elementR = 0;
+	let elementV = 120;
+	let elementP = 2000;
 
 	let tankSize = 151; //40 gal
 	//heat capacity Cp of water is 4.186kJ/kg-K
@@ -75,13 +84,16 @@
 	let personsInHoushold = 4;
 	let groundTemp = 5;
 	let energyFactor = 0.91;
-	let powerPerPanel = $Vmpp * $Impp;
+	let powerPerPanel = $Vmp * $Imp;
 	let nominalPower = powerPerPanel * panelsPerString * parallelStrings;
 	let energyToHeatOneTank = heatCapOfWater * tankSize * (hotWaterOutTemp - groundTemp);
 	let tanksUsedPerDay = round((hotWaterPerPersonDay * personsInHoushold) / tankSize);
 	let dailyDemand = round((tanksUsedPerDay * energyToHeatOneTank) / 3600e3);
 
 	let peakPrice = 0.2352;
+	let mismatch = 10;
+	let Rsource = 1;
+	let Rmp = 1;
 	let stringVoc = $Voc * panelsPerString;
 	let offPeakPrice = 0.0716;
 	let peakHours = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0];
@@ -124,11 +136,14 @@
 		(heatCapOfWater * tankSize * (hotWaterOutTemp - groundTemp) * 1) / energyFactor;
 	$: costToHeatOneTank = round((avgPowerPrice * energyToHeatOneTank) / 3600e3);
 	$: tanksUsedPerDay = round((hotWaterPerPersonDay * personsInHoushold) / tankSize);
-	$: powerPerPanel = $Vmpp * $Impp;
+	$: powerPerPanel = $Vmp * $Imp;
 	$: nominalPower = powerPerPanel * panelsPerString * parallelStrings;
 	$: stringVoc = $Voc * panelsPerString;
-
+	$: elementR = vpToR(elementV, elementP);
 	$: dailyDemand = round((tanksUsedPerDay * energyToHeatOneTank) / 3600e3);
+	$: Rmp = ($Vmp * panelsPerString) / $Imp / parallelStrings;
+	$: Rsource = Rmp - wireResistance;
+	$: mismatch = Math.abs(100 - (elementR / Rsource) * 100.0);
 
 	let graphUrlBase = '/graph?';
 	function makeGraphUrl(startDay = 45, event) {
@@ -147,7 +162,7 @@
 		let pwr = nominalPower / 1000.0;
 		url =
 			url +
-			`day=${day}&lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}`;
+			`day=${day}&lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}&losses=${losses}&module_type=${selectedModuleType.id}`;
 
 		const elem = document.getElementById('solarGraph');
 		elem.onload = reEnable;
@@ -162,7 +177,9 @@
 
 		//pwr should be in W
 		let pwr = nominalPower / 1000.0;
-		url = url + `lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}`;
+		url =
+			url +
+			`lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}&losses=${losses}&module_type=${selectedModuleType.id}`;
 
 		let newYearlySavings = 0;
 		let newMonthData = [];
@@ -211,7 +228,7 @@
 	</li>
 	<li style="">
 		<figure>
-			<HousePic style ="max-width: 300px;"/>
+			<HousePic style="max-width: 300px;" />
 			<figcaption>Simple DC only heating</figcaption>
 		</figure>
 	</li>
@@ -299,11 +316,15 @@
 			<!-- <Input val={50} label="ThermostatSetting" units="°C" /> -->
 			<Input bind:val={hotWaterPerPersonDay} label="Hot Water/Person/Day" units="l" />
 			<Input bind:val={personsInHoushold} label="Persons In Houshold" units="" />
+			<br />
+			<Input bind:val={elementP} label="Element Power Rating" units="W" />
+			<Input bind:val={elementV} label="Element Voltage Rating" units="V" />
 			<!-- <label>
 				<input type="checkbox" bind:checked={useMixingValve} />
 				Use Thermostatic mixing valve
 			</label> -->
 			<hr />
+			<Output val={elementR} label="Element Resistance" units="Ω" />
 			<Output val={round(energyToHeatOneTank / 3600e3)} label="Energy to heat 1 tank" units="kWh" />
 			<Output val={costToHeatOneTank} label="Cost to heat one tank" units="$" />
 			<Output val={tanksUsedPerDay} label="Tanks used per day" units="" />
@@ -339,6 +360,12 @@
 				day to completely replace city power. Every day you meet this target you will save the
 				amount in <b>Hot water cost per day</b>
 			</p>
+
+			<p>
+				<b> Element Resistance</b> Often elements are rated by Volts and Watts instead of Ohms. You
+				can put in the <b>Element Power Rating</b> and <b>Element Voltage Rating</b> to calculate the
+				Ohms.
+			</p>
 		</Box>
 	</span>
 </div>
@@ -352,13 +379,27 @@
 	<span>
 		<Box>
 			<h2>Solar Panel Specs</h2>
+			<label>
+				<select bind:value={selectedModuleType}>
+					{#each moduleTypes as mt}
+						<option value={mt}>
+							{mt.text}
+						</option>
+					{/each}
+				</select>
+				Module Type
+			</label>
+			<br />
 			<Input bind:val={$Voc} label="Voc" units="V" />
-			<Input bind:val={$Vmpp} label="Vmpp" units="V" />
-			<Input bind:val={$Impp} label="Impp" units="A" />
-			<Input bind:val={panelsPerString} label="Panels per string" units="" />
-			<Input bind:val={parallelStrings} label="Parallel strings" units="" />
+			<Input bind:val={$Vmp} label="Vmp" units="V" />
+			<Input bind:val={$Imp} label="Imp" units="A" />
+			<Input bind:val={$Isc} label="Isc" units="A" />
+			<br />
 			<Input bind:val={azimuth} label="Azimuth  180=South" units="°" />
 			<Input bind:val={elevation} label="Elevation 0=Flat" units="°" />
+			<Input bind:val={panelsPerString} label="Panels per string" units="" />
+			<Input bind:val={parallelStrings} label="Parallel strings" units="" />
+			<br />
 			<label>
 				<select bind:value={selectedWire}>
 					{#each wireGuages as g}
@@ -372,41 +413,47 @@
 			<br />
 
 			<Input bind:val={wireLength} label="Total wire length" units="m" />
+			<Input bind:val={losses} label="Losses" units="%" />
 			<hr />
-			<Output val={stringVoc} label="Voc of full string" units="V" />
-			<Output val={$Vmpp * panelsPerString} label="Vmpp of full string" units="V" />
+			<Output val={round(stringVoc)} label="Voc of full string" units="V" />
+			<Output val={round($Vmp * panelsPerString)} label="Vmp of full string" units="V" />
+			<Output val={round($Isc * parallelStrings)} label="Isc of parallel strings" units="A" />
 			<Output val={wireResistance} label="Resistance of wire" units="Ω" />
 			<Output val={round(nominalPower)} label="Nominal power of string" units="W" />
-			<Output val={round($Impp * $Impp * wireResistance)} label="Wire Losses at Mpp" units="W" />
-			<Output
-				val={round(($Vmpp * panelsPerString) / $Impp)}
-				label="Rmpp of full string"
-				units="Ω"
-			/>
+			<Output val={round($Imp * $Imp * wireResistance)} label="Wire Losses at Mpp" units="W" />
+			<Output val={round(Rsource)} label="Source Impedance" units="Ω" />
+			<Output val={round(mismatch)} label="Mismatch" units="%" />
 		</Box>
 	</span>
 	<span>
 		<Box>
 			<p>
-				<b>Vmpp, Impp</b>, find these in the spec sheet of your solar panels. This is the volts and
-				amps your panel will make, brand new, clean, in full sun. All your wires/connectors/switches
-				must be rated above the Impp.
+				<b>Vmp, Imp</b>, find these in the spec sheet of your solar panels (<a
+					href="CS-Datasheet-BiHiKu7_CS7N-MB-AG_v2.4_EN.pdf">example</a
+				>) , use the STC values. These are the volts and amps your panel will make with a Solar
+				irradiance of 1,000 W/m2, cell temperature of 25°C (77°F).
+			</p>
+
+			<p>
+				<b>Isc of parallel strings</b> All your wires/connectors/switches/breakers must be rated to at
+				least this.
 			</p>
 
 			<p>
 				<b>Voc</b> this is max voltage your panels can make. Everything in your system needs to be
-				rated to at least <b>Voc of full string</b> Common solar wire and connectors are rated to 600V.
+				rated to at least <b>Voc of full string</b>. Common solar wire and connectors are rated to
+				600V.
 			</p>
 
 			<p>
-				<b>Panels per string, Parallel Strings</b> I kept things simple using a single string of large
-				size panels. If are using small panels you may need to run parallel strings to keep the voltage
-				down.
+				<b>Panels per string, Parallel Strings</b> If possible, use a single series string. If you are
+				using small panels it is possible to parallel more then one string but the strings should be
+				well matched.
 			</p>
 
 			<p>
-				<b>Rmpp of full string</b> is the resistance value you want for your lower water heater element.
-				This number is the ideal impedance for maximum power transfer in full sun.
+				<b>Source Impedance</b> is the resistance value you want to match with your lower heating
+				element. I suggest a <b>Mismatch</b> below 20% is good enough;
 			</p>
 		</Box>
 	</span>
@@ -417,8 +464,9 @@
 		<h2>Step 4</h2>
 		<p>
 			Click "Simulate Monthly Totals". This will feed the simulator with the solar panel data you
-			entered above and Typical Meteorological Year Data (TMY) for your lat/lng. This calls a NREL PVwatts API rate
-			limited to 1000 req/day so you may have to try again tomorrow if it is not working.
+			entered above and Typical Meteorological Year Data (TMY) for your lat/lng. This calls a NREL
+			PVwatts API rate limited to 1000 req/day so you may have to try again tomorrow if it is not
+			working.
 		</p>
 
 		<hr />
@@ -451,7 +499,7 @@
 				{/each}
 				<tfoot>
 					<tr>
-						<th scope="row" colspan="7">Estimated Yearly Total Savings:</th>
+						<th scope="row" colspan="7">Estimated Total Annual Savings:</th>
 						<th colspan="1">${round(yearlySavings)}</th>
 					</tr>
 				</tfoot>
@@ -463,10 +511,10 @@
 			Here you can graph your simulated daily power production using Typical Meteorological Year
 			Data (TMY)
 		</p>
-		<button on:click={(e) => makeGraphUrl(0, e)}> Graph random day in spring </button>
-		<button on:click={(e) => makeGraphUrl(90, e)}> Graph random day in summer</button>
-		<button on:click={(e) => makeGraphUrl(180, e)}> Graph random day in fall</button>
-		<button on:click={(e) => makeGraphUrl(270, e)}> Graph random day in winter</button>
+		<button on:click={(e) => makeGraphUrl(0, e)}> Graph random day in Q1</button>
+		<button on:click={(e) => makeGraphUrl(90, e)}> Graph random day in Q2</button>
+		<button on:click={(e) => makeGraphUrl(180, e)}> Graph random day in Q3</button>
+		<button on:click={(e) => makeGraphUrl(270, e)}> Graph random day in Q4</button>
 	</span>
 	<span>
 		<figure>

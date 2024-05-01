@@ -95,7 +95,7 @@
 
 	<!-- <button on:click={exportFile}>Export XLSX</button> -->
 
-	<p>You can support this website by using the links in the "Source" column to purchase parts.</p>
+	<p>This website may receive a small commission if you use the links in the "Source" column to purchase parts. Thank you for your support.</p>
 </div>
 
 <style>
