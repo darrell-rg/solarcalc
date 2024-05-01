@@ -12,111 +12,109 @@ export const prerender = true;
 export const _bomData = [
     {
         "Desc": "Solar Panel",
-        "Qty": 4,
+        "Qty": 5,
         "Price": 150,
-        "Total": 600
     },
     {
         "Desc": "Ground Rod",
         "Qty": 1,
         "Price": 40,
-        "Total": 40
+    },
+    {
+        "Desc": "Ground rod wire clamp",
+        "Qty": 1,
+        "Price": 8,
     },
     {
         "Desc": "Ground Wire",
         "Qty": 10,
         "Price": 2,
-        "Total": 20
     },
     {
-        "Desc": "Ground - to - Rack lug",
+        "Desc": "Ground to rack bonding lug",
         "Qty": 1,
         "Price": 8,
-        "Total": 8
-    },
-    {
-        "Desc": "Ground - ground rod lug",
-        "Qty": 1,
-        "Price": 8,
-        "Total": 8
     },
     {
         "Desc": "Solar Shutoff Switch",
         "Qty": 1,
-        "Price": 200,
-        "Total": 200
+        "Price": 150,
     },
     {
-        "Desc": "Metal Conduit",
+        "Desc": "Flexible Metal Conduit",
         "Qty": 3,
         "Price": 20,
-        "Total": 60
     },
     {
         "Desc": "Plastic Conduit",
         "Qty": 5,
         "Price": 20,
-        "Total": 100
     },
     {
-        "Desc": "Roof mounts for rack",
+        "Desc": "Roof jacks for rack",
         "Qty": 8,
         "Price": 12,
-        "Total": 96
     },
     {
-        "Desc": "Mid-solar rack bolts",
+        "Desc": "Middle solar clamp bolts",
         "Qty": 8,
         "Price": 2,
-        "Total": 16
     },
     {
-        "Desc": "End solar rack mounts ",
+        "Desc": "End solar clamp bolts ",
         "Qty": 4,
         "Price": 6,
         "Total": 24
     },
     {
-        "Desc": "Lag bolts for roof mounts",
-        "Qty": 8,
+        "Desc": "Roof to Rail brackets",
+        "Qty": 16,
         "Price": 2,
-        "Total": 16
+    },
+    {
+        "Desc": "Stainless Lag bolts for roof mounts",
+        "Qty": 16,
+        "Price": 2,
     },
     {
         "Desc": "600v solar wire",
         "Qty": 100,
         "Price": 1.5,
-        "Total": 150
     },
     {
         "Desc": "MC4 connectors",
         "Qty": 4,
         "Price": 4,
-        "Total": 16
     },
     {
-        "Desc": "Hot Water Mixing Valve",
+        "Desc": "Thermostatic Mixing Valve",
         "Qty": 1,
         "Price": 125,
-        "Total": 125
+    },
+    {
+        "Desc": "Misc copper fittings/elbows",
+        "Qty": 6,
+        "Price": 4,
     },
     {
         "Desc": "Water Heater element",
         "Qty": 1,
         "Price": 33,
-        "Total": 33
     },
     {
-        "Desc": "Solar Rack Rails",
+        "Desc": "Solar Mounting Rails",
         "Qty": 2,
         "Price": 55,
-        "Total": 110
     },
     {
-        "Desc": "DC Breaker",
+        "Desc": "MC4 Crimper Kit",
         "Qty": 1,
         "Price": 44,
-        "Total": 44
+    },
+    {
+        "Desc": "Heater Element Wrench",
+        "Qty": 1,
+        "Price": 24,
     }
 ];
 

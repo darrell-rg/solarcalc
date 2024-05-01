@@ -58,6 +58,9 @@
 		You can use this sheet to help figure out what you need to buy and how much everything will
 		cost.
 	</p>
+	<p>
+		I have filled it in with the approximate costs from my project in the year 2020.
+	</p>
 	<table class="bomTable" id="bomTable" bind:this={tbl}>
 		<tr>
 			<th>PN</th>
