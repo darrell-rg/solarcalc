@@ -1,56 +1,30 @@
-# Flask Application for a Restaurant Reservation System
+# Flask Application for Solar PV hot water simulator
 
-This is a simple Flask application developed to demonstrate a restaurant reservation system. The application is developed using Python 3.9.7 and Flask 2.0.2.
+This is a simple Flask application developed to simulate solar PV with PVWAtts
 
 ## Deploying the application in Choreo
 1. Fork this repository.
-2. Create a `Service` component in Choreo.
-3. Deploy the component.
+2. Get an API key for NRDS and PVWatts V8 from NREL
+3. Create a `Service` component in Choreo.
+4. Deploy the component.
 
 ## Testing the application
 
 Invoke the following endpoints to test the application. Make sure to change the `<endpoint-url>` to the URL of the deployed component.
 
-### Viewing all the available resevations
+### Viewing all the available endpoints
 
 ```
-curl -X GET <endpoint-url>/reservations
+set NRDSBAPIKEY = "your api key from NREL"
 
+flask run dev
 
-[{"reservationCreator": "John Doe", "reservationId": "1234", "contact": "011-123-4567"}, {"reservationCreator": "Jane Doe", "reservationId": "5678", "contact": "011-123-4562"}, {"reservationCreator": "John Smith", "reservationId": "9012", "contact": "011-123-4523"}]
-```
+curl -X GET <endpoint-url>/
 
-### Viewing a specific resevation
+curl -X GET <endpoint-url>/graph
 
-```
-curl -X GET <endpoint-url>/reservation/1234
+curl -X GET <endpoint-url>/csv
 
-Your reservation details: {"reservationCreator": "John Doe", "reservationId": "1234", "contact": "011-123-4567"}
-
-```
-
-### Adding a resevation
-
-```
-curl -X POST -d '{"reservationCreator": "John Doe", "reservationId": "111", "contact": "011-123-1111"}' <endpoint-url>/reservation/1111
-
-
-Your added reservation details: b'{"reservationCreator": "John Doe", "reservationId": "111", "contact": "011-123-1111"}'
-```
-
-### Updating a resevation
-
-```
-curl -X PUT <endpoint-url>/reservation/1234 -d '{"reservationCreator": "Lahiru C", "reservationId": "1234", "contact": "011-123-4588"}' 
-
-Reservation updated: 1234
-```
-
-### Deleting a resevation
-
-```
-curl -X DELETE <endpoint-url>/reservation/1234
-
-Reservation deleted: {"reservationCreator": "John Doe", "reservationId": "1234", "contact": "011-123-4567"}
+curl -X GET <endpoint-url>/json
 
 ```
