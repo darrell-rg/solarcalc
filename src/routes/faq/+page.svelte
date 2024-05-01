@@ -146,8 +146,14 @@
 
   
   <article class="faq">
-    <h2>How do I fix/complain about an error/typo/bug with this website?</h2>
-    <p> Open a ticket on the <a href="https://github.com/darrell-rg/solarcalc">github</a>. </p>
+    <h2>There is an error on this website!</h2>
+    <p> Thats not really a question, but you can email: webmaster@hot-h20.us and I will try to fix it.</p>
+  </article>
+
+
+  <article class="faq">
+    <h2>Can you install this for me?</h2>
+    <p> Yes, possibly if you are willing to pay $1000 and don't live to far away.  email: sales@hot-h20.us</p>
   </article>
 
 </div>

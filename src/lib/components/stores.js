@@ -2,9 +2,16 @@ import { readable, derived, writable } from 'svelte/store';
 //https://github.com/MacFJA/svelte-persistent-store
 //import { persist, localStorage } from "@macfja/svelte-persistent-store"
 
-export const Vmpp = writable(42.8);
-export const Impp = writable(8.06);
-export const Voc = writable(55.2);
+// export const Vmpp = writable(42.8);
+// export const Impp = writable(8.06);
+// export const Voc = writable(55.2);
+
+
+//BiHiKu7
+export const Vmpp = writable(37.5);
+export const Impp = writable(13.76);
+export const Isc = writable(14.86);
+export const Voc = writable(42.7);
 
 export const lat = writable(40.5);
 export const lng = writable(-104.7);

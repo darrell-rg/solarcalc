@@ -7,15 +7,9 @@
 	import Output from '$lib/components/Output.svelte';
 	import { time, elapsed, Vmpp, Voc, Impp, Rmpp, lat, lng } from '$lib/components/stores.js';
 	import { element } from 'svelte/internal';
+	import {round,tokWh,clamp} from '$lib/components/util'
 	import Map from '$lib/components/Map.svelte';
 	import { PUBLIC_API_URL } from '$env/static/public';
-
-	let useCityPower = false;
-
-	function updateCalc(value) {
-		f = +value;
-		c = +((5 / 9) * (f - 32)).toFixed(1);
-	}
 
 	const formatter = new Intl.DateTimeFormat('en', {
 		hour12: true,
@@ -24,11 +18,6 @@
 		second: '2-digit'
 	});
 
-	function round(num) {
-		// rounds to two digits
-		var m = Number((Math.abs(num) * 100).toPrecision(15));
-		return (Math.round(m) / 100) * Math.sign(num);
-	}
 
 	function getCurrentPosition() {
 		navigator.geolocation.getCurrentPosition(function (position) {
@@ -43,19 +32,6 @@
 	// of January, not February
 	function daysInMonth(year, month) {
 		return new Date(year, month + 1, 0).getDate();
-	}
-
-	function tokWh(j) {
-		//converts joules to kwh
-		return j / 3600e3;
-	}
-
-	function clamp(value, min, max) {
-		if (value < min) return min;
-
-		if (value > max) return max;
-
-		return value;
 	}
 
 	let wireGuages = [
@@ -81,13 +57,12 @@
 		'November',
 		'December'
 	];
-	let panelsPerString = 5;
+	let panelsPerString = 3;
 	let parallelStrings = 1;
 	let azimuth = 180;
 	let elevation = 40;
 	let wireLength = 100;
 	let useMixingValve = 1;
-
 	let mixingValveConstant = 1.5;
 
 	let wireResistance = 2.1;
@@ -209,16 +184,10 @@
 						savings: (data.outputs.dc_monthly[index] / 1000.0) * avgPowerPrice
 					};
 
-					// m.Edemand = tokWh(
-					// 	m.days * ((hotWaterPerPersonDay * personsInHoushold) / tankSize) * energyToHeatOneTank
-					// );
 					m.Epercent = clamp((m.Esolar / m.Edemand) * 100.0, 0, 200);
-
 					m.Ecity = clamp(100 - m.Epercent, 0, 100);
-
 					newYearlySavings = newYearlySavings + m.savings;
 
-					// m.savings = (m.Edemand - m.Ecity) * avgPowerPrice;
 					newMonthData.push(m);
 				});
 				monthData = newMonthData;
@@ -330,10 +299,10 @@
 			<!-- <Input val={50} label="ThermostatSetting" units="°C" /> -->
 			<Input bind:val={hotWaterPerPersonDay} label="Hot Water/Person/Day" units="l" />
 			<Input bind:val={personsInHoushold} label="Persons In Houshold" units="" />
-			<label>
+			<!-- <label>
 				<input type="checkbox" bind:checked={useMixingValve} />
 				Use Thermostatic mixing valve
-			</label>
+			</label> -->
 			<hr />
 			<Output val={round(energyToHeatOneTank / 3600e3)} label="Energy to heat 1 tank" units="kWh" />
 			<Output val={costToHeatOneTank} label="Cost to heat one tank" units="$" />

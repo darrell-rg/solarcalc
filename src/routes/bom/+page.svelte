@@ -2,13 +2,14 @@
 	import { onMount } from 'svelte';
 	import { read, utils, writeFileXLSX } from 'xlsx';
 	import { _bomData } from './+page';
+	import { round, tokWh, clamp } from '$lib/components/util';
 
-	function round(num) {
-		// rounds to two digits
-		var m = Number((Math.abs(num) * 100).toPrecision(15));
-		return (Math.round(m) / 100) * Math.sign(num);
+	let ebayAffiliateCode = '';
+
+	function getSourceUrl(itm) {
+		let url = 'https://www.ebay.com/itm/' + itm.ebayid + ebayAffiliateCode;
+		return url;
 	}
-
 	/* Fetch and update the state once */
 	// onMount(async () => {
 	// 	const f = await (await fetch('SolarHotWaterBOM.xlsx')).arrayBuffer();
@@ -38,6 +39,7 @@
 			Qty: r.Qty,
 			Price: r.Price,
 			Source: '',
+			ebayid: r.ebayid,
 			Total: r.Price * r.Qty
 		};
 	});
@@ -58,9 +60,7 @@
 		You can use this sheet to help figure out what you need to buy and how much everything will
 		cost.
 	</p>
-	<p>
-		I have filled it in with the approximate costs from my project in the year 2020.
-	</p>
+	<p>I have filled it in with the approximate costs from my project in the year 2020.</p>
 	<table class="bomTable" id="bomTable" bind:this={tbl}>
 		<tr>
 			<th>PN</th>
@@ -77,7 +77,11 @@
 				<td>{r.Qty}</td>
 				<td>{r.Price}</td>
 				<td>{round(r.Total)}</td>
-				<td>{r.Source}</td>
+				<td>
+					{#if r.ebayid}
+						<a href={getSourceUrl(r)}>eBay</a>
+					{/if}
+				</td>
 			</tr>
 		{/each}
 
@@ -90,6 +94,8 @@
 	</table>
 
 	<!-- <button on:click={exportFile}>Export XLSX</button> -->
+
+	<p>You can support this website by using the links in the "Source" column to purchase parts.</p>
 </div>
 
 <style>
