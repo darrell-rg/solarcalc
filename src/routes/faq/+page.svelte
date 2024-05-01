@@ -14,7 +14,7 @@
   <article class="faq">
     <figure>
       <HousePic style="float:right; width: 400px;"/>
-      <figcaption>Simple DC direct setup</figcaption>
+      <figcaption>DC to heating element. Note Thermostatic Mixing Valve</figcaption>
     </figure>
     <h2>What are we even doing here?</h2>
     <p>This site teaches you how to hook some solar panels to the bottom element of your water heater.  Cheap solar power with energy storage. I did this DIY and cut my household electric use in half. </p>
@@ -28,12 +28,12 @@
 
   <article class="faq">
     <h2>Will this kill me?</h2>
-    <p>The main dangers are falling off the roof while installing the panels, electrocution, and fire.  You can do the wiring at night when there is no possibly of a shock. Be sure to install all the wires in conduit to reduce fire risk. Bond the solar mounting rails and negative side of the array to a ground rod in case of lightning. </p>
+    <p>The main dangers are falling off the roof while installing the panels, electrocution, and fire.  HVDC is hazardous, probably more so then AC.  If you do not have much electrical experience it would be good to find an experienced person to help with the wiring part.  That said, this is a very simple circuit we are building.  Be sure to install all the wires in conduit to reduce fire risk.  Bond the solar rails and negative side of the array to a ground rod in case of lightning. Turn the switch off and check for current with a DC clamp meter before messing with the wires (or work at night).</p>
   </article>
 
   <article class="faq">
     <h2>How much hot water do I use?</h2>
-    <p> According  <a href="https://www.fsec.ucf.edu/en/publications/pdf/fsec-pf-464-15.pdf">Estimating Daily Domestic HotWater Use in North American Homes</a> people use about 64L/person/day on average in a four person household.   This seems high to me, our house with 2 adults and 2 kids uses about half that.  I have noticed that I am more aware of how much hot water I am using after installing this system.  On sunny days I use more and on cloudy days I use less. </p>
+    <p> According  <a href="https://www.fsec.ucf.edu/en/publications/pdf/fsec-pf-464-15.pdf">Estimating Daily Domestic HotWater Use in North American Homes</a> people use about 64 liters/person/day on average in a four person household.   This seems high to me, our house with 2 adults and 2 kids uses about half that.  I have noticed that I am more aware of how much hot water I am using after installing this system.  On sunny days I use more and on cloudy days I use less. </p>
   </article>
 
 	<article class="faq">
@@ -72,7 +72,7 @@
 
   <article class="faq">
     <h2>How much energy can I store in my water heater?</h2>
-    <p> Heating 50 gallons of water from  5C to 70C stores about 14kWh of energy.  A Tesla Powerwall, stores about 13.5kWh of energy.  For both the water heater and the Powerwall, you can expect an efficiency of about 90%.  The powerwall cost around $9,300,  and you should be able to DIY this system for well less then $2,000.  </p>
+    <p> Heating 50 gallons of water from  5C to 70C stores about 14kWh of energy.  A Tesla Powerwall, stores about 13.5kWh of energy.  For both the water heater and the Powerwall, you can expect an efficiency of about 90%.  The powerwall cost around $9,300,  and you should be able to DIY this system for around $2,000.  </p>
   </article>
 
   <article class="faq">
@@ -81,7 +81,7 @@
       <figcaption>Solar Shutoff Switch</figcaption>
     </figure>
     <h2>What kind of shutoff switch do I need?</h2>
-    <p>You want to mount an off switch in a outside in a readily accessible place, near the panels.  This is so firefighters/electricians/roofers/etc can turn your panels off while they are working.  Search for  "Solar Disconnect Switch" or "Solar Circuit Breaker Waterproof Isolator".   You can a combo unit that is both a switch and a circuit breaker.  If you are using parallel strings you can get a "Solar PV Combiner Box." </p>
+    <p>You need to mount the solar disconnect switch outside in a readily accessible place near the panels.  This is so firefighters/electricians/roofers/etc can turn your panels off while they are working.  Search for  "Solar Disconnect Switch" or "Solar Circuit Breaker Waterproof Isolator".   You can get a combo unit that is both a switch and a circuit breaker. You can also mount a second shutoff switch near the water heater to make working on it safer if you like.  I kinda wish I had one.</p>
   </article>
 
   <article class="faq">
@@ -131,7 +131,7 @@
 
   <article class="faq">
     <h2>How big an array do I need?</h2>
-    <p> I have 1.7kW on a standard 40 gallon water heater and it works great.  In the summer this is almost too much, the water gets very hot. In the winter I still need a bit of city power from time to time. </p>
+    <p> I have 1.7kW on a standard 40 gallon water heater and it works great.  In the summer this is almost too much, the water gets up to around 70C. In the winter I still need a bit of city power from time to time. I suggest you start with 1-2kW and if that does not meet your needs you can add more panels.</p>
   </article>
 
   <article class="faq">
