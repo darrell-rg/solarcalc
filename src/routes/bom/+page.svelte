@@ -4,10 +4,12 @@
 	import { _bomData } from './+page';
 	import { round, tokWh, clamp } from '$lib/components/util';
 
-	let ebayAffiliateCode = '';
-
 	function getSourceUrl(itm) {
-		let url = 'https://www.ebay.com/itm/' + itm.ebayid + ebayAffiliateCode;
+
+		if(itm.link) 
+			return itm.link;
+		
+		let url = 'https://www.ebay.com/itm/' + itm.ebayid;
 		return url;
 	}
 	/* Fetch and update the state once */
@@ -40,6 +42,7 @@
 			Price: r.Price,
 			Source: '',
 			ebayid: r.ebayid,
+			link: r.link,
 			Total: r.Price * r.Qty
 		};
 	});
@@ -57,10 +60,8 @@
 	<h1>Bill Of Materials Spreadsheet</h1>
 
 	<p>
-		You can use this sheet to help figure out what you need to buy and how much everything will
-		cost.
+		You can use this sheet to estimate your costs.
 	</p>
-	<p>I have filled it in with the approximate costs from my project in the year 2020.</p>
 	<table class="bomTable" id="bomTable" bind:this={tbl}>
 		<tr>
 			<th>PN</th>
@@ -95,7 +96,7 @@
 
 	<!-- <button on:click={exportFile}>Export XLSX</button> -->
 
-	<p>This website may receive a small commission if you use the links in the "Source" column to purchase parts. Thank you for your support.</p>
+	<p>This website may receive a small commission if you use the links in the "Source" column to purchase parts. </p>
 </div>
 
 <style>

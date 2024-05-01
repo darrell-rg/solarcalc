@@ -100,6 +100,7 @@ def downloadWeatherData(lat=40.57, lon=-105.07, year=2010, folder="/tmp"):
 def runSimJson(lat=40.57, lon=-105.07, power_kW=1, tilt=40, azimuth=180, module_type=0, losses=14, folder="/tmp"):
 
     # this will run PvWatts V8 on nrel's api
+    #https://developer.nrel.gov/docs/solar/pvwatts/v8/
 
     url= f"https://developer.nrel.gov/api/pvwatts/v8.json?api_key={api_key}&azimuth={azimuth}&system_capacity={power_kW}&losses={losses}&array_type=1&module_type={module_type}&gcr=0.4&dc_ac_ratio=1.2&inv_eff=96.0&radius=0&dataset=nsrdb&tilt={tilt}&lat={lat}&lon={lon}"
 
