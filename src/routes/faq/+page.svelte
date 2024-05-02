@@ -14,7 +14,7 @@
   <article class="faq">
     <figure>
       <HousePic style="float:right; width: 400px;"/>
-      <figcaption>DC only, Note thermostatic mixing valve</figcaption>
+      <figcaption>This is the entire schematic, simple eh?</figcaption>
     </figure>
     <h2>What are we even doing here?</h2>
     <p>This site teaches you how to hook some solar panels to the bottom element of your water heater.  Cheap solar power with energy storage. I did this DIY and cut my household electric use in half. </p>
