@@ -10,7 +10,7 @@
 </main>
 
 <footer>
-	<p>Thanks for visiting!</p>
+	<p>Thanks for visiting - Darrell</p>
 </footer>
 
 <style>

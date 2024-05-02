@@ -8,19 +8,15 @@
 	import Map from '$lib/components/Map.svelte';
 	import { PUBLIC_API_URL } from '$env/static/public';
 
+	let jsonUrlBase = '/json?';
+	let graphUrlBase = '/graph?';
+
 	const formatter = new Intl.DateTimeFormat('en', {
 		hour12: true,
 		hour: 'numeric',
 		minute: '2-digit',
 		second: '2-digit'
 	});
-
-	function getCurrentPosition() {
-		navigator.geolocation.getCurrentPosition(function (position) {
-			$lat = round(position.coords.latitude);
-			$lng = round(position.coords.longitude);
-		});
-	}
 
 	// Month in JavaScript is 0-indexed (January is 0, February is 1, etc),
 	// but by using 0 as the day it will give us the last day of the prior
@@ -65,7 +61,7 @@
 	let parallelStrings = 1;
 	let azimuth = 180;
 	let elevation = 40;
-	let wireLength = 100;
+	let wireLength = 60;
 	let useMixingValve = 1;
 	let mixingValveConstant = 1.5;
 
@@ -142,14 +138,12 @@
 	$: elementR = vpToR(elementV, elementP);
 	$: dailyDemand = round((tanksUsedPerDay * energyToHeatOneTank) / 3600e3);
 	$: Rmp = ($Vmp * panelsPerString) / $Imp / parallelStrings;
-	$: Rsource = Rmp - wireResistance;
-	$: mismatch = Math.abs(100 - (elementR / Rsource) * 100.0);
+	$: Rsource = Rmp;
+	$: mismatch = Math.abs(100 - ((elementR + wireResistance) / Rsource) * 100.0);
 
-	let graphUrlBase = '/graph?';
 	function makeGraphUrl(startDay = 45, event) {
 		//pick a random day in the season
 		let day = Math.floor(Math.random() * 90) + startDay;
-
 		let url = PUBLIC_API_URL + graphUrlBase;
 
 		let reEnable = function () {
@@ -165,12 +159,13 @@
 			`day=${day}&lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}&losses=${losses}&module_type=${selectedModuleType.id}`;
 
 		const elem = document.getElementById('solarGraph');
-		elem.onload = reEnable;
-		elem?.setAttribute('src', url);
+		if (elem) {
+			elem.onload = reEnable;
+			elem?.setAttribute('src', url);
+		}
 		return url;
 	}
 
-	let jsonUrlBase = '/json?';
 
 	function updateMonthlyTable(runMonthlySimButton) {
 		let url = PUBLIC_API_URL + jsonUrlBase;
@@ -310,13 +305,13 @@
 	<span>
 		<Box>
 			<h2>Water Heater Specs</h2>
+			<Input bind:val={personsInHoushold} label="Persons In Houshold" units="" />
+			<Input bind:val={hotWaterPerPersonDay} label="Hot Water/Person/Day" units="l" />
+			<br />
 			<Input bind:val={tankSize} label="TankSize" units="liter" />
 			<Input bind:val={energyFactor} label="Energy Factor" units="ef" />
 			<Input bind:val={hotWaterOutTemp} label="Desired Output Temp" units="°C" />
 			<!-- <Input val={50} label="ThermostatSetting" units="°C" /> -->
-			<Input bind:val={hotWaterPerPersonDay} label="Hot Water/Person/Day" units="l" />
-			<Input bind:val={personsInHoushold} label="Persons In Houshold" units="" />
-			<br />
 			<Input bind:val={elementP} label="Element Power Rating" units="W" />
 			<Input bind:val={elementV} label="Element Voltage Rating" units="V" />
 			<!-- <label>
@@ -379,6 +374,11 @@
 	<span>
 		<Box>
 			<h2>Solar Panel Specs</h2>
+			<Input bind:val={azimuth} label="Azimuth  180=South" units="°" />
+			<Input bind:val={elevation} label="Elevation 0=Flat" units="°" />
+			<Input bind:val={panelsPerString} label="Panels per string" units="" />
+			<Input bind:val={parallelStrings} label="Parallel strings" units="" />
+			<br />
 			<label>
 				<select bind:value={selectedModuleType}>
 					{#each moduleTypes as mt}
@@ -395,11 +395,6 @@
 			<Input bind:val={$Imp} label="Imp" units="A" />
 			<Input bind:val={$Isc} label="Isc" units="A" />
 			<br />
-			<Input bind:val={azimuth} label="Azimuth  180=South" units="°" />
-			<Input bind:val={elevation} label="Elevation 0=Flat" units="°" />
-			<Input bind:val={panelsPerString} label="Panels per string" units="" />
-			<Input bind:val={parallelStrings} label="Parallel strings" units="" />
-			<br />
 			<label>
 				<select bind:value={selectedWire}>
 					{#each wireGuages as g}
@@ -413,7 +408,7 @@
 			<br />
 
 			<Input bind:val={wireLength} label="Total wire length" units="m" />
-			<Input bind:val={losses} label="Losses" units="%" />
+
 			<hr />
 			<Output val={round(stringVoc)} label="Voc of full string" units="V" />
 			<Output val={round($Vmp * panelsPerString)} label="Vmp of full string" units="V" />
@@ -472,6 +467,7 @@
 		<hr />
 
 		<button on:click={(e) => updateMonthlyTable(e)}>Simulate Monthly Generation Totals</button>
+		<Input bind:val={losses} label="Estimated Losses (dirt, snow, aging, etc.)" units="%" /> 
 		<div>
 			<!-- <TestSvg/> -->
 			<table class="monthTable">

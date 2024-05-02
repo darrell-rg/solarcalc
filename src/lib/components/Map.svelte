@@ -1,6 +1,7 @@
 <script>
 	import { MapLibre, Marker } from 'svelte-maplibre';
 	import { lat, lng } from '$lib/components/stores.js';
+	import { round } from './util';
 
 	let boundPos = { lng: $lng, lat: $lat };
 
@@ -12,9 +13,19 @@
 		lng.set(boundPos.lng);
 		lat.set(boundPos.lat);
 	}
+
+	function getCurrentPosition() {
+		navigator.geolocation.getCurrentPosition(function (position) {
+			boundPos.lat = round(position.coords.latitude);
+			boundPos.lng = round(position.coords.longitude);
+			updatePos();
+		});
+	}
 </script>
 
-Move the solar panel icon to set location.
+Move the solar panel icon to set your lat/lng. Or:
+
+<button on:click={(e) => getCurrentPosition()}> Use Browser Location</button>
 <MapLibre
 	center={[boundPos.lng, boundPos.lat]}
 	zoom={2}

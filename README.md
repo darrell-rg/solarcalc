@@ -2,7 +2,7 @@
 
 A design aid for DC solar hot water systems.
 
-Try it out at [hot-h20.us](https://www.hot-h2o.us/).
+Try it out at [pvh2o.com](https://www.hot-h2o.us/).
 
 ![Screenshot](/static/Screenshot.png)
 

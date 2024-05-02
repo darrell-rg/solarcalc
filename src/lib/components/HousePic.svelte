@@ -164,7 +164,7 @@
 			class="blackWire"
 			transform="translate(-32 -32) "
 			d="
-		M0 0
+		M 0 0
 		V 65 
 		H 7 
 	"
@@ -174,7 +174,7 @@
 			class="redWire"
 			transform="translate(-30 -33) "
 			d="
-	M0 0
+	M 0 0
 	V 63 
 	H 7 
 "
