@@ -16,9 +16,9 @@
 		</figure>
 		<h2>What are we even doing here?</h2>
 		<p>
-			This site teaches you how to hook some solar panels to the bottom element of your water
-			heater. Cheap solar power with energy storage. I did this DIY and cut my household electric
-			use in half.
+			This site teaches you how to hook some photo voltaic (PV) solar panels to the bottom element
+			of your water heater. Cheap solar power with energy storage. I did this DIY and cut my
+			household electric use in half.
 		</p>
 	</article>
 
@@ -27,8 +27,8 @@
 		<p>
 			This depends a lot on how expensive your power is and how much hot water you use. In my case,
 			it was costing me a bit over buck day to heat water. I was able to build a PV system for less
-			then $2000. I calculated my payback at around 5 years. There are some places with expensive
-			power where your payback could be closer to 2 years.
+			then $2000. Even with cheap power in Colorado my payback was around 5 years. If you are using
+			expensive California power, your payback could be closer to 2 years.
 		</p>
 	</article>
 
@@ -107,11 +107,25 @@
 	</article>
 
 	<article class="faq">
+		<h2>What about wind loads?</h2>
+		<p>
+			The <a href="https://www.omnicalculator.com/physics/wind-load"
+				>100mph wind load on a 45deg tilted 4'x8' panel is 578lbf</a
+			>. The <a href="lagPullout.png">pullout rating for a 3/8 lag screw into a 2x4 is 400lbf</a>.
+			So use at least 4 lag screws per panel and make sure you are screwing into a rafter, not just
+			the sheathing. If your panel is mounted close to the roof you will have less wind load. My
+			panels stick out past the edges of the shed about a foot. The panels have survived winds that
+			knocked over two back yard fences for what that is worth.
+		</p>
+	</article>
+
+	<article class="faq">
 		<h2>Is this better then solar thermal?</h2>
 		<p>
 			This system has no moving parts and is cheaper and easier to install. It reuses your existing
-			electric water heater. It does require more panel area. If you want to heat the whole house
-			solar thermal would be better.
+			electric water heater. PV panels gain efficiency on really cold days when thermal panels have
+			trouble. PV does require more panel area to collect the same amount of heat as thermal. If you
+			want to heat the whole house solar thermal would be better.
 		</p>
 	</article>
 
@@ -144,11 +158,11 @@
 		<h2>What kind of shutoff switch do I need?</h2>
 		<p>
 			You need to mount the solar disconnect switch outside in a readily accessible place near the
-			panels. This is so firefighters/electricians/roofers/etc can turn your panels off while they
+			panels. This is so firefighters/electricians/plumbers/etc can turn your panels off while they
 			are working. Search for "Solar Disconnect Switch" or "Solar Circuit Breaker Waterproof
 			Isolator". You can get a combo unit that is both a switch and a circuit breaker. You can also
-			mount a second shutoff switch near the water heater to make working on it safer if you like. I
-			kinda wish I had one.
+			mount a second shutoff switch near the water heater to make working on it safer. I kinda wish
+			I had one.
 		</p>
 	</article>
 
@@ -249,7 +263,8 @@
 			I have 1.7kW on a standard 40 gallon water heater and it works great. In the summer this is
 			almost too much, the water gets up to around 70C. In the winter I still need a bit of city
 			power from time to time. I suggest you start with 1-2kW and if that does not meet your needs
-			you can add more panels.
+			you can add more panels. If you plug your numbers into the simulator and you have multiple
+			months with over 100% solar power generation then your array is probably too big.
 		</p>
 	</article>
 
@@ -272,8 +287,8 @@
 			melted. 2/5 DC solar optimizers failed. I am not sure the optimizers were worth it, they only
 			get you 20-30% more power. The panels are not quite steep enough to shed snow by themselves,
 			sometime I have to clean them manually. I noticed some of the lag screws holding the solar
-			rails down loosened up. Might want to give the system a yearly once over for lose bolts and
-			chewed wires.
+			rails down loosened up. Might want to give the system a yearly once over to check for lose
+			bolts and chewed wires.
 		</p>
 	</article>
 

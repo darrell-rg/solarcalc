@@ -24,7 +24,7 @@ import sys, os
 import pandas as pd
 import numpy as np
 import hashlib
-
+from datetime import datetime, timedelta
 # from IPython.display import display
 import urllib.request
 import os
@@ -48,7 +48,7 @@ attributes = "ghi,dhi,dni,wind_speed,air_temperature,solar_zenith_angle"
 # Set leap year to true or false. True will return leap day data if present, false will not.
 leap_year = "false"
 # Set time interval in minutes, i.e., '30' is half hour intervals. Valid intervals are 30 & 60.
-interval = "60"
+interval = "30"
 # Specify Coordinated Universal Time (UTC), 'true' will use UTC, 'false' will use the local time zone of the data.
 # NOTE: In order to use the NSRDB data in SAM, you must specify UTC as 'false'. SAM requires the data to be in the
 # local time zone.
@@ -204,39 +204,105 @@ def runSim(lat=40.57, lon=-105.07, year=2010, power_kW=1, tilt=40, azimuth=180, 
     df.to_csv(filename_sim)
     return df, filename_sim
 
+def convert_day_of_year( day_of_year, year = 2020):
+    # Create a date object for the first day of the year
+    start_date = datetime(year, 1, 1)
+    
+    # Calculate the actual date by adding the number of days (minus one)
+    actual_date = start_date + timedelta(days=day_of_year - 1)
+    
+    # Format the date to "Month, Day"
+    return actual_date.strftime("%B %d")
 
-def nsrdb_plot(df, day, filename):
-    i = day * 24
+
+# water heater search:  https://www.ahridirectory.org/NewSearch?programId=24&searchTypeId=3  
+# https://www.centerpointenergy.com/en-us/SaveEnergyandMoney/Pages/CNP_Calculators/Thermal-Efficiency-Calculator.aspx?sa=MN&au=res
+# 98%, 100BTU/hr = 0.93 EF  = 29.3 w
+# 98%, 200BTU/hr = 0.88 EF  = 58.61 w   
+# Tank temp = 58.61, amb temp = 19.4 = delta is 40 C 
+#
+#
+#
+def nsrdb_plot(df, day, filename, tankSize = 151):
+
+    timeSteps = 24
+
+    if int(interval) < 59:
+        timeSteps = 48
+    i = day * timeSteps
+    j = i + timeSteps
     filename = filename.replace(".csv", ".png")
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    ax2 = ax.twinx()
+    # Create a figure
+    fig = plt.figure(figsize=(15, 8))
+    ax = fig.add_subplot(4, 1, (1))
+    twin1  = ax.twinx()
+    ax.set_ylim(-50, 2000)
+    twin1.set_ylim(-50, 2000)
+
+    ax2  = fig.add_subplot(4, 1, (2,4),sharex=ax)
+    twin2  = ax2.twinx()
+    ax2.set_ylim(-10, 95)
+    twin2.set_ylim(-200, 2000)
+
     df["90 Degree Zenith"] = 90
-    df[["GHI", "DNI", "DHI", "Solar Zenith Angle", "90 Degree Zenith"]][
-        i : i + int(interval)
-    ].plot(
-        ax=ax,
-        figsize=(15, 8),
-        yticks=(np.arange(0, 900, 100)),
-        style={
-            "90 Degree Zenith": "--",
-            "Solar Zenith Angle": "-o",
-            "DNI": "-o",
-            "DHI": "-o",
-            "GHI": "-o",
-        },
-        legend=False,
-    )
-    df["generation"][i : i + 30].plot(
-        ax=ax2, style={"generation": "y-o"}
-    )
-    # , yticks=(np.arange(0, 4.5, 0.5))
-    ax.grid()
+
+    singleDay = df[:][i:j]
+
+	#heat capacity Cp of water is 4.186kJ/kg-K
+    heatCapOfWater = 4186; # j/l/k
+    singleDay["standbyLoss"] = 100 
+    singleDay["powerFlux"]  =  singleDay["generation"] - singleDay["standbyLoss"] 
+    singleDay["energyFlux"]  =  singleDay["powerFlux"]* 60 * float(interval)
+
+    jouleSum = singleDay["energyFlux"].sum()
+    total_kWh = jouleSum * 0.0000002778 
+
+    # print("total_kWh",total_kWh)
+
+    d = convert_day_of_year(day)
+    ax.set_title(f"{d},  net energy gain = {total_kWh:.2f} (kWh)")
+  
+    singleDay["tankTemp"] =  singleDay["energyFlux"].cumsum() /  (heatCapOfWater * tankSize)
+
+    singleDay["standbyLoss"] = 60
+
+    singleDay["Max Safe Temp"] = 85
+
+    p1 = ax.plot( 'DNI',"-s", data=singleDay, label="DNI" )
+    p1 = ax.plot( 'DHI',"->", data=singleDay )
+    p1 = ax.plot( 'GHI',"-o", data=singleDay )
+    
+    p2 = ax2.plot("tankTemp", "b-o", data=singleDay)
+    ax2.plot("Max Safe Temp", "r--", data=singleDay)
+
+    p3 = twin1.plot("generation", "g-o", data=singleDay)
+    p3 = twin2.plot("powerFlux", "g-s", data=singleDay)
+
+
+    twin2.grid(False)
     ax.set_ylabel("W/m2 (solar radiation)")
-    ax2.set_ylabel("W (output from array)")
-    ax.legend(loc=2, ncol=5, frameon=False)
-    ax2.legend(loc=1, frameon=False)
+    twin1.set_ylabel("W (solar generation)")
+    twin2.set_ylabel("W (tank flux)")
+    ax2.set_ylabel(" (℃) (water temp Δ)")
+
+    # ax.yaxis.label.set_color("y"
+    twin2.yaxis.label.set_color("g")
+
+    twin1.yaxis.label.set_color("g")
+    ax2.yaxis.label.set_color("b")
+   
+    tkw = dict(size=4, width=1.5)
+    twin1.tick_params(axis='y', colors="g", **tkw)
+    ax2.tick_params(axis='y', colors="b", **tkw)
+    twin2.tick_params(axis='y', colors="g", **tkw)
+
+    ax.legend(loc=2, ncol=3, frameon=True)
+    ax2.legend(loc=2, ncol=3, frameon=False)
+    twin2.legend(loc=1, ncol=1, frameon=False)
+    twin1.legend(loc=1, ncol=1, frameon=False)
     fig.savefig(filename)
+
+    # singleDay.to_csv("debug.csv")
     return filename
 
 
