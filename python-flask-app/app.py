@@ -220,7 +220,7 @@ def convert_day_of_year( day_of_year, year = 2020):
 # 98%, 100BTU/hr = 0.93 EF  = 29.3 w
 # 98%, 200BTU/hr = 0.88 EF  = 58.61 w   
 # Tank temp = 58.61, amb temp = 19.4 = delta is 40 C 
-#
+#  https://www.energytrust.org/wp-content/uploads/2017/11/Water_Heater_Energy_Storage_wStaffResponse.pdf
 #
 #
 def nsrdb_plot(df, day, filename, tankSize = 151):
@@ -250,6 +250,7 @@ def nsrdb_plot(df, day, filename, tankSize = 151):
 
 	#heat capacity Cp of water is 4.186kJ/kg-K
     heatCapOfWater = 4186; # j/l/k
+    singleDay["Max Safe Temp"] = 85
     singleDay["standbyLoss"] = 100 
     singleDay["powerFlux"]  =  singleDay["generation"] - singleDay["standbyLoss"] 
     singleDay["energyFlux"]  =  singleDay["powerFlux"]* 60 * float(interval)
@@ -263,10 +264,6 @@ def nsrdb_plot(df, day, filename, tankSize = 151):
     ax.set_title(f"{d},  net energy gain = {total_kWh:.2f} (kWh)")
   
     singleDay["tankTemp"] =  singleDay["energyFlux"].cumsum() /  (heatCapOfWater * tankSize)
-
-    singleDay["standbyLoss"] = 60
-
-    singleDay["Max Safe Temp"] = 85
 
     p1 = ax.plot( 'DNI',"-s", data=singleDay, label="DNI" )
     p1 = ax.plot( 'DHI',"->", data=singleDay )
