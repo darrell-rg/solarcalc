@@ -62,6 +62,9 @@
 	let azimuth = 180;
 	let elevation = 40;
 	let wireLength = 60;
+	let peakPrice = 0.285;
+	let offPeakPrice = 0.0792;
+
 	let useMixingValve = 1;
 	let mixingValveConstant = 1.5;
 
@@ -86,13 +89,11 @@
 	let tanksUsedPerDay = round((hotWaterPerPersonDay * personsInHoushold) / tankSize);
 	let dailyDemand = round((tanksUsedPerDay * energyToHeatOneTank) / 3600e3);
 
-	let peakPrice = 0.2352;
 	let mismatch = 10;
 	let Rsource = 1;
 	let Rmp = 1;
 	let stringVoc = $Voc * panelsPerString;
-	let offPeakPrice = 0.0716;
-	let peakHours = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0];
+	let peakHours = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0];
 	let peakHourCount = peakHours.reduce((accumulator, currentValue) => {
 		return accumulator + currentValue;
 	}, 0);
@@ -243,7 +244,15 @@
 <div class="smol-sidebar">
 	<span data-text>
 		<h2>Step 1</h2>
-		Fill in what you know about your Location and power price
+		Fill in what you know about your Location and power price.<br /><br /> If you do not know your
+		exact power price,
+		<a href="https://www.bls.gov/regions/midwest/data/averageenergyprices_selectedareas_table.htm"
+			>get an estimate here.</a
+		>
+		<br /><br /> You can measure your ground water temperature, or estimate it from
+		<a href="https://www3.epa.gov/ceampubl/learn2model/part-two/onsite/tempmap.html"
+			>this Ground Water Temperature Map.</a
+		>
 	</span>
 	<span>
 		<Box>
@@ -302,6 +311,14 @@
 	<span data-text>
 		<h2>Step 2</h2>
 		Hot water Usage calculator, use this to estimate how much you are paying to heat water.
+
+		<br /> <br />
+
+		The important numbers are <b>Tank Size</b> and <b>Persons In Household</b>
+
+		
+		<br /> <br /> If you want to plug in the exact numbers from your water heater, look at the yellow energy star sticker or <a href="https://www.ahridirectory.org/NewSearch?programId=24&searchTypeId=3 ">search here.</a>
+		
 	</span>
 	<span>
 		<Box>
@@ -309,7 +326,7 @@
 			<Input bind:val={personsInHoushold} label="Persons In Houshold" units="" />
 			<Input bind:val={hotWaterPerPersonDay} label="Hot Water/Person/Day" units="l" />
 			<br />
-			<Input bind:val={tankSize} label="TankSize" units="liter" />
+			<Input bind:val={tankSize} label="Tank Size" units="liter" />
 			<Input bind:val={energyFactor} label="Energy Factor" units="UEF" />
 			<Input bind:val={hotWaterOutTemp} label="Desired Output Temp" units="°C" />
 			<!-- <Input val={50} label="ThermostatSetting" units="°C" /> -->
@@ -367,6 +384,9 @@
 		<h2>Step 3</h2>
 		Impedance matching calculator. Use this to figure out the optimal resistance for your water heater
 		element.
+		<br /> <br />
+		Set <b>Azimuth </b> and <b>Elevation</b> to match the roof where you plan to install the panels.
+		The ideal elevation is equal to your Latitude.
 	</span>
 	<span>
 		<Box>
@@ -456,10 +476,10 @@
 	<span data-text>
 		<h2>Step 4</h2>
 		<p>
-			Click <b>Simulate Monthly Generation For TMY</b> This will feed the simulator with the solar panel data you
-			entered above and Typical Meteorological Year Data (TMY) for your lat/lng. This calls a NREL
-			PVwatts API rate limited to 1000 req/day so you may have to try again tomorrow if it is not
-			working.
+			Click <b>Simulate Monthly Generation For TMY</b> This will feed the simulator with the solar panel
+			data you entered above and Typical Meteorological Year Data (TMY) for your lat/lng. This calls
+			a NREL PVwatts API rate limited to 1000 req/day so you may have to try again tomorrow if it is
+			not working.
 		</p>
 
 		<hr />
@@ -510,15 +530,15 @@
 		<p>
 			This graph uses the TMY simulation data to help you size your array. <span class="blue"
 				><b>Mean Tank Temperature</b></span
-			> assumes fully mixed water. On most days, your tank will not get as hot
-			as the graph shows because you will be using hot water.
+			> assumes fully mixed water. On most days, your tank will not get as hot as the graph shows because
+			you will be using hot water.
 		</p>
 		<p>
 			Click a <b>Graph random day</b> button a few times until you find a nice sunny day (lots of
 			<b>Solar Radiation</b>).
 		</p>
 		<p>
-			If your <b>Net Energy Harvest</b> is more than
+			If your <b>Net Thermal Energy Gain</b> is more than
 			<b>Daily Energy Demand ({round(dailyEnergyDemand)}kWh)</b>
 			on a sunny day, then your solar array is oversized. If the
 			<span class="blue"><b>Tank Temperature</b></span>
@@ -543,25 +563,28 @@
 
 	<ul>
 		<li>No hot water withdraws (aka nobody is home)</li>
-		<li>On most days, the water will not get as hot as the graph shows because you will be using hot water. </li>
-		<li>The tank water starts at your  <b>Desired Output Temp</b> ({hotWaterOutTemp}℃)</li>
-		<li><span class="blue"
-			><b>Mean Tank Temperature</b></span
-		> assumes fully mixed water.</li>
-		<li> In the real world the hottest water moves to the top of the tank and the coldest to the bottom.</li>
-		<li>The <span class="green"
-			><b>Net Water Heating Power</b></span> will be negative when there is no sun. These are the standby losses estimated from your UEF ({energyFactor})</li>
+		<li>
+			On most days, the water will not get as hot as the graph shows because you will be using hot
+			water.
+		</li>
+		<li>The tank water starts at your <b>Desired Output Temp</b> ({hotWaterOutTemp}℃)</li>
+		<li><span class="blue"><b>Mean Tank Temperature</b></span> assumes fully mixed water.</li>
+		<li>
+			In the real world the hottest water moves to the top of the tank and the coldest to the
+			bottom.
+		</li>
+		<li>
+			The <span class="green"><b>Net Water Heating Power</b></span> will be negative when there is
+			no sun. These are the standby losses estimated from your UEF ({energyFactor})
+		</li>
 		<li>The top element is disconnected (no city power)</li>
 		<li>No thermostat is installed on the bottom element.</li>
-		<li>If there was a thermostat the <span class="blue"
-			><b>Mean Tank Temperature</b></span
-		> would not exceed the <span class="red"
-			><b>Mixing Valve Limit</b>
+		<li>
+			If there was a thermostat the <span class="blue"><b>Mean Tank Temperature</b></span> would not
+			exceed the <span class="red"><b>Mixing Valve Limit</b> </span>
 		</li>
-		
 	</ul>
 </div>
-
 
 <!-- <h5>The time is ss {formatter.format($time)}</h5>
 
