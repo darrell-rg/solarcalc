@@ -13,7 +13,7 @@ First start the flask backend app in /python-flask-app.  See /python-flask-app/R
 Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
 ```bash
-set PUBLIC_API_URL="http://localhost:5173/"
+set PUBLIC_API_URL="http://localhost:5000/"
 npm run dev
 
 # or start the server and open the app in a new browser tab

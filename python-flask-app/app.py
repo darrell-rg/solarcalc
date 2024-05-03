@@ -34,6 +34,7 @@ import os
 # Use site.addsitedir() to set the path to the SAM SDK API. Set path to the python directory.
 # site.addsitedir('/Applications/sam-sdk-2015-6-30-r3/languages/python/')
 from matplotlib import pyplot as plt
+from matplotlib import dates as mdates
 
 plt.style.use("ggplot")
 
@@ -223,7 +224,7 @@ def convert_day_of_year( day_of_year, year = 2020):
 #  https://www.energytrust.org/wp-content/uploads/2017/11/Water_Heater_Energy_Storage_wStaffResponse.pdf
 #
 #
-def nsrdb_plot(df, day, filename, tankSize = 151):
+def nsrdb_plot(df, day, filename, tankSize = 189, startingTemp = 40):
 
     timeSteps = 24
 
@@ -236,8 +237,8 @@ def nsrdb_plot(df, day, filename, tankSize = 151):
     fig = plt.figure(figsize=(15, 8))
     ax = fig.add_subplot(4, 1, (1))
     twin1  = ax.twinx()
-    ax.set_ylim(-50, 2000)
-    twin1.set_ylim(-50, 2000)
+    ax.set_ylim(-50, 1050)
+    twin1.set_ylim(-10, 40)
 
     ax2  = fig.add_subplot(4, 1, (2,4),sharex=ax)
     twin2  = ax2.twinx()
@@ -254,17 +255,13 @@ def nsrdb_plot(df, day, filename, tankSize = 151):
     singleDay["standbyLoss"] = 100 
     singleDay["powerFlux"]  =  singleDay["generation"] - singleDay["standbyLoss"] 
     singleDay["energyFlux"]  =  singleDay["powerFlux"]* 60 * float(interval)
-
+    singleDay["tankTemp"] =  (singleDay["energyFlux"].cumsum()  /  (heatCapOfWater * tankSize) ) + startingTemp
     jouleSum = singleDay["energyFlux"].sum()
     total_kWh = jouleSum * 0.0000002778 
-
-    # print("total_kWh",total_kWh)
 
     d = convert_day_of_year(day)
     ax.set_title(f"{d},  net energy gain = {total_kWh:.2f} (kWh)")
   
-    singleDay["tankTemp"] =  singleDay["energyFlux"].cumsum() /  (heatCapOfWater * tankSize)
-
     p1 = ax.plot( 'DNI',"-s", data=singleDay, label="DNI" )
     p1 = ax.plot( 'DHI',"->", data=singleDay )
     p1 = ax.plot( 'GHI',"-o", data=singleDay )
@@ -272,31 +269,35 @@ def nsrdb_plot(df, day, filename, tankSize = 151):
     p2 = ax2.plot("tankTemp", "b-o", data=singleDay)
     ax2.plot("Max Safe Temp", "r--", data=singleDay)
 
-    p3 = twin1.plot("generation", "g-o", data=singleDay)
-    p3 = twin2.plot("powerFlux", "g-s", data=singleDay)
+    p3 = twin1.plot("Temperature", "b--", data=singleDay)
+    p3 = twin2.plot("powerFlux", "g-", data=singleDay)
 
 
-    twin2.grid(False)
-    ax.set_ylabel("W/m2 (solar radiation)")
-    twin1.set_ylabel("W (solar generation)")
-    twin2.set_ylabel("W (tank flux)")
-    ax2.set_ylabel(" (℃) (water temp Δ)")
-
-    # ax.yaxis.label.set_color("y"
-    twin2.yaxis.label.set_color("g")
-
-    twin1.yaxis.label.set_color("g")
-    ax2.yaxis.label.set_color("b")
-   
     tkw = dict(size=4, width=1.5)
-    twin1.tick_params(axis='y', colors="g", **tkw)
-    ax2.tick_params(axis='y', colors="b", **tkw)
+    ax.grid(False)
+    ax.tick_params('x', labelbottom=False)
+    ax.set_ylabel("W/m2 (solar radiation)")
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%H'))
+    # ax.yaxis.label.set_color("y"
+    
+    twin1.yaxis.label.set_color("b")
+    twin1.set_ylabel("℃ (outside air)")
+    twin1.tick_params(axis='y', colors="b", **tkw)
+    
+    twin2.set_ylabel("W (net water heating power)")
     twin2.tick_params(axis='y', colors="g", **tkw)
+    twin2.yaxis.label.set_color("g")
+    twin2.grid(False)
+    
+    ax2.set_ylabel(" (℃) (water temp Δ)")
+    ax2.yaxis.label.set_color("b")
+    ax2.tick_params(axis='y', colors="b", **tkw)
 
     ax.legend(loc=2, ncol=3, frameon=True)
     ax2.legend(loc=2, ncol=3, frameon=False)
     twin2.legend(loc=1, ncol=1, frameon=False)
     twin1.legend(loc=1, ncol=1, frameon=False)
+
     fig.savefig(filename)
 
     # singleDay.to_csv("debug.csv")

@@ -72,10 +72,10 @@
 	let elementV = 120;
 	let elementP = 2000;
 
-	let tankSize = 151; //40 gal
+	let tankSize = 189; //50 gal
 	//heat capacity Cp of water is 4.186kJ/kg-K
 	let heatCapOfWater = 4186; // j/l/k
-	let hotWaterOutTemp = 50;
+	let hotWaterOutTemp = 40;
 	let hotWaterPerPersonDay = 64; // l/person/day
 	let personsInHoushold = 4;
 	let groundTemp = 5;

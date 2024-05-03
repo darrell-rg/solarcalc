@@ -156,7 +156,16 @@ export const _bomData = [
         "Price": 26,
         "ebayid": 145519750249,
         "link": "https://www.ebay.com/itm/145519750249?amdata=enc%3AAQAJAAAAkNAqMZmoSe2aAbjzc333%2BfvHwvSRWxO8w4rV98Gua8xHrDmKOyx0wDwpwWXV0QSj3dkgi1JnsgAlPR49ByaMVhu4Mj8bXgnQ17HufwGopYCY3oce86pTWmW0uuzr8nEBrV8pR0WH0vLjmm0NuWcuzlzSgaOYpG4PeuYuXTBQ0qvxtel71VKVPdx0JcLxHt0NTw%3D%3D&mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=5339056755&customid=&toolid=10001&mkevt=1"
+    },
+    {
+        "Desc": "MPPT Boiler PV Solar Regulator",
+        "Qty": 1,
+        "Price": 250,
+        "ebayid": 263523458861,
+        "link": "https://www.ebay.com/itm/263523458861",
     }
+
+
 
 ];
 
