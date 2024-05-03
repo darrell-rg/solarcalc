@@ -359,9 +359,9 @@
 			</p>
 
 			<p>
-				<b>Energy Factor (ef)</b> this is rating of how efficient your water heater is. Most
-				electric heaters have an <b>ef</b> of about 0.9, which means they waste about 10% of the energy
-				used. The main losses are standby losses, where heat leaks through the insulation to the air.
+				<b>Energy Factor (UEF)</b> this is rating of how efficient your water heater is. Most
+				electric heaters have an <b>UEF</b> of about 0.9, which means they waste about 10% of the energy
+				used. The main losses are standby losses, where heat leaks through the insulation.
 			</p>
 
 			<p>
