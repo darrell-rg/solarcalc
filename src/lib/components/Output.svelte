@@ -17,3 +17,11 @@
 	 {label} 
 </label>
 <br>
+
+<style>
+	input:read-only {
+		border: 2px solid white;
+		box-shadow: none;
+		background-color: whitesmoke;
+	}
+</style>

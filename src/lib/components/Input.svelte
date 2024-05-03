@@ -30,8 +30,8 @@
 
 <style>
 	input:read-only {
-		border: 0;
+		border: 2px solid white;
 		box-shadow: none;
-		background-color: gray;
+		background-color: whitesmoke;
 	}
 </style>
