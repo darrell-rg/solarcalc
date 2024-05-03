@@ -104,6 +104,7 @@
 	let monthData = [];
 
 	let yearlySavings = 0;
+	let dailyEnergyDemand = 0;
 
 	months.forEach((month, index) => {
 		let m = {
@@ -140,6 +141,7 @@
 	$: Rmp = ($Vmp * panelsPerString) / $Imp / parallelStrings;
 	$: Rsource = Rmp;
 	$: mismatch = Math.abs(100 - ((elementR + wireResistance) / Rsource) * 100.0);
+	$: dailyEnergyDemand = (tanksUsedPerDay * energyToHeatOneTank) / 3600e3;
 
 	function makeGraphUrl(startDay = 45, event) {
 		//pick a random day in the season
@@ -156,7 +158,7 @@
 		let pwr = nominalPower / 1000.0;
 		url =
 			url +
-			`day=${day}&lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}&losses=${losses}&module_type=${selectedModuleType.id}`;
+			`day=${day}&lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}&losses=${losses}&module_type=${selectedModuleType.id}&liters=${tankSize}&uef=${energyFactor}&startingTemp=${hotWaterOutTemp}`;
 
 		const elem = document.getElementById('solarGraph');
 		if (elem) {
@@ -165,7 +167,6 @@
 		}
 		return url;
 	}
-
 
 	function updateMonthlyTable(runMonthlySimButton) {
 		let url = PUBLIC_API_URL + jsonUrlBase;
@@ -309,7 +310,7 @@
 			<Input bind:val={hotWaterPerPersonDay} label="Hot Water/Person/Day" units="l" />
 			<br />
 			<Input bind:val={tankSize} label="TankSize" units="liter" />
-			<Input bind:val={energyFactor} label="Energy Factor" units="ef" />
+			<Input bind:val={energyFactor} label="Energy Factor" units="UEF" />
 			<Input bind:val={hotWaterOutTemp} label="Desired Output Temp" units="°C" />
 			<!-- <Input val={50} label="ThermostatSetting" units="°C" /> -->
 			<Input bind:val={elementP} label="Element Power Rating" units="W" />
@@ -323,11 +324,7 @@
 			<Output val={round(energyToHeatOneTank / 3600e3)} label="Energy to heat 1 tank" units="kWh" />
 			<Output val={costToHeatOneTank} label="Cost to heat one tank" units="$" />
 			<Output val={tanksUsedPerDay} label="Tanks used per day" units="" />
-			<Output
-				val={round((tanksUsedPerDay * energyToHeatOneTank) / 3600e3)}
-				label="Daily Energy Demand"
-				units="kWh"
-			/>
+			<Output val={round(dailyEnergyDemand)} label="Daily Energy Demand" units="kWh" />
 			<Output
 				val={round(tanksUsedPerDay * costToHeatOneTank)}
 				label="Hot water cost per day"
@@ -357,9 +354,9 @@
 			</p>
 
 			<p>
-				<b> Element Resistance</b> Often water heater elements are rated by Volts and Watts instead of Ohms. You
-				can put in <b>Element Power Rating</b> and <b>Element Voltage Rating</b> to calculate the
-				Ohms.
+				<b> Element Resistance</b> Often water heater elements are rated by Volts and Watts instead
+				of Ohms. You can put in <b>Element Power Rating</b> and <b>Element Voltage Rating</b> to calculate
+				the Ohms.
 			</p>
 		</Box>
 	</span>
@@ -448,7 +445,8 @@
 
 			<p>
 				<b>Source Impedance</b> is the resistance value you want to match with your lower heating
-				element. I suggest a <b>Mismatch</b> below 20% is good enough; the heater elements are not made to a very precise resistance anyway. 
+				element. I suggest a <b>Mismatch</b> below 20% is good enough; the heater elements are not made
+				to a very precise resistance anyway.
 			</p>
 		</Box>
 	</span>
@@ -458,7 +456,7 @@
 	<span data-text>
 		<h2>Step 4</h2>
 		<p>
-			Click "Simulate Monthly Totals". This will feed the simulator with the solar panel data you
+			Click <b>Simulate Monthly Generation For TMY</b> This will feed the simulator with the solar panel data you
 			entered above and Typical Meteorological Year Data (TMY) for your lat/lng. This calls a NREL
 			PVwatts API rate limited to 1000 req/day so you may have to try again tomorrow if it is not
 			working.
@@ -466,8 +464,14 @@
 
 		<hr />
 
-		<button on:click={(e) => updateMonthlyTable(e)}>Simulate Monthly Generation Totals</button>
-		<Input bind:val={losses} label="Estimated Losses (dirt, snow, aging, etc.)" units="%" /> 
+		<button on:click={(e) => updateMonthlyTable(e)}>Simulate Monthly Generation For TMY</button>
+		<Input
+			bind:val={losses}
+			label="Losses (dirt, snow, aging, etc.) If your panels are shaded 1/3 of the day, then add 33% to losses."
+			units="%"
+		/>
+		<br />
+		<br />
 		<div>
 			<!-- <TestSvg/> -->
 			<table class="monthTable">
@@ -504,20 +508,60 @@
 		</div>
 		<hr />
 		<p>
-			Here you can graph your simulated daily power production using Typical Meteorological Year
-			Data (TMY)
+			This graph uses the TMY simulation data to help you size your array. <span class="blue"
+				><b>Mean Tank Temperature</b></span
+			> assumes fully mixed water. On most days, your tank will not get as hot
+			as the graph shows because you will be using hot water.
 		</p>
-		<button on:click={(e) => makeGraphUrl(0, e)}> Graph random day in Q1</button>
-		<button on:click={(e) => makeGraphUrl(90, e)}> Graph random day in Q2</button>
-		<button on:click={(e) => makeGraphUrl(180, e)}> Graph random day in Q3</button>
-		<button on:click={(e) => makeGraphUrl(270, e)}> Graph random day in Q4</button>
+		<p>
+			Click a <b>Graph random day</b> button a few times until you find a nice sunny day (lots of
+			<b>Solar Radiation</b>).
+		</p>
+		<p>
+			If your <b>Net Energy Harvest</b> is more than
+			<b>Daily Energy Demand ({round(dailyEnergyDemand)}kWh)</b>
+			on a sunny day, then your solar array is oversized. If the
+			<span class="blue"><b>Tank Temperature</b></span>
+			is going over the
+			<span class="red"><b>Mixing Valve Limit</b></span>
+			and you still are making less then 2/3 of your <b>Daily Energy Demand</b>, then your tank is
+			undersized.
+		</p>
+		<div class="smol-css-grid">
+			<button on:click={(e) => makeGraphUrl(0, e)}> Graph random day in Q1</button>
+			<button on:click={(e) => makeGraphUrl(90, e)}> Graph random day in Q2</button>
+			<button on:click={(e) => makeGraphUrl(180, e)}> Graph random day in Q3</button>
+			<button on:click={(e) => makeGraphUrl(270, e)}> Graph random day in Q4</button>
+		</div>
 	</span>
 	<span>
 		<figure>
-			<img alt="SolarSimGraph" src="day67.png" id="solarGraph" />
+			<img alt="SolarSimGraph" src="graph_day_251.png" id="solarGraph" />
 		</figure>
 	</span>
+	<p>Graph Assumptions:</p>
+
+	<ul>
+		<li>No hot water withdraws (aka nobody is home)</li>
+		<li>On most days, the water will not get as hot as the graph shows because you will be using hot water. </li>
+		<li>The tank water starts at your  <b>Desired Output Temp</b> ({hotWaterOutTemp}℃)</li>
+		<li><span class="blue"
+			><b>Mean Tank Temperature</b></span
+		> assumes fully mixed water.</li>
+		<li> In the real world the hottest water moves to the top of the tank and the coldest to the bottom.</li>
+		<li>The <span class="green"
+			><b>Net Water Heating Power</b></span> will be negative when there is no sun. These are the standby losses estimated from your UEF ({energyFactor})</li>
+		<li>The top element is disconnected (no city power)</li>
+		<li>No thermostat is installed on the bottom element.</li>
+		<li>If there was a thermostat the <span class="blue"
+			><b>Mean Tank Temperature</b></span
+		> would not exceed the <span class="red"
+			><b>Mixing Valve Limit</b>
+		</li>
+		
+	</ul>
 </div>
+
 
 <!-- <h5>The time is ss {formatter.format($time)}</h5>
 
@@ -582,6 +626,17 @@
 		margin: 0;
 	}
 
+	.blue {
+		color: blue;
+	}
+
+	.red {
+		color: red;
+	}
+
+	.green {
+		color: green;
+	}
 	.smol-css-grid {
 		--min: 15ch;
 		--gap: 1rem;

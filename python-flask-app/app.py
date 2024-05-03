@@ -11,7 +11,7 @@
 # software distributed under the License is distributed on an
 # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 # KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations
+# specific language governing permissions and Limitations
 # under the License.
 
 import json
@@ -224,7 +224,7 @@ def convert_day_of_year( day_of_year, year = 2020):
 #  https://www.energytrust.org/wp-content/uploads/2017/11/Water_Heater_Energy_Storage_wStaffResponse.pdf
 #
 #
-def nsrdb_plot(df, day, filename, tankSize = 189, startingTemp = 40):
+def nsrdb_plot(df, day, filename, tankSize = 189, startingTemp = 40, uef=0.9):
 
     timeSteps = 24
 
@@ -232,73 +232,83 @@ def nsrdb_plot(df, day, filename, tankSize = 189, startingTemp = 40):
         timeSteps = 48
     i = day * timeSteps
     j = i + timeSteps
-    filename = filename.replace(".csv", ".png")
-    # Create a figure
-    fig = plt.figure(figsize=(15, 8))
-    ax = fig.add_subplot(4, 1, (1))
-    twin1  = ax.twinx()
-    ax.set_ylim(-50, 1050)
-    twin1.set_ylim(-10, 40)
+    filename = filename.replace(".csv", f"_{tankSize}_{startingTemp}_{uef}_{day}.png")
 
-    ax2  = fig.add_subplot(4, 1, (2,4),sharex=ax)
-    twin2  = ax2.twinx()
-    ax2.set_ylim(-10, 95)
-    twin2.set_ylim(-200, 2000)
+    if not os.path.exists(filename):
+        # Create a figure
+        fig = plt.figure(figsize=(15, 8))
+        ax = fig.add_subplot(4, 1, (1))
+        twin1  = ax.twinx()
+        ax.set_ylim(-50, 1050)
+        twin1.set_ylim(-10, 40)
 
-    df["90 Degree Zenith"] = 90
+        ax2  = fig.add_subplot(4, 1, (2,4),sharex=ax)
+        twin2  = ax2.twinx()
+        ax2.set_ylim(-10, 100)
+        twin2.set_ylim(-200, 2000)
 
-    singleDay = df[:][i:j]
+        df["90 Degree Zenith"] = 90
 
-	#heat capacity Cp of water is 4.186kJ/kg-K
-    heatCapOfWater = 4186; # j/l/k
-    singleDay["Max Safe Temp"] = 85
-    singleDay["standbyLoss"] = 100 
-    singleDay["powerFlux"]  =  singleDay["generation"] - singleDay["standbyLoss"] 
-    singleDay["energyFlux"]  =  singleDay["powerFlux"]* 60 * float(interval)
-    singleDay["tankTemp"] =  (singleDay["energyFlux"].cumsum()  /  (heatCapOfWater * tankSize) ) + startingTemp
-    jouleSum = singleDay["energyFlux"].sum()
-    total_kWh = jouleSum * 0.0000002778 
+        singleDay = df[:][i:j]
 
-    d = convert_day_of_year(day)
-    ax.set_title(f"{d},  net energy gain = {total_kWh:.2f} (kWh)")
-  
-    p1 = ax.plot( 'DNI',"-s", data=singleDay, label="DNI" )
-    p1 = ax.plot( 'DHI',"->", data=singleDay )
-    p1 = ax.plot( 'GHI',"-o", data=singleDay )
+        #heat capacity Cp of water is 4.186kJ/kg-K
+        heatCapOfWater = 4186; # j/l/k
+        singleDay["Mixing Valve Limit"] = 85
+        singleDay["T&P Valve Limit"] = 98
+        singleDay["standbyLoss"] = 100 
+        if uef > 0.92:
+            singleDay["standbyLoss"] = 60 
+        if uef > 0.94:
+            singleDay["standbyLoss"] = 30 
+        singleDay["Net Power"]  =  singleDay["generation"] - singleDay["standbyLoss"] 
+        singleDay["energyFlux"]  =  singleDay["Net Power"]* 60 * float(interval)
+        singleDay["Tank Temperature"] =  (singleDay["energyFlux"].cumsum()  /  (heatCapOfWater * tankSize) ) + startingTemp
+        jouleSum = singleDay["energyFlux"].sum()
+        total_kWh = jouleSum * 0.0000002778 
+
+        d = convert_day_of_year(day)
+        ax.set_title(f"{d},  Net Energy Harvest = {total_kWh:.2f} (kWh)")
     
-    p2 = ax2.plot("tankTemp", "b-o", data=singleDay)
-    ax2.plot("Max Safe Temp", "r--", data=singleDay)
+        p1 = ax.plot( 'DNI',"-s", data=singleDay, label="DNI" )
+        p1 = ax.plot( 'DHI',"->", data=singleDay )
+        p1 = ax.plot( 'GHI',"-o", data=singleDay )
+        
+        p2 = ax2.plot("Tank Temperature", "b-o", data=singleDay)
+        ax2.plot("Mixing Valve Limit", "r--", data=singleDay)
+        ax2.plot("T&P Valve Limit", "r-", data=singleDay)
 
-    p3 = twin1.plot("Temperature", "b--", data=singleDay)
-    p3 = twin2.plot("powerFlux", "g-", data=singleDay)
+       
+        
 
 
-    tkw = dict(size=4, width=1.5)
-    ax.grid(False)
-    ax.tick_params('x', labelbottom=False)
-    ax.set_ylabel("W/m2 (solar radiation)")
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%H'))
-    # ax.yaxis.label.set_color("y"
-    
-    twin1.yaxis.label.set_color("b")
-    twin1.set_ylabel("℃ (outside air)")
-    twin1.tick_params(axis='y', colors="b", **tkw)
-    
-    twin2.set_ylabel("W (net water heating power)")
-    twin2.tick_params(axis='y', colors="g", **tkw)
-    twin2.yaxis.label.set_color("g")
-    twin2.grid(False)
-    
-    ax2.set_ylabel(" (℃) (water temp Δ)")
-    ax2.yaxis.label.set_color("b")
-    ax2.tick_params(axis='y', colors="b", **tkw)
+        tkw = dict(size=4, width=1.5)
+        ax.grid(False)
+        ax.tick_params('x', labelbottom=False)
+        ax.set_ylabel("Solar Radiation (W/m2)")
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%H'))
+        # ax.yaxis.label.set_color("y"
+        
+        twin1.plot("Temperature", "k--", data=singleDay)
+        twin1.yaxis.label.set_color("k")
+        twin1.set_ylabel("Outside Air(℃)")
+        twin1.tick_params(axis='y', colors="k", **tkw)
+        
+        twin2.plot("Net Power", "g-", data=singleDay)
+        twin2.set_ylabel("Net Water Heating Power(W)")
+        twin2.tick_params(axis='y', colors="g", **tkw)
+        twin2.yaxis.label.set_color("g")
+        twin2.grid(False)
+        
+        ax2.set_ylabel("Mean Water Tank Temperature (℃)")
+        ax2.yaxis.label.set_color("b")
+        ax2.tick_params(axis='y', colors="b", **tkw)
 
-    ax.legend(loc=2, ncol=3, frameon=True)
-    ax2.legend(loc=2, ncol=3, frameon=False)
-    twin2.legend(loc=1, ncol=1, frameon=False)
-    twin1.legend(loc=1, ncol=1, frameon=False)
+        ax.legend(loc=2, ncol=3, frameon=True)
+        ax2.legend(loc=2, ncol=3, frameon=False)
+        twin2.legend(loc=1, ncol=1, frameon=False)
+        twin1.legend(loc=1, ncol=1, frameon=False)
 
-    fig.savefig(filename)
+        fig.savefig(filename)
 
     # singleDay.to_csv("debug.csv")
     return filename
@@ -314,13 +324,16 @@ def getGraph():
     day = int(request.args.get("day", "180"))
     power_kW = float(request.args.get("pwr", "1000"))
     tilt = float(request.args.get("tilt", "40"))
-    azimuth = float(request.args.get("azimuth", "180"))
-    losses = float(request.args.get("losses", "14"))
+    startingTemp = float(request.args.get("startingTemp", "40"))
+    liters = int(request.args.get("liters", "189"))
+    uef = float(request.args.get("uef", "0.90"))
+    azimuth = int(request.args.get("azimuth", "180"))
+    losses = int(request.args.get("losses", "14"))
     module_type = int(request.args.get("module_type", "0"))
 
     df, filename = runSim(lat, lon, year, power_kW,tilt,azimuth, module_type, losses, folder)
 
-    graph = nsrdb_plot(df, day, filename)
+    graph = nsrdb_plot(df, day, filename,tankSize=liters,startingTemp=startingTemp,uef=uef)
 
     if os.path.exists(graph):
         response = send_file(graph, mimetype="image/png")

@@ -58,6 +58,16 @@
 	</article>
 
 	<article class="faq">
+		<h2>How much energy can I store in my water heater?</h2>
+		<p>
+			If you assume the water starts off warm, heating from 40°C to 85°C, stores 9.89kWh. If you assume you are pulling water from the cold ground, heating 50 gallons from 5°C(ground temp) to 85°C stores  17.5kWh.  A Tesla Powerwall,
+			stores about 13.5kWh. For both the water heater and the Powerwall, you can expect an
+			efficiency of about 90%. The powerwall cost around $9,300, and you should be able to DIY this
+			system for around $2,000.
+		</p>
+	</article>
+
+	<article class="faq">
 		<figure>
 			<img alt="shutoff switch" src="Source_and_load_circuit.svg" style="max-width: 300px;" />
 			<figcaption>Rs = RL for MAX POWER</figcaption>
@@ -68,9 +78,9 @@
 				>Maximum Power Transfer theorem</a
 			> says we want to match the load impedance to the source impedance. To get the full capacity of
 			the panels, it necessary to choose a water heater element that matches the source impedance(Vmp/Immp)
-			of the solar panel array. You can also use DC solar optimizers for this, they will match the impedance
+			of the solar panel array. You can also use DC solar optimizers or a MPPT thermostat, they will match the impedance
 			for you (within reason). If you have a lot of partial shading, the optimizers MIGHT be worth it.
-			In most cases, carefully selecting the resistance of your heater element is good enough. There
+			In many cases, carefully selecting the resistance of your heater element is good enough. There
 			is a calculator on the simulator page to help you with this.
 		</p>
 	</article>
@@ -140,15 +150,7 @@
 		</p>
 	</article>
 
-	<article class="faq">
-		<h2>How much energy can I store in my water heater?</h2>
-		<p>
-			Heating 50 gallons of water from 5C to 70C stores about 14kWh of energy. A Tesla Powerwall,
-			stores about 13.5kWh of energy. For both the water heater and the Powerwall, you can expect an
-			efficiency of about 90%. The powerwall cost around $9,300, and you should be able to DIY this
-			system for around $2,000.
-		</p>
-	</article>
+
 
 	<article class="faq">
 		<figure>
@@ -253,7 +255,7 @@
 		</figure>
 		<h2>What is a Temperature and Pressure (T&P) Relief valve?</h2>
 		<p>
-			The T&P valve is a safety device that will spill some hot water out if your water heater gets
+			The T&P valve is a safety device that will let some hot water out if your water heater gets
 			too hot or has too high pressure. T&P valves used on residential water heaters are designed to
 			open at 150 psi or 98C. When water is heated it expands. In a 40-gallon water heater, water
 			being heated to the thermostat setting expands by approximately 1/2 gallon. In most houses the
