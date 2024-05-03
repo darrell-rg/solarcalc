@@ -178,50 +178,92 @@
 	</article>
 
 	<article class="faq">
-		<h2>Do I need a thermostat?</h2>
-		<p>
-			The AC thermostat built into the water heater will not last long if you try to use it on DC
-			power. DC arcs a lot worse then AC since there is no zero-crossing to extinguish the arc. A
-			600V, DC rated thermostat is hard to find. If your array is not too oversized you can make do
-			with only a mixing valve and no thermostat. The standby losses of the water heater <a
-				href="https://en.wikipedia.org/wiki/Newton%27s_law_of_cooling">increase proportionally</a
-			> with the hot water temperature. This helps to bring the system into equilibrium so it will not
-			activate your P&T valve. In the summer, the water will get hotter then is safe so you definitely
-			need a thermostatic mixing valve to prevent scalds. The extra hot water in the tank increases the
-			amount of energy you can store. I have made it through three cloudy days in a row before I need
-			to use city power to heat the water.
-		</p>
-	</article>
-
-	<article class="faq">
-		<figure>
-			<img alt="mixing valve" src="solarShed/pAndTValve.webp" style="max-width: 300px;" />
-			<figcaption>P&T Valve</figcaption>
-		</figure>
-		<h2>Really you don't need a thermostat?</h2>
-		<p>
-			My system has been running for three years with no thermostat. I am using solar DC power
-			hooked directly to the bottom heater element. As long as you don't overdo it with the number
-			of panels this works fine. If you do overheat, your P&T valve will open and let some hot water
-			out. You can hear this if it happens. Make sure you test your P&T valve yearly by pulling the
-			lever and listening for water flow.
-		</p>
-	</article>
-
-	<article class="faq">
 		<figure>
 			<img alt="mixing valve" src="solarShed/mixValve1.jpg" style="max-width: 300px;" />
 			<figcaption>My Mixing Valve</figcaption>
 		</figure>
 		<h2>What is a thermostatic mixing valve?</h2>
 		<p>
-			A mixing valve mixes some cold water in with the hot to maintain a set output temperature. You
-			install it at the output from the water heater where the hot water is piped to the rest of the
-			house. Adding this valve prevents excessively hot water from burning you, and allows you to
-			store more energy. An example is the <a
+			A mixing valve mixes some cold water in with the hot to maintain a set output temperature. In
+			the summer,the water will get hotter then is safe so you definitely need a thermostatic mixing
+			valve to prevent scalds. The extra hot water in the tank increases the amount of energy you
+			can store. I have made it through three cloudy days in a row before I need to use city power
+			to heat the water. You install it at the output from the water heater where the hot water is
+			piped to the rest of the house. Adding this valve prevents excessively hot water from burning
+			you, and allows you to store more energy. An example is the <a
 				href="https://www.nibco.com/nibco-products/system-management/temperature-control/thermostatic-mixing-valves/h-tmv-131"
 				>Webstone TMV</a
 			> which costs $115 and handles hot water up to 85C.
+		</p>
+	</article>
+
+	<article class="faq">
+		<figure>
+			<img src="mppt_thermostat.jpg" style="max-width: 300px;" />
+			<figcaption>MPPT thermostat</figcaption>
+		</figure>
+		<h2>Do I need a thermostat?</h2>
+		<p>
+			The AC thermostat built into the water heater will not last long if you try to use it on DC
+			power. DC arcs a lot worse then AC since there is no zero-crossing to extinguish the arc. If
+			your array is not too oversized you can make do with only a mixing valve and no thermostat.
+			The standby losses of the water heater <a
+				href="https://en.wikipedia.org/wiki/Newton%27s_law_of_cooling">increase proportionally</a
+			>
+			with the hot water temperature. This helps to bring the system into equilibrium. If you want
+			to use an array larger then 1kW or so, or you have a water heater with a high UEF (good
+			insulation) you should use a thermostat. They make
+			<a href="https://www.ebay.com/itm/263523458861"> thermostats with MPPT built in</a> so you do not
+			have to worry much about impedance matching your heating element.
+		</p>
+	</article>
+
+	<article class="faq">
+		<h2>What are standby losses?</h2>
+		<p>
+			The standby loss is how much heat energy leaks out through the water tank insulation and the
+			attached pipes. It
+			<a
+				href="https://www.energytrust.org/wp-content/uploads/2017/11/Water_Heater_Energy_Storage_wStaffResponse.pdf"
+				>varies widely</a
+			>, from 20W for a new well-insulated tank to 200W for an old badly insulated tank. The higher
+			your tank's UEF rating, the lower the standby losses. If your tank has a UEF rating above
+			0.93, you probably want to use a thermostat so your tank will not overheat when you go on
+			summer vacation.
+		</p>
+	</article>
+
+	<article class="faq">
+		<h2>Really you don't use thermostat?</h2>
+		<p>
+			My system has been running for three years with no thermostat. BUT I have a crappy old water
+			heater with bad insulation, and I have trees that shade the solar panels for about 1/2 of the
+			day.  I think most people would want a thermostat. 
+		</p>
+	</article>
+
+	<article class="faq">
+		<figure>
+			<img src="solarShed/pAndTValve.webp" style="max-width: 300px;" />
+			<figcaption>T&P Valve</figcaption>
+		</figure>
+		<figure>
+			<img alt="mixing valve" src="tempering-diagram.jpg" style="max-width: 300px;" />
+			<figcaption>The T&P valve is popping</figcaption>
+		</figure>
+		<h2>What is a Temperature and Pressure (T&P) Relief valve?</h2>
+		<p>
+			The T&P valve is a safety device that will spill some hot water out if your water heater gets
+			too hot or has too high pressure. T&P valves used on residential water heaters are designed to
+			open at 150 psi or 98C. When water is heated it expands. In a 40-gallon water heater, water
+			being heated to the thermostat setting expands by approximately 1/2 gallon. In most houses the
+			extra pressure will push back into the city water supply but if you have a really tight
+			backflow preventer installed on the water main feeding the house there is nowhere for the
+			pressure to go.
+			<a href="https://www.watts.com/resources/references-tools/t-and-p-relief-valves"
+				>If you find your T&P is popping you may need an expansion tank.</a
+			>
+			Make sure you test your T&P valve yearly by pulling the lever and listening for water flow.
 		</p>
 	</article>
 
@@ -286,7 +328,7 @@
 			Squirrels chewed some of the wires and I had to replace them. A cheap ebay inline fuse holder
 			melted. 2/5 DC solar optimizers failed. I am not sure the optimizers were worth it, they only
 			get you 20-30% more power. The panels are not quite steep enough to shed snow by themselves,
-			sometime I have to clean them manually. I noticed some of the lag screws holding the solar
+			sometimes I have to clean them manually. I noticed some of the lag screws holding the solar
 			rails down loosened up. Might want to give the system a yearly once over to check for lose
 			bolts and chewed wires.
 		</p>
