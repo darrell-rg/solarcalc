@@ -316,9 +316,9 @@
 
 		The important numbers are <b>Tank Size</b> and <b>Persons In Household</b>
 
-		
-		<br /> <br /> If you want to plug in the exact numbers from your water heater, look at the yellow energy star sticker or <a href="https://www.ahridirectory.org/NewSearch?programId=24&searchTypeId=3 ">search here.</a>
-		
+		<br /> <br /> If you want to plug in the exact numbers from your water heater, look at the
+		yellow energy star sticker or
+		<a href="https://www.ahridirectory.org/NewSearch?programId=24&searchTypeId=3 ">search here.</a>
 	</span>
 	<span>
 		<Box>
@@ -713,5 +713,8 @@
 		h1 {
 			font-size: 4em;
 		}
+	}
+	input:read-only {
+		background-color: grey;
 	}
 </style>
