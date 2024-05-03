@@ -237,6 +237,7 @@ def nsrdb_plot(df, day, filename, tankSize = 189, startingTemp = 40, uef=0.9):
     if not os.path.exists(filename):
         # Create a figure
         fig = plt.figure(figsize=(15, 8))
+        tkw = dict(size=4, width=1.5)
         ax = fig.add_subplot(4, 1, (1))
         twin1  = ax.twinx()
         ax.set_ylim(-50, 1050)
@@ -255,11 +256,15 @@ def nsrdb_plot(df, day, filename, tankSize = 189, startingTemp = 40, uef=0.9):
         heatCapOfWater = 4186; # j/l/k
         singleDay["Mixing Valve Limit"] = 85
         singleDay["T&P Valve Limit"] = 98
+        singleDay["Desired Output Temp"] = startingTemp
+
+        #TODO: improve standby loss estimate
         singleDay["standbyLoss"] = 100 
         if uef > 0.92:
             singleDay["standbyLoss"] = 60 
         if uef > 0.94:
             singleDay["standbyLoss"] = 30 
+
         singleDay["Net Power"]  =  singleDay["generation"] - singleDay["standbyLoss"] 
         singleDay["energyFlux"]  =  singleDay["Net Power"]* 60 * float(interval)
         singleDay["Tank Temperature"] =  (singleDay["energyFlux"].cumsum()  /  (heatCapOfWater * tankSize) ) + startingTemp
@@ -267,44 +272,37 @@ def nsrdb_plot(df, day, filename, tankSize = 189, startingTemp = 40, uef=0.9):
         total_kWh = jouleSum * 0.0000002778 
 
         d = convert_day_of_year(day)
-        ax.set_title(f"{d},  Net Energy Harvest = {total_kWh:.2f} (kWh)")
+        ax.set_title(f"{d},  Net Thermal Energy Gain = {total_kWh:.2f} (kWh)")
     
-        p1 = ax.plot( 'DNI',"-s", data=singleDay, label="DNI" )
-        p1 = ax.plot( 'DHI',"->", data=singleDay )
-        p1 = ax.plot( 'GHI',"-o", data=singleDay )
-        
-        p2 = ax2.plot("Tank Temperature", "b-o", data=singleDay)
-        ax2.plot("Mixing Valve Limit", "r--", data=singleDay)
-        ax2.plot("T&P Valve Limit", "r-", data=singleDay)
-
-       
-        
-
-
-        tkw = dict(size=4, width=1.5)
+        ax.plot( 'DNI',"-s", data=singleDay, label="DNI" )
+        ax.plot( 'DHI',"->", data=singleDay )
+        ax.plot( 'GHI',"-o", data=singleDay )
         ax.grid(False)
         ax.tick_params('x', labelbottom=False)
         ax.set_ylabel("Solar Radiation (W/m2)")
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%H'))
-        # ax.yaxis.label.set_color("y"
-        
+
         twin1.plot("Temperature", "k--", data=singleDay)
         twin1.yaxis.label.set_color("k")
         twin1.set_ylabel("Outside Air(℃)")
         twin1.tick_params(axis='y', colors="k", **tkw)
+        
+        ax2.plot("T&P Valve Limit", "r-", data=singleDay)
+        ax2.plot("Mixing Valve Limit", "r--", data=singleDay)
+        ax2.plot("Tank Temperature", "b-o", data=singleDay)
+        ax2.plot("Desired Output Temp", "k-.", data=singleDay)
+        ax2.set_ylabel("Mean Water Tank Temperature (℃)")
+        ax2.yaxis.label.set_color("b")
+        ax2.tick_params(axis='y', colors="b", **tkw)
         
         twin2.plot("Net Power", "g-", data=singleDay)
         twin2.set_ylabel("Net Water Heating Power(W)")
         twin2.tick_params(axis='y', colors="g", **tkw)
         twin2.yaxis.label.set_color("g")
         twin2.grid(False)
-        
-        ax2.set_ylabel("Mean Water Tank Temperature (℃)")
-        ax2.yaxis.label.set_color("b")
-        ax2.tick_params(axis='y', colors="b", **tkw)
 
-        ax.legend(loc=2, ncol=3, frameon=True)
-        ax2.legend(loc=2, ncol=3, frameon=False)
+        ax.legend(loc=2, ncol=4, frameon=False)
+        ax2.legend(loc=2, ncol=4, frameon=False)
         twin2.legend(loc=1, ncol=1, frameon=False)
         twin1.legend(loc=1, ncol=1, frameon=False)
 

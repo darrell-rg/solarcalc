@@ -45,13 +45,16 @@
 		</p>
 	</article>
 
-	<article class="faq">
+	<article class="faq">		<figure>
+		<img alt="shutoff switch" src="gpd_estimate.png" style="max-width: 300px;" />
+		<figcaption>Hot Water Used vs. Household Size</figcaption>
+	</figure>
 		<h2>How much hot water do I use?</h2>
 		<p>
 			According <a href="https://www.fsec.ucf.edu/en/publications/pdf/fsec-pf-464-15.pdf"
 				>Estimating Daily Domestic HotWater Use in North American Homes</a
 			> people use about 64 liters/person/day on average in a four person household. This seems high
-			to me, our house with 2 adults and 2 kids uses about half that. I have noticed that I am more aware
+			to me, our house with 2 adults and 2 kids and we rarely use more then 150liters/day. I have noticed that I am more aware
 			of how much hot water I am using after installing this system. On sunny days I use more and on
 			cloudy days I use less.
 		</p>
@@ -70,7 +73,7 @@
 	<article class="faq">
 		<figure>
 			<img alt="shutoff switch" src="Source_and_load_circuit.svg" style="max-width: 300px;" />
-			<figcaption>Rs = RL for MAX POWER</figcaption>
+			<figcaption>IF  R<sub>S</sub>==R<sub>L</sub> THEN power='Maximum!'</figcaption>
 		</figure>
 		<h2>What is impedance matching and why does it matter?</h2>
 		<p>

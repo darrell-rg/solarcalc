@@ -478,12 +478,12 @@
 				<tr>
 					<th>Month</th>
 					<th>Days</th>
-					<th>Insolation</th>
+					<th>Insolation (kWh/m2/day) </th>
 					<th>Energy Demand (kWh)</th>
-					<th>Solar Energy (kWh)</th>
+					<th>Solar Generation (kWh<sub>dc</sub>)</th>
 					<th>Solar Power Used (%)</th>
 					<th>City Power Used (%)</th>
-					<th>Savings ($)</th>
+					<th>Solar Power Value ($)</th>
 				</tr>
 				{#each monthData as m}
 					<tr>
@@ -499,7 +499,7 @@
 				{/each}
 				<tfoot>
 					<tr>
-						<th scope="row" colspan="7">Estimated Total Annual Savings:</th>
+						<th scope="row" colspan="7">Estimated Value Of Generated Solar Power:</th>
 						<th colspan="1">${round(yearlySavings)}</th>
 					</tr>
 				</tfoot>
@@ -536,7 +536,7 @@
 	</span>
 	<span>
 		<figure>
-			<img alt="SolarSimGraph" src="graph_day_251.png" id="solarGraph" />
+			<img alt="SolarSimGraph" src="sampleGraph.png" id="solarGraph" />
 		</figure>
 	</span>
 	<p>Graph Assumptions:</p>
