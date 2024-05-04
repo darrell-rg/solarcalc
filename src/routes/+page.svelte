@@ -443,7 +443,7 @@
 				<b>Vmp, Imp</b>, find these in the spec sheet of your solar panels (<a
 					href="CS-Datasheet-BiHiKu7_CS7N-MB-AG_v2.4_EN.pdf">example</a
 				>) , use the STC values. These are the volts and amps your panel will make with a Solar
-				irradiance of 1,000 W/m2, cell temperature of 25°C (77°F).
+				irradiance of 1,000 W/m<sup>2</sup>, cell temperature of 25°C (77°F).
 			</p>
 
 			<p>
@@ -498,7 +498,7 @@
 				<tr>
 					<th>Month</th>
 					<th>Days</th>
-					<th>Insolation (kWh/m2/day) </th>
+					<th>Insolation (kWh/m<sup>2</sup>/day) </th>
 					<th>Energy Demand (kWh)</th>
 					<th>Solar Generation (kWh<sub>dc</sub>)</th>
 					<th>Solar Power Used (%)</th>
@@ -556,7 +556,7 @@
 	</span>
 	<span>
 		<figure>
-			<img alt="SolarSimGraph" src="sampleGraph.png" id="solarGraph" />
+			<img alt="SolarSimGraph" src="sampleGraph.png" id="solarGraph" style="padding-top:10px;"/>
 		</figure>
 	</span>
 	<p>Graph Assumptions:</p>

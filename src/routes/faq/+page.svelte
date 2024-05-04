@@ -9,11 +9,11 @@
 
 <div class="text-column">
 	<h1>FAQ</h1>
+	<figure class="floatRightBig">
+		<HousePic style="" />
+		<figcaption>This is the entire schematic, simple eh?</figcaption>
+	</figure>
 	<article class="faq">
-		<figure>
-			<HousePic style="float:right; width: 400px;" />
-			<figcaption>This is the entire schematic, simple eh?</figcaption>
-		</figure>
 		<h2>What are we even doing here?</h2>
 		<p>
 			This site teaches you how to hook some photo voltaic (PV) solar panels to the bottom element
@@ -45,35 +45,37 @@
 		</p>
 	</article>
 
-	<article class="faq">		<figure>
-		<img alt="shutoff switch" src="gpd_estimate.png" style="max-width: 300px;" />
-		<figcaption>Hot Water Used vs. Household Size</figcaption>
-	</figure>
+	<article class="faq">
+		<figure>
+			<img alt="shutoff switch" src="gpd_estimate.png" class="rightSideImg" />
+			<figcaption>Hot Water Used vs. Household Size</figcaption>
+		</figure>
 		<h2>How much hot water do I use?</h2>
 		<p>
 			According <a href="https://www.fsec.ucf.edu/en/publications/pdf/fsec-pf-464-15.pdf"
 				>Estimating Daily Domestic HotWater Use in North American Homes</a
 			> people use about 64 liters/person/day on average in a four person household. This seems high
-			to me, our house with 2 adults and 2 kids and we rarely use more then 150liters/day. I have noticed that I am more aware
-			of how much hot water I am using after installing this system. On sunny days I use more and on
-			cloudy days I use less.
+			to me, our house with 2 adults and 2 kids and we rarely use more then 150liters/day. I have noticed
+			that I am more aware of how much hot water I am using after installing this system. On sunny days
+			I use more and on cloudy days I use less.
 		</p>
 	</article>
 
 	<article class="faq">
 		<h2>How much energy can I store in my water heater?</h2>
 		<p>
-			If you assume the water starts off warm, heating from 40°C to 85°C, stores 9.89kWh. If you assume you are pulling water from the cold ground, heating 50 gallons from 5°C(ground temp) to 85°C stores  17.5kWh.  A Tesla Powerwall,
-			stores about 13.5kWh. For both the water heater and the Powerwall, you can expect an
-			efficiency of about 90%. The powerwall cost around $9,300, and you should be able to DIY this
-			system for around $2,000.
+			If you assume the water starts off warm, heating from 40°C to 85°C, stores 9.89kWh. If you
+			assume you are pulling water from the cold ground, heating 50 gallons from 5°C(ground temp) to
+			85°C stores 17.5kWh. A Tesla Powerwall, stores about 13.5kWh. For both the water heater and
+			the Powerwall, you can expect an efficiency of about 90%. The powerwall cost around $9,300,
+			and you should be able to DIY this system for around $2,000.
 		</p>
 	</article>
 
 	<article class="faq">
 		<figure>
-			<img alt="shutoff switch" src="Source_and_load_circuit.svg" style="max-width: 300px;" />
-			<figcaption>IF  R<sub>S</sub>==R<sub>L</sub> THEN power='Maximum!'</figcaption>
+			<img alt="shutoff switch" src="Source_and_load_circuit.svg" class="rightSideImg" />
+			<figcaption>IF R<sub>S</sub>==R<sub>L</sub> THEN power='Maximum!'</figcaption>
 		</figure>
 		<h2>What is impedance matching and why does it matter?</h2>
 		<p>
@@ -81,16 +83,16 @@
 				>Maximum Power Transfer theorem</a
 			> says we want to match the load impedance to the source impedance. To get the full capacity of
 			the panels, it necessary to choose a water heater element that matches the source impedance(Vmp/Immp)
-			of the solar panel array. You can also use DC solar optimizers or a MPPT thermostat, they will match the impedance
-			for you (within reason). If you have a lot of partial shading, the optimizers MIGHT be worth it.
-			In many cases, carefully selecting the resistance of your heater element is good enough. There
-			is a calculator on the simulator page to help you with this.
+			of the solar panel array. You can also use DC solar optimizers or a MPPT thermostat, they will
+			match the impedance for you (within reason). If you have a lot of partial shading, the optimizers
+			MIGHT be worth it. In many cases, carefully selecting the resistance of your heater element is
+			good enough. There is a calculator on the simulator page to help you with this.
 		</p>
 	</article>
 
 	<article class="faq">
 		<figure>
-			<img src="solarShed/deadTigos.jpg" style="max-width: 300px;" />
+			<img src="solarShed/deadTigos.jpg" class="rightSideImg" />
 			<figcaption>Dead TS4-A-O solar optimizers</figcaption>
 		</figure>
 		<h2>What DC solar optimizers did you try?</h2>
@@ -153,11 +155,9 @@
 		</p>
 	</article>
 
-
-
 	<article class="faq">
 		<figure>
-			<img alt="shutoff switch" src="solarShed/switch1.jpg" style="max-width: 300px;" />
+			<img alt="shutoff switch" src="solarShed/switch1.jpg" class="rightSideImg" />
 			<figcaption>Solar Shutoff Switch</figcaption>
 		</figure>
 		<h2>What kind of shutoff switch do I need?</h2>
@@ -184,7 +184,7 @@
 
 	<article class="faq">
 		<figure>
-			<img alt="mixing valve" src="solarShed/mixValve1.jpg" style="max-width: 300px;" />
+			<img alt="mixing valve" src="solarShed/mixValve1.jpg" class="rightSideImg" />
 			<figcaption>My Mixing Valve</figcaption>
 		</figure>
 		<h2>What is a thermostatic mixing valve?</h2>
@@ -204,7 +204,7 @@
 
 	<article class="faq">
 		<figure>
-			<img src="mppt_thermostat.jpg" style="max-width: 300px;" />
+			<img src="mppt_thermostat.jpg" class="rightSideImg" />
 			<figcaption>MPPT thermostat</figcaption>
 		</figure>
 		<h2>Do I need a thermostat?</h2>
@@ -215,9 +215,9 @@
 			The standby losses of the water heater <a
 				href="https://en.wikipedia.org/wiki/Newton%27s_law_of_cooling">increase proportionally</a
 			>
-			with the hot water temperature. This helps to bring the system into equilibrium. If you want
-			to use an array larger then 1kW or so, or you have a water heater with a high UEF (good
-			insulation) you should use a thermostat. They make
+			with the hot water temperature. This helps to bring the system into equilibrium. If you want to
+			use an array larger then 1kW or so, or you have a water heater with a high UEF (good insulation)
+			you should use a thermostat. They make
 			<a href="https://www.ebay.com/itm/263523458861"> thermostats with MPPT built in</a> so you do not
 			have to worry much about impedance matching your heating element.
 		</p>
@@ -243,17 +243,17 @@
 		<p>
 			My system has been running for three years with no thermostat. BUT I have a crappy old water
 			heater with bad insulation, and I have trees that shade the solar panels for about 1/2 of the
-			day.  I think most people would want a thermostat. 
+			day. I think most people would want a thermostat.
 		</p>
 	</article>
 
 	<article class="faq">
 		<figure>
-			<img src="solarShed/pAndTValve.webp" style="max-width: 300px;" />
+			<img alt="T&P valve" src="solarShed/pAndTValve.webp" class="rightSideImg" />
 			<figcaption>T&P Valve</figcaption>
 		</figure>
 		<figure>
-			<img alt="mixing valve" src="tempering-diagram.jpg" style="max-width: 300px;" />
+			<img alt="T&P valve popping" src="tempering-diagram.jpg" class="rightSideImg" />
 			<figcaption>The T&P valve is popping</figcaption>
 		</figure>
 		<h2>What is a Temperature and Pressure (T&P) Relief valve?</h2>
@@ -373,5 +373,25 @@
 	figure {
 		float: right;
 		clear: both;
+		/* width: 500px; */
+	}
+
+	.rightSideImg {
+		max-width: 400px;
+		min-width: 200px;
+	}
+
+	.floatRightBig {
+		width: 500px;
+	}
+
+	@media (max-width: 481px) {
+		.floatRightBig {
+			width: 310px;
+		}
+		.rightSideImg {
+			max-width: 300px;
+			min-width: 200px;
+		}
 	}
 </style>
