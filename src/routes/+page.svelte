@@ -27,10 +27,10 @@
 	}
 
 	let wireGuages = [
-		{ id: 1, r: 2.1, text: `8AWG, 2.1 Ω/km` },
-		{ id: 2, r: 3.35, text: `10AWG, 3.35 Ω/km` },
-		{ id: 3, r: 5.31, text: `12AWG,  5.31  Ω/km` },
-		{ id: 4, r: 8.46, text: `14AWG,  8.46  Ω/km` }
+		{ id: 1, r: 2.1, text: `8AWG 2.1Ω/km 40A max` },
+		{ id: 2, r: 3.35, text: `10AWG 3.35Ω/km 30A max` },
+		{ id: 3, r: 5.31, text: `12AWG 5.31Ω/km 20A max` },
+		{ id: 4, r: 8.46, text: `14AWG 8.46Ω/km 15A max` }
 	];
 
 	let moduleTypes = [
@@ -184,10 +184,13 @@
 		// console.log(runMonthlySimButton)
 		runMonthlySimButton.srcElement.setAttribute('disabled', true);
 
+		document.getElementById('apiWarn')?.setAttribute('style', '');
+
 		fetch(url)
 			.then((response) => response.json())
 			.then((data) => {
 				runMonthlySimButton.srcElement.removeAttribute('disabled');
+				document.getElementById('apiWarn')?.setAttribute('style', 'display:none;');
 				months.forEach((month, index) => {
 					let m = {
 						month: months[index],
@@ -352,12 +355,14 @@
 	<span>
 		<Box>
 			<p>
-				<b>TankSize</b> Most water heaters are 30-60 gallons in size. A bigger water heater can store
-				more energy to bridge cloudy days. For showers, you want water at around 40C, but for washing
-				dishes it helps to have it at 50C. If you install a thermostatic mixing valve you can increase
-				the effective size of the tank.
+				<b>TankSize</b> Most water heaters are 30-60 gallons (113-226 liters) in size. A bigger water
+				heater can store more energy to bridge cloudy days.
 			</p>
-
+			<p>
+				<b>Desired Output Temp</b> 40°C(104°F) is good enough for showers, but for washing dishes it helps
+				to have it at 50°C(122°F). The thermostatic mixing valve and the top element (city power) thermostat
+				should be set to this temperature.
+			</p>
 			<p>
 				<b>Energy Factor (UEF)</b> this is rating of how efficient your water heater is. Most
 				electric heaters have an <b>UEF</b> of about 0.9, which means they waste about 10% of the energy
@@ -382,11 +387,13 @@
 <div class="smol-sidebar">
 	<span data-text>
 		<h2>Step 3</h2>
-		Impedance matching calculator. Use this to figure out the optimal resistance for your water heater
-		element.
-		<br /> <br />
-		Set <b>Azimuth </b> and <b>Elevation</b> to match the roof where you plan to install the panels.
+		Set<b>Azimuth </b> and <b>Elevation</b> to match the roof where you plan to install the panels.
 		The ideal elevation is equal to your Latitude.
+		<br /> <br />
+		Put in the rest of the specs for the solar panels you want to Simulate, or use the defaults to start.
+		<br /> <br />
+		The bottom of this section will show you the source impedance you want to match with your water heater
+		element.
 	</span>
 	<span>
 		<Box>
@@ -447,26 +454,30 @@
 			</p>
 
 			<p>
-				<b>Isc of parallel strings</b> All your wires/connectors/switches/breakers must be rated to at
-				least this.
+				<b>Isc of parallel strings</b> This is the max current your panels can make when shorted. All
+				your wires/connectors/switches/breakers must be rated to at least this.
 			</p>
 
 			<p>
-				<b>Voc</b> this is max voltage your panels can make. Everything in your system needs to be
-				rated to at least <b>Voc of full string</b>. Common solar wire and connectors are rated to
-				600V.
+				<b>Voc</b> this is max open circuit voltage your panels can make. Everything in your system
+				needs to be rated to at least <b>Voc of full string</b>. Common solar wire and connectors
+				are rated to 600V.
 			</p>
 
 			<p>
 				<b>Panels per string, Parallel Strings</b> If possible, use a single series string. If you are
-				using small panels it is possible to parallel more then one string but the strings should be
-				well matched.
+				using small panels you can parallel more then one string but the strings should be well matched.
 			</p>
 
 			<p>
 				<b>Source Impedance</b> is the resistance value you want to match with your lower heating
 				element. I suggest a <b>Mismatch</b> below 20% is good enough; the heater elements are not made
 				to a very precise resistance anyway.
+			</p>
+
+			<p>
+				<b>Wire Gauge</b> most solar installs use 10AWG 600V wire. You can reduce your losses a bit if
+				you use 8AWG wire.
 			</p>
 		</Box>
 	</span>
@@ -476,22 +487,25 @@
 	<span data-text>
 		<h2>Step 4</h2>
 		<p>
-			Click <b>Simulate Monthly Generation For TMY</b> This will feed the simulator with the solar panel
-			data you entered above and Typical Meteorological Year Data (TMY) for your lat/lng. This calls
-			a NREL PVwatts API rate limited to 1000 req/day so you may have to try again tomorrow if it is
-			not working.
+			Click <b>Simulate Monthly Generation</b> This will feed the simulator with the solar panel data
+			you entered above and Typical Meteorological Year Data (TMY) 2020 for your lat/lng.
 		</p>
-
+		<p>
+			If you are going much over 100% for <b>Solar Power Used</b> your array is bigger then it needs
+			to be.
+		</p>
 		<hr />
-
-		<button on:click={(e) => updateMonthlyTable(e)}>Simulate Monthly Generation For TMY</button>
+		<button on:click={(e) => updateMonthlyTable(e)}>Simulate Monthly Generation</button>
 		<Input
 			bind:val={losses}
 			label="Losses (dirt, snow, aging, etc.) If your panels are shaded 1/3 of the day, then add 33% to losses."
 			units="%"
 		/>
 		<br />
-		<br />
+		<p id="apiWarn" style="display: none;">
+			This calls a NREL PVwatts API rate limited to 1000 req/day so you may have to try again
+			tomorrow if it is not working.
+		</p>
 		<div>
 			<!-- <TestSvg/> -->
 			<table class="monthTable">
@@ -530,8 +544,8 @@
 		<p>
 			This graph uses the TMY simulation data to help you size your array. <span class="blue"
 				><b>Mean Tank Temperature</b></span
-			> assumes fully mixed water. On most days, your tank will not get as hot as the graph shows because
-			you will be using hot water.
+			> assumes fully mixed water. On most days, the tank will not get as hot as the graph shows because
+			you will be using withdrawing hot water from the top, which adds cold water to the bottom.
 		</p>
 		<p>
 			Click a <b>Graph random day</b> button a few times until you find a nice sunny day (lots of
@@ -556,32 +570,28 @@
 	</span>
 	<span>
 		<figure>
-			<img alt="SolarSimGraph" src="sampleGraph.png" id="solarGraph" style="padding-top:10px;"/>
+			<img alt="SolarSimGraph" src="sampleGraph.png" id="solarGraph" style="padding-top:10px;" />
 		</figure>
 	</span>
 	<p>Graph Assumptions:</p>
 
 	<ul>
 		<li>No hot water withdraws (aka nobody is home)</li>
-		<li>
-			On most days, the water will not get as hot as the graph shows because you will be using hot
-			water.
-		</li>
 		<li>The tank water starts at your <b>Desired Output Temp</b> ({hotWaterOutTemp}℃)</li>
-		<li><span class="blue"><b>Mean Tank Temperature</b></span> assumes fully mixed water.</li>
 		<li>
-			In the real world the hottest water moves to the top of the tank and the coldest to the
-			bottom.
+			<span class="blue"><b>Mean Tank Temperature</b></span> assumes fully mixed water. In the real world
+			the hottest water moves to the top of the tank and the coldest to the bottom.
 		</li>
 		<li>
 			The <span class="green"><b>Net Water Heating Power</b></span> will be negative when there is
 			no sun. These are the standby losses estimated from your UEF ({energyFactor})
 		</li>
-		<li>The top element is disconnected (no city power)</li>
-		<li>No thermostat is installed on the bottom element.</li>
+		<li>The top element is disconnected (no city power).</li>
 		<li>
-			If there was a thermostat the <span class="blue"><b>Mean Tank Temperature</b></span> would not
-			exceed the <span class="red"><b>Mixing Valve Limit</b> </span>
+			No thermostat is installed on the bottom element. If there was a thermostat the <span
+				class="blue"><b>Mean Tank Temperature</b></span
+			>
+			would not exceed the <span class="red"><b>Mixing Valve Limit</b> </span>
 		</li>
 	</ul>
 </div>
