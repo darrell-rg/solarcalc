@@ -262,7 +262,7 @@ def nsrdb_plot(df, day, filename, tankSize = 189, startingTemp = 40, uef=0.9):
         singleDay["standbyLoss"] = 60 
         if uef > 0.92:
             singleDay["standbyLoss"] = 40 
-        if uef > 0.94
+        if uef > 0.94:
             singleDay["standbyLoss"] = 20 
 
         singleDay["Net Power"]  =  singleDay["generation"] - singleDay["standbyLoss"] 
