@@ -259,11 +259,11 @@ def nsrdb_plot(df, day, filename, tankSize = 189, startingTemp = 40, uef=0.9):
         singleDay["Desired Output Temp"] = startingTemp
 
         #TODO: improve standby loss estimate
-        singleDay["standbyLoss"] = 100 
+        singleDay["standbyLoss"] = 60 
         if uef > 0.92:
-            singleDay["standbyLoss"] = 60 
-        if uef > 0.94:
-            singleDay["standbyLoss"] = 30 
+            singleDay["standbyLoss"] = 40 
+        if uef > 0.94
+            singleDay["standbyLoss"] = 20 
 
         singleDay["Net Power"]  =  singleDay["generation"] - singleDay["standbyLoss"] 
         singleDay["energyFlux"]  =  singleDay["Net Power"]* 60 * float(interval)

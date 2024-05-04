@@ -52,8 +52,8 @@
 </script>
 
 <svelte:head>
-	<title>About</title>
-	<meta name="description" content="About this app" />
+	<title>PVH2O BOM</title>
+	<meta name="description" content="Bill Of Materials" />
 </svelte:head>
 
 <div class="text-column">

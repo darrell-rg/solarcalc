@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-	<title>FAQ</title>
+	<title>PVH20 FAQ</title>
 	<meta name="description" content="Frequently asked Questions" />
 </svelte:head>
 

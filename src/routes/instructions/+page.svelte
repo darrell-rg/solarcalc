@@ -1,13 +1,19 @@
 <script>
+	import HousePic from "$lib/components/HousePic.svelte";
+
 </script>
 
 <svelte:head>
-	<title>Instructions</title>
-	<meta name="description" content="About this app" />
+	<title>PVH2O Instructions</title>
+	<meta name="description" content="Building Solar Photo Voltaic Hot Water System" />
 </svelte:head>
 
 <div class="text-column">
 	<h1>Instructions</h1>
+	<figure class="floatRightBig">
+		<HousePic style="" />
+		<figcaption>Soon it will be you enjoying that shower</figcaption>
+	</figure>
 	<ol>
 		<li>
 			Calculate/Design
@@ -156,8 +162,19 @@
 		max-width: 75%;
 	}
 
-	/* figure {
+	.floatRightBig {
+		width: 500px;
 		float: right;
 		clear: both;
-	} */
+	}
+
+	@media (max-width: 481px) {
+		.floatRightBig {
+			width: 310px;
+		}
+		.rightSideImg {
+			max-width: 300px;
+			min-width: 200px;
+		}
+	}
 </style>
