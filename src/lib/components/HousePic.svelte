@@ -26,7 +26,7 @@
 	});
 </script>
 
-<svg viewBox="-50 -50 100 100" style={style}>
+<svg viewBox="-50 -50 100 100" {style}>
 	<mask id="myMask">
 		<!-- Everything under a white pixel will be visible -->
 		<rect x="0" y="0" width="100" height="100" fill="white" />
@@ -65,7 +65,9 @@
 		transform="rotate(90)"
 	/>
 
-	<circle class="sun" r="8" fill="url('#sunGradient')" transform="translate(-36 -45.5) " />
+	<circle class="sun" r="8" fill="url('#sunGradient')" transform="translate(-36 -45.5) "
+		><title>The Sun</title></circle
+	>
 
 	<polygon
 		class="wall"
@@ -85,9 +87,10 @@
 			height="50"
 			rx="2"
 			fill="url(#waterHeaterGradient)"
-		/>
+		>
+			<title>Water Heater</title></rect
+		>
 
-		
 		<path
 			class="heatingElement"
 			d="
@@ -95,8 +98,8 @@
 		M -20,-2 h 18
 		q 2,2  0,4
 		"
-			transform="translate(-9 31.5) scale(0.9)"
-		/>
+			transform="translate(-9 31.5) scale(0.9)"><title>Heating element</title></path
+		>
 
 		{#each Array(10) as _, i}
 			<path
@@ -108,87 +111,75 @@
 	</g>
 
 	<g id="waterPipes">
-		<polyline class="coldWater" points="50,46 -15,46 -15,37 " />
+		<polyline class="coldWater" points="50,46 -15,46 -15,37 "><title>Cold Water</title></polyline>
+		<polyline class="coldWater" points="3.5,46 3.5,-10"><title>Cold Water</title></polyline>
+		<polyline class="hotWater" points="-12,-10 0,-10"><title>Very Hot Water</title></polyline>
 
-		<polyline class="coldWater" points="4,46 4,-10" />
-		<polyline class="hotWater" points="-12,-10 0,-10" />
-
-		<polyline class="pipe" points="0,-10 22,-10 22,-8" fill="none" />
-		<ellipse class="shower" cx="22" cy="-8" rx="6" ry="3" />
-		<rect class="valve" x="0" y="-12" width="8" height="8" rx="0.2" />
-
-		{#each Array(10) as _, i}
+		<g>
+			<polyline class="pipe" points="0,-10 22,-10 22,-8" fill="none"></polyline>
+			<ellipse class="shower" cx="22" cy="-8" rx="6" ry="3" />
+			{#each Array(10) as _, i}
+				<path
+					class="waterDrops"
+					d="M {i}, {(i % 2) / 2} v 18 "
+					transform="translate(18 -8) scale(0.9)"
+				/>
+			{/each}
+			<title>Safe Temperature, Warm Water</title>
+		</g>
+		<g>
+			<rect class="valve" x="0" y="-12" width="7" height="7" rx="0.2" />
 			<path
-				class="waterDrops"
-				d="M {i}, {(i % 2) / 2} v 18 "
-				transform="translate(18 -8) scale(0.9)"
+				transform="translate(0 -12) scale(0.025)"
+				d="M212,52a28,28,0,1,0,28,28A28.03146,28.03146,0,0,0,212,52Zm0,40a12,12,0,1,1,12-12A12.01343,12.01343,0,0,1,212,92Zm-52,51.27441V48a40,40,0,0,0-80,0v95.27441a60,60,0,1,0,80,0ZM120,24a24.02718,24.02718,0,0,1,24,24V80H96V48A24.02718,24.02718,0,0,1,120,24Z"
 			/>
-		{/each}
+			<title>Mixing Valve</title>
+		</g>
 	</g>
 
-	<g id="thermometer" transform="translate(-0.4 -12.5) scale(0.3)">
-		<style type="text/css">
-			.st0 {
-				fill: none;
-				stroke: #000000;
-				stroke-width: 2;
-				stroke-linecap: round;
-				stroke-linejoin: round;
-				stroke-miterlimit: 10;
-			}
-			.st1 {
-				fill: none;
-				stroke: #000000;
-				stroke-width: 2;
-				stroke-linejoin: round;
-				stroke-miterlimit: 10;
-			}
-		</style>
-		<path
-			class="st0"
-			d="M15,17.81V6c0-1.66-1.34-3-3-3S9,4.34,9,6v11.81C7.21,18.85,6,20.78,6,23c0,3.31,2.69,6,6,6s6-2.69,6-6
-	C18,20.78,16.79,18.85,15,17.81z"
-		/>
-		<circle class="st0" cx="12" cy="23" r="3" />
-		<line class="st0" x1="12" y1="13" x2="12" y2="20" />
-		<line class="st0" x1="20" y1="6" x2="25" y2="6" />
-		<line class="st0" x1="20" y1="10" x2="22" y2="10" />
-		<line class="st0" x1="20" y1="14" x2="25" y2="14" />
-		<line class="st0" x1="20" y1="18" x2="22" y2="18" />
-	</g>
 
 	<g class="electrical">
-		<!-- <polyline class='conduit' points ='-33,30 -33,-30  ' /> -->
-
 		<path
 			class="blackWire"
 			transform="translate(-32 -32) "
 			d="
-		M 0 0
-		V 65 
-		H 7 
-	"
-		/>
+				M 0 0
+				V 65 
+				H 7 
+			"><title>Solar Negative Wire</title></path
+		>
 
 		<path
 			class="redWire"
 			transform="translate(-30 -33) "
 			d="
-	M 0 0
-	V 63 
-	H 7 
-"
-		/>
+				M 0 0
+				V 63 
+				H 7 
+			"><title>Solar Positive Wire</title></path
+		>
 
+		<g>
+			<rect class="conduit" x="-28" y="29" width="5" height="5" rx="0.2" />
+			<path
+				transform="translate(-28.5 29) scale(0.02)"
+				d="M212,52a28,28,0,1,0,28,28A28.03146,28.03146,0,0,0,212,52Zm0,40a12,12,0,1,1,12-12A12.01343,12.01343,0,0,1,212,92Zm-52,51.27441V48a40,40,0,0,0-80,0v95.27441a60,60,0,1,0,80,0ZM120,24a24.02718,24.02718,0,0,1,24,24V80H96V48A24.02718,24.02718,0,0,1,120,24Z"
+			/>
+			<title>MPPT Thermostat</title>
+		</g>
 
-		<rect class="conduit" x="-28" y="29" width="5" height="5" rx="0.2" />
-		<polyline class="greenWire" points="-35,73 -35,-31" transform="translate(-1, 0) " />
+		<polyline class="greenWire" points="-35,73 -35,-31" transform="translate(-1, 0) "
+			><title>Ground Wire</title></polyline
+		>
 
-		<!-- the switch -->
-		<rect class="conduit" x="-38" y="-11" width="10" height="9" rx="0.2" />
-		<line class="onOff" x1="-33" y1="-5" x2="-33" y2="-10.5" />
-		<circle class="onOff" r="3" transform="translate(-33, -6) "></circle>
-		<line class="solarPanel" x1="-5" y1="-41" x2="-43" y2="-28" />
+		<g>
+			<!-- the switch -->
+			<rect class="conduit" x="-38" y="-11" width="10" height="9" rx="0.2" />
+			<line class="onOff" x1="-33" y1="-5" x2="-33" y2="-10.5" />
+			<circle class="onOff" r="3" transform="translate(-33, -6) "></circle>
+			<title>Disconnect Switch</title>
+		</g>
+		<line class="solarPanel" x1="-5" y1="-41" x2="-43" y2="-28"><title>Solar Panel</title></line>
 	</g>
 
 	{#if showShowerPerson}
@@ -286,18 +277,12 @@
 			/><path
 				d="M19.696 2H2v20h20V2zm-4.675 1A29.014 29.014 0 0 0 9.94 5.461l-.214.125C8.186 6.483 8.047 7.46 8.1 7.96a2.11 2.11 0 0 0 1.588 1.7c.402.131.87.39.823.875a1.83 1.83 0 0 1-1.653 1.321c-3.611.447-3.506 2.308-3.457 3.202.008.131.018.311.025.324A3.463 3.463 0 0 1 3 16.664V3zM21 21h-7.257c.17-.6.612-1.385 3.295-1.718 2.378-.295 2.293-2.152 2.225-3.644-.075-1.6-.133-2.894 1.737-3.381zm0-9.764c-2.904.628-2.81 2.823-2.736 4.448.075 1.637.049 2.432-1.349 2.606-3.37.417-3.93 1.59-4.19 2.656L12.71 21H7.7a6.94 6.94 0 0 0 .737-1.24 8.424 8.424 0 0 1 .498-.9 3.063 3.063 0 0 0 .234-.49c.362-.882 1.036-2.525 4.21-2.918 1.028-.128 1.588-.389 1.816-.849.28-.564-.058-1.144-.385-1.706-.575-.99-1.03-1.773.608-2.727C17.083 9.2 18.767 8.377 21 8.853zm0-3.387a8.461 8.461 0 0 0-6.085 1.457c-2.5 1.457-1.504 3.172-.968 4.093a2.486 2.486 0 0 1 .354.759c-.001.002-.128.188-1.043.301-3.755.466-4.636 2.614-5.013 3.532a2.101 2.101 0 0 1-.14.314 9.411 9.411 0 0 0-.56 1.006c-.415.826-.75 1.476-1.584 1.689H3v-3.31c1.326-.305 2.472-.573 3.259-1.753a1.47 1.47 0 0 0 .141-.935c-.045-.812-.101-1.821 2.582-2.154a2.802 2.802 0 0 0 2.526-2.218A1.87 1.87 0 0 0 10 8.71c-.52-.17-.867-.498-.905-.855-.047-.445.366-.957 1.134-1.404l.215-.126A21.544 21.544 0 0 1 19.714 3H21z"
 			/><path fill="none" d="M0 0h24v24H0z" />
+			<title>Shower Door</title>
 		</g>
 	{/if}
 </svg>
 
 <style>
-	svg {
-		/* width: 100%;
-		height: 100%; 
-		border: 1px solid red;
-		*/
-	}
-
 	.wall {
 		stroke: burlywood;
 		fill: white;
@@ -342,7 +327,7 @@
 	}
 
 	.solarPanel {
-		stroke-width: 1.2;
+		stroke-width: 2;
 		stroke: blue;
 		fill: lightblue;
 	}
@@ -412,12 +397,4 @@
 		fill: none;
 		stroke-width: 1;
 	}
-	/* 
-	.second, .second-counterweight {
-		stroke: rgb(180,0,0);
-	}
-
-	.second-counterweight {
-		stroke-width: 3;
-	} */
 </style>

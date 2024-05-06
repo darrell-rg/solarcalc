@@ -9,7 +9,7 @@
 
 
 <label>
-	 <input readonly={readonly} type=number bind:value={val} min={min} max={max}> 
+	 <input readonly={readonly} bind:value={val} min={min} max={max}> 
 	 {#if units}
 	 ({units}) 
 	 {/if}
@@ -23,5 +23,6 @@
 		border: 2px solid white;
 		box-shadow: none;
 		background-color: whitesmoke;
+		width: 5em;
 	}
 </style>

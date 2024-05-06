@@ -7,6 +7,7 @@
 	import { round, tokWh, clamp, vpToR } from '$lib/components/util';
 	import Map from '$lib/components/Map.svelte';
 	import { PUBLIC_API_URL } from '$env/static/public';
+	import InputInt from '$lib/components/InputInt.svelte';
 
 	let jsonUrlBase = '/json?';
 	let graphUrlBase = '/graph?';
@@ -24,6 +25,31 @@
 	// of January, not February
 	function daysInMonth(year, month) {
 		return new Date(year, month + 1, 0).getDate();
+	}
+
+	/**
+	 * @param {number} liters
+	 */
+	function toGal(liters) {
+		return Math.round(liters * 0.264172);
+	}
+
+	/**
+	 * @param {number} i
+	 */
+	function indexToTime(i) {
+		let amPm = 'AM';
+
+		if (i == 0) return 'Midnight';
+		// i = i + 1;
+		if (i == 12) return 'Noon';
+
+		if (i >= 12) {
+			i = i - 12;
+			amPm = 'PM';
+		}
+
+		return '' + i + amPm;
 	}
 
 	let wireGuages = [
@@ -249,11 +275,13 @@
 		<h2>Step 1</h2>
 		Fill in what you know about your Location and power price.<br /><br /> If you do not know your
 		exact power price,
-		<a href="https://www.bls.gov/regions/midwest/data/averageenergyprices_selectedareas_table.htm"
+		<a
+			target="_blank"
+			href="https://www.bls.gov/regions/midwest/data/averageenergyprices_selectedareas_table.htm"
 			>get an estimate here.</a
 		>
 		<br /><br /> You can measure your ground water temperature, or estimate it from
-		<a href="https://www3.epa.gov/ceampubl/learn2model/part-two/onsite/tempmap.html"
+		<a target="_blank" href="https://www3.epa.gov/ceampubl/learn2model/part-two/onsite/tempmap.html"
 			>this Ground Water Temperature Map.</a
 		>
 	</span>
@@ -266,37 +294,19 @@
 			-->
 			<Input val={round($lat)} label="Latitude" units="°North" readonly />
 			<Input val={round($lng)} label="Longitude" units="°East" readonly />
-			<Input bind:val={groundTemp} label="GroundTemp" units="°C" />
+			<InputInt bind:val={groundTemp} label="GroundTemp" units="°C" min="1" max="30" />
 			<Input bind:val={offPeakPrice} label="Off Peak Price" units="$/kWh" />
 			<Input bind:val={peakPrice} label="Peak Price" units="$/kWh" />
 
 			<label>
-				PeakHours <br />
-				<input type="checkbox" bind:checked={peakHours[0]} />
-				<input type="checkbox" bind:checked={peakHours[1]} />
-				<input type="checkbox" bind:checked={peakHours[2]} />
-				<input type="checkbox" bind:checked={peakHours[3]} />
-				<input type="checkbox" bind:checked={peakHours[4]} />
-				<input type="checkbox" bind:checked={peakHours[5]} />
-				<input type="checkbox" bind:checked={peakHours[6]} />
-				<input type="checkbox" bind:checked={peakHours[7]} />
-				<input type="checkbox" bind:checked={peakHours[8]} />
-				<input type="checkbox" bind:checked={peakHours[9]} />
-				<input type="checkbox" bind:checked={peakHours[10]} />
-				<input type="checkbox" bind:checked={peakHours[11]} />
+				PeakHours: <br />
+				{#each Array(12) as _, i}
+					<input type="checkbox" bind:checked={peakHours[i]} title={indexToTime(i)} />
+				{/each}
 				<br />
-				<input type="checkbox" bind:checked={peakHours[12]} />
-				<input type="checkbox" bind:checked={peakHours[13]} />
-				<input type="checkbox" bind:checked={peakHours[14]} />
-				<input type="checkbox" bind:checked={peakHours[15]} />
-				<input type="checkbox" bind:checked={peakHours[16]} />
-				<input type="checkbox" bind:checked={peakHours[17]} />
-				<input type="checkbox" bind:checked={peakHours[18]} />
-				<input type="checkbox" bind:checked={peakHours[19]} />
-				<input type="checkbox" bind:checked={peakHours[20]} />
-				<input type="checkbox" bind:checked={peakHours[21]} />
-				<input type="checkbox" bind:checked={peakHours[22]} />
-				<input type="checkbox" bind:checked={peakHours[23]} />
+				{#each Array(12) as _, i}
+					<input type="checkbox" bind:checked={peakHours[i + 12]} title={indexToTime(i + 12)} />
+				{/each}
 			</label>
 			<hr />
 			<Output val={peakHourCount} label="Peak Hour Count" units="H" />
@@ -321,26 +331,52 @@
 
 		<br /> <br /> If you want to plug in the exact numbers from your water heater, look at the
 		yellow energy star sticker or
-		<a href="https://www.ahridirectory.org/NewSearch?programId=24&searchTypeId=3 ">search here.</a>
+		<a target="_blank" href="https://www.ahridirectory.org/NewSearch?programId=24&searchTypeId=3 "
+			>search here.</a
+		>
 	</span>
 	<span>
 		<Box>
 			<h2>Water Heater Specs</h2>
-			<Input bind:val={personsInHoushold} label="Persons In Houshold" units="" />
-			<Input bind:val={hotWaterPerPersonDay} label="Hot Water/Person/Day" units="l" />
+			<InputInt
+				bind:val={personsInHoushold}
+				label="Persons In Houshold"
+				units=""
+				min="1"
+				max="20"
+			/>
+			<InputInt
+				bind:val={hotWaterPerPersonDay}
+				label="Hot Water/Person/Day"
+				units="l"
+				min="10"
+				max="100"
+			/>
 			<br />
-			<Input bind:val={tankSize} label="Tank Size" units="liter" />
+			<InputInt
+				bind:val={tankSize}
+				label="Tank Size ≈ {toGal(tankSize)}gal"
+				units="l"
+				min="50"
+				max="500"
+			/>
 			<Input bind:val={energyFactor} label="Energy Factor" units="UEF" />
-			<Input bind:val={hotWaterOutTemp} label="Desired Output Temp" units="°C" />
+			<InputInt
+				bind:val={hotWaterOutTemp}
+				label="Desired Output Temp"
+				units="°C"
+				min="35"
+				max="55"
+			/>
 			<!-- <Input val={50} label="ThermostatSetting" units="°C" /> -->
-			<Input bind:val={elementP} label="Element Power Rating" units="W" />
-			<Input bind:val={elementV} label="Element Voltage Rating" units="V" />
+			<br />
+			<InputInt bind:val={elementP} label="Element Power Rating" units="W" min="100" max="10000" />
+			<InputInt bind:val={elementV} label="Element Voltage Rating" units="V" min="12" max="600" />
 			<!-- <label>
 				<input type="checkbox" bind:checked={useMixingValve} />
 				Use Thermostatic mixing valve
 			</label> -->
 			<hr />
-			<Output val={elementR} label="Element Resistance" units="Ω" />
 			<Output val={round(energyToHeatOneTank / 3600e3)} label="Energy to heat 1 tank" units="kWh" />
 			<Output val={costToHeatOneTank} label="Cost to heat one tank" units="$" />
 			<Output val={tanksUsedPerDay} label="Tanks used per day" units="" />
@@ -350,6 +386,8 @@
 				label="Hot water cost per day"
 				units="$"
 			/>
+			<br />
+			<Output val={elementR} label="Element Resistance" units="Ω" />
 		</Box>
 	</span>
 	<span>
@@ -359,9 +397,9 @@
 				heater can store more energy to bridge cloudy days.
 			</p>
 			<p>
-				<b>Desired Output Temp</b> 40°C(104°F) is good enough for showers, but for washing dishes it helps
-				to have it at 50°C(122°F). The thermostatic mixing valve and the top element (city power) thermostat
-				should be set to this temperature.
+				<b>Desired Output Temp</b> 40°C(104°F) is good enough for showers, but for washing dishes it
+				helps to have it at 50°C(122°F). The thermostatic mixing valve and the top element (city power)
+				thermostat should be set to this temperature.
 			</p>
 			<p>
 				<b>Energy Factor (UEF)</b> this is rating of how efficient your water heater is. Most
@@ -398,10 +436,10 @@
 	<span>
 		<Box>
 			<h2>Solar Panel Specs</h2>
-			<Input bind:val={azimuth} label="Azimuth  180=South" units="°" />
-			<Input bind:val={elevation} label="Elevation 0=Flat" units="°" />
-			<Input bind:val={panelsPerString} label="Panels per string" units="" />
-			<Input bind:val={parallelStrings} label="Parallel strings" units="" />
+			<InputInt bind:val={azimuth} label="Azimuth  180=South" units="°" min="0" max="359" />
+			<InputInt bind:val={elevation} label="Elevation 0=Flat" units="°" min="0" max="90" />
+			<InputInt bind:val={panelsPerString} label="Panels per string" units="" min="1" max="100" />
+			<InputInt bind:val={parallelStrings} label="Parallel strings" units="" min="1" max="10" />
 			<br />
 			<label>
 				<select bind:value={selectedModuleType}>
@@ -431,23 +469,26 @@
 			</label>
 			<br />
 
-			<Input bind:val={wireLength} label="Total wire length" units="m" />
+			<InputInt bind:val={wireLength} label="Total wire length" units="m" min="3" max="300" />
 
 			<hr />
 			<Output val={round(stringVoc)} label="Voc of full string" units="V" />
 			<Output val={round($Vmp * panelsPerString)} label="Vmp of full string" units="V" />
 			<Output val={round($Isc * parallelStrings)} label="Isc of parallel strings" units="A" />
-			<Output val={wireResistance} label="Resistance of wire" units="Ω" />
 			<Output val={round(nominalPower)} label="Nominal power of string" units="W" />
-			<Output val={round($Imp * $Imp * wireResistance)} label="Wire Losses at Mpp" units="W" />
+			<br />
 			<Output val={round(Rsource)} label="Source Impedance" units="Ω" />
 			<Output val={round(mismatch)} label="Mismatch" units="%" />
+			<br />
+			<Output val={wireResistance} label="Resistance of wire" units="Ω" />
+			<Output val={round($Imp * $Imp * wireResistance)} label="Wire Losses at Mpp" units="W" />
 		</Box>
 	</span>
 	<span>
 		<Box>
 			<p>
 				<b>Vmp, Imp</b>, find these in the spec sheet of your solar panels (<a
+					target="_blank"
 					href="CS-Datasheet-BiHiKu7_CS7N-MB-AG_v2.4_EN.pdf">example</a
 				>) , use the STC values. These are the volts and amps your panel will make with a Solar
 				irradiance of 1,000 W/m<sup>2</sup>, cell temperature of 25°C (77°F).
@@ -495,11 +536,13 @@
 			to be.
 		</p>
 		<hr />
-		<button on:click={(e) => updateMonthlyTable(e)}>Simulate Monthly Generation</button>
-		<Input
+		<button on:click={(e) => updateMonthlyTable(e)}>Simulate Monthly Generation</button> with
+		<InputInt
 			bind:val={losses}
 			label="Losses (dirt, snow, aging, etc.) If your panels are shaded 1/3 of the day, then add 33% to losses."
 			units="%"
+			min="1"
+			max="99"
 		/>
 		<br />
 		<p id="apiWarn" style="display: none;">
@@ -545,7 +588,7 @@
 			This graph uses the TMY simulation data to help you size your array. <span class="blue"
 				><b>Mean Tank Temperature</b></span
 			> assumes fully mixed water. On most days, the tank will not get as hot as the graph shows because
-			you will be using withdrawing hot water from the top, which adds cold water to the bottom.
+			you will be withdrawing hot water from the top, which adds cold water to the bottom.
 		</p>
 		<p>
 			Click a <b>Graph random day</b> button a few times until you find a nice sunny day (lots of
