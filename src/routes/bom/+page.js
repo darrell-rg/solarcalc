@@ -167,9 +167,9 @@ export const _bomData = [
     {
         "Desc": "MPPT Boiler PV Solar Regulator",
         "Qty": 1,
-        "Price": 250,
+        "Price": 370,
         "ebayid": 263523458861,
-        "link": "https://www.ebay.com/itm/263523458861",
+        "link": "https://www.ebay.com/itm/265624377737",
     }
 
 

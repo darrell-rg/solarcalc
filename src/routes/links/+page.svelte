@@ -16,7 +16,7 @@
 	</p>
 
 	<p>
-		<a target="_blank" href="https://www.my-pv.com/en/products/elwa/">The ACTii AC7392</a>,a german
+		<a target="_blank" href="https://www.ebay.com/itm/265624377737">The ACTii AC7392</a>,a german
 		MPPT thermostat. Around $380.
 	</p>
 

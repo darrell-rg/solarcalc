@@ -86,7 +86,7 @@
 				<td>{round(r.Total)}</td>
 				<td>
 					{#if r.link}
-						<a href={getSourceUrl(r)}>{getSourceName(r)}</a>
+						<a target="_blank" href={getSourceUrl(r)}>{getSourceName(r)}</a>
 					{/if}
 				</td>
 			</tr>
