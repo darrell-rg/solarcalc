@@ -47,7 +47,11 @@
 
 	<article class="faq">
 		<figure>
-			<img alt="hot water use graph" src="gpd_estimate.png" class="rightSideImg" />
+			<img alt="hot water use graph" src="medium_use_home.png" class="rightSideImg" />
+			<figcaption>Medium Usage Home, Hot Water Draws</figcaption>
+		</figure>
+		<figure>
+			<img alt="hot water pie chart" src="gpd_estimate.png" class="rightSideImg" />
 			<figcaption>Hot Water Used vs. Household Size</figcaption>
 		</figure>
 		<h2>How much hot water do I use?</h2>
@@ -136,6 +140,10 @@
 
 	<article class="faq">
 		<h2>Is this better then solar thermal?</h2>
+		<figure>
+			<img alt="electric water heater" src="electricWaterHeater.png" class="rightSideImg" />
+			<figcaption>A standard electric water heater</figcaption>
+		</figure>
 		<p>
 			This system has no moving parts and is cheaper and easier to install. It reuses your existing
 			electric water heater. PV panels gain efficiency on really cold days when thermal panels have
@@ -152,7 +160,8 @@
 			they always manage to start beeping at 3am). They cost more and are less reliable then the old
 			fashioned electric water heater. They steal heat from the indoor air and dump it to the water,
 			which is great in summer but less great in winter. If you already have a heat pump water
-			heater, you may be able to hook up the bottom element to solar, but I have not tried this myself. 
+			heater, you may be able to hook up the bottom element to solar, but I have not tried this
+			myself.
 		</p>
 	</article>
 
@@ -166,8 +175,9 @@
 			You need to mount the solar disconnect switch outside in a readily accessible place near the
 			panels. This is so firefighters/electricians/plumbers/etc can turn your panels off while they
 			are working. Search for "Solar Disconnect Switch" or "Solar Circuit Breaker Waterproof
-			Isolator". You can get a combo unit that is both a switch and a circuit breaker. You should also
-			mount a second shutoff switch near the water heater to make working on it safer. </p>
+			Isolator". You can get a combo unit that is both a switch and a circuit breaker. You should
+			also mount a second shutoff switch near the water heater to make working on it safer.
+		</p>
 	</article>
 
 	<article class="faq">
@@ -208,17 +218,17 @@
 		</figure>
 		<h2>Do I need a thermostat?</h2>
 		<p>
-			The AC thermostat built into the water heater will not last long if you try to use it on DC
-			power. DC arcs a lot worse then AC since there is no zero-crossing to extinguish the arc. If
-			your array is not too oversized you can make do with only a mixing valve and no thermostat.
-			The standby losses of the water heater <a
-				href="https://en.wikipedia.org/wiki/Newton%27s_law_of_cooling">increase proportionally</a
-			>
-			with the hot water temperature. This helps to bring the system into equilibrium. If you want to
-			use an array larger then 1kW or so, or you have a water heater with a high UEF (good insulation)
-			you should use a thermostat. They make
-			<a href="https://www.ebay.com/itm/263523458861"> thermostats with MPPT built in</a> so you do not
-			have to worry much about impedance matching your heating element.
+			In most cases you will need a thermostat. If you want to use an array larger then 1kW or so,
+			or you have a water heater with a high UEF (good insulation) you should use a thermostat. They
+			make
+			<a href="https://www.ebay.com/itm/263523458861"> thermostats with MPPT built in</a> so you do
+			not have to worry much about impedance matching your heating element. The AC thermostat built
+			into the water heater will not last long if you try to use it on DC power. DC arcs a lot worse
+			then AC since there is no zero-crossing to extinguish the arc. If your array is pretty small
+			you can make do with only a mixing valve and no thermostat. The standby losses of the water
+			heater
+			<a href="https://en.wikipedia.org/wiki/Newton%27s_law_of_cooling">increase proportionally</a>
+			with the hot water temperature. This helps to bring the system into equilibrium.
 		</p>
 	</article>
 

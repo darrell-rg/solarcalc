@@ -386,7 +386,7 @@
 	<span>
 		<Box>
 			<p>
-				<b>TankSize</b> Most water heaters are 30-60 gallons (113-226 liters) in size. A bigger water
+				<b>TankSize</b> Most water heaters are 30-80 gallons (113-226 liters) in size. A bigger water
 				heater can store more energy to bridge cloudy days.
 			</p>
 			<p>
@@ -604,6 +604,7 @@
 			<button on:click={(e) => makeGraphUrl(270, e)}> Graph random day in Q4</button>
 		</div>
 	</span>
+	<br>
 	<span>
 		<figure>
 			<img alt="SolarSimGraph" src="sampleGraph.png" id="solarGraph" style="padding-top:10px;" />
