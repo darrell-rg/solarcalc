@@ -254,8 +254,8 @@
 	</li>
 	<li style="">
 		<figure>
-			<HousePic style="max-width: 300px;" />
-			<figcaption>Simple DC only heating</figcaption>
+			<HousePic style="max-width: 350px;" />
+			<figcaption>Simple DC only heating (mouseover for labels)</figcaption>
 		</figure>
 	</li>
 
@@ -266,9 +266,6 @@
 		</figure>
 	</li>
 </ul>
-
-<!-- <div class="smol-flexbox-grid">
-	<div> -->
 
 <div class="smol-sidebar">
 	<span data-text>
@@ -288,10 +285,6 @@
 	<span>
 		<Box>
 			<h2>Location Specs</h2>
-			<!-- 
-				<button on:click="{getCurrentPosition()}">Get Current Position</button>
-				<br> 
-			-->
 			<Input val={round($lat)} label="Latitude" units="°North" readonly />
 			<Input val={round($lng)} label="Longitude" units="°East" readonly />
 			<InputInt bind:val={groundTemp} label="GroundTemp" units="°C" min="1" max="30" />
@@ -638,20 +631,6 @@
 		</li>
 	</ul>
 </div>
-
-<!-- <h5>The time is ss {formatter.format($time)}</h5>
-
-<p>
-	This page has been open for
-	{$elapsed}
-	{$elapsed === 1 ? "second" : "seconds"}
-</p>
-
-</div> -->
-
-<!-- </div> -->
-
-<!-- <Counter /> -->
 
 <style>
 	.map {

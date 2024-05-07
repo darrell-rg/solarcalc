@@ -11,7 +11,7 @@ export const prerender = true;
 
 export const _bomData = [
     {
-        "PN":"BiHiKu7N",
+        "PN": "BiHiKu7N",
         "Desc": "Canadian Solar 655w Solar Panel",
         "Qty": 3,
         "Price": 250,
@@ -51,7 +51,7 @@ export const _bomData = [
         "Qty": 1,
         "Price": 50,
         "ebayid": 235459112866,
-        "link" : "https://www.ebay.com/itm/235459112866?amdata=enc%3AAQAJAAAAkFiv0Ud50QQTRynOA2fzbYo5d5t09o4LBq%2FvResFUX3kzNQ14g4xXuQSvN3DE%2FrTLeIU4lw4ixDHqEf1aOLsOHIlvn6Uz3LzrwHFxp3eGStG4pVtUsxjBM1N4PiiFNclp9eW7qIS63u5D3XLfTUahLXG6WyNXSLUt%2F%2B%2F8Cu9tfUUCwPkzdIN9AQ9MoutgDACmQ%3D%3D&mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=5339056755&customid=&toolid=10001&mkevt=1"
+        "link": "https://www.ebay.com/itm/235459112866?amdata=enc%3AAQAJAAAAkFiv0Ud50QQTRynOA2fzbYo5d5t09o4LBq%2FvResFUX3kzNQ14g4xXuQSvN3DE%2FrTLeIU4lw4ixDHqEf1aOLsOHIlvn6Uz3LzrwHFxp3eGStG4pVtUsxjBM1N4PiiFNclp9eW7qIS63u5D3XLfTUahLXG6WyNXSLUt%2F%2B%2F8Cu9tfUUCwPkzdIN9AQ9MoutgDACmQ%3D%3D&mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=5339056755&customid=&toolid=10001&mkevt=1"
     },
     {
         "Desc": '3/4" x 50ft  Flexible Non Metallic Conduit kit',
@@ -62,43 +62,50 @@ export const _bomData = [
     },
     {
         "Desc": "Solar Mounting Rails",
-        "Qty": 2,
-        "Price": 55,
+        "Qty": 6,
+        "Price": 23,
         "ebayid": null,
-        "link": ""
+        "link": "https://www.santansolar.com/product/k2-cross-rail-44-x-86-mill/"
     },
     {
-        "Desc": "Roof jacks for rack",
-        "Qty": 8,
-        "Price": 12,
+        "Desc": "Rail-To-Rail Connector",
+        "Qty": 4,
+        "Price": 5,
         "ebayid": null,
-        "link": ""
+        "link": "https://www.santansolar.com/product/k2-rail-connector-cross-rail-44-x-mill/"
+    },
+    {
+        "Desc": "Flashing/Mount Kit",
+        "Qty": 8,
+        "Price": 9,
+        "ebayid": null,
+        "link": "https://www.santansolar.com/product/k2-everflash-xp-comp-kit-mill/"
     },
     {
         "Desc": "Middle solar clamp bolts",
-        "Qty": 8,
-        "Price": 2,
+        "Qty": 4,
+        "Price": 4,
         "ebayid": null,
-        "link": ""
+        "link": "https://www.santansolar.com/product/k2-mid-clamp-mil-25-45mm-m8x40/"
     },
     {
         "Desc": "End solar clamp bolts ",
         "Qty": 4,
-        "Price": 6,
+        "Price": 4,
         "ebayid": null,
-        "link": ""
+        "link": "https://www.santansolar.com/product/k2-end-clamp-silver-25-40mm/"
     },
     {
-        "Desc": "Roof to Rail brackets",
-        "Qty": 16,
-        "Price": 2,
+        "Desc": "Roof to Rail brackets (long for more tilt)",
+        "Qty": 8,
+        "Price": 6,
         "ebayid": null,
-        "link": ""
+        "link": "https://www.santansolar.com/product/k2-big-foot-6-w-3-chem-link-clip-kit/"
     },
     {
         "Desc": "Stainless Lag bolts for roof mounts",
         "Qty": 16,
-        "Price":2,
+        "Price": 2,
         "ebayid": 293494409497,
         "link": "https://www.ebay.com/itm/293494409497?amdata=enc%3AAQAJAAAAkEIqG6O9ynK7abaIuDwtQlMdreHbTGRBwQ8FN3TKYRvrW2JS%2B34NS4TQr%2BSe%2FQWJdTjpiZjLKEeQST%2BGD5EUWRxKuILar62NjluXaaDHMuKmt6kXIriWVWdkcA26oIXdzHuS3I9LDfxkeiOSVbXWG1ckz13Sil05SddN%2BkmG4UolyBGgs%2Bea6uGePsH%2Fbsq4jA%3D%3D&mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=5339056755&customid=&toolid=10001&mkevt=1"
     },

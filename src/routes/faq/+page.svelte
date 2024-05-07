@@ -47,7 +47,7 @@
 
 	<article class="faq">
 		<figure>
-			<img alt="shutoff switch" src="gpd_estimate.png" class="rightSideImg" />
+			<img alt="hot water use graph" src="gpd_estimate.png" class="rightSideImg" />
 			<figcaption>Hot Water Used vs. Household Size</figcaption>
 		</figure>
 		<h2>How much hot water do I use?</h2>
@@ -74,7 +74,7 @@
 
 	<article class="faq">
 		<figure>
-			<img alt="shutoff switch" src="Source_and_load_circuit.svg" class="rightSideImg" />
+			<img alt="Source and Load Schematic" src="Source_and_load_circuit.svg" class="rightSideImg" />
 			<figcaption>IF R<sub>S</sub>==R<sub>L</sub> THEN power='Maximum!'</figcaption>
 		</figure>
 		<h2>What is impedance matching and why does it matter?</h2>
@@ -151,7 +151,8 @@
 			to clean the air filter regularly. Some of them beep when they need the filter cleaned (and
 			they always manage to start beeping at 3am). They cost more and are less reliable then the old
 			fashioned electric water heater. They steal heat from the indoor air and dump it to the water,
-			which is great in summer but in winter this will add to your heating bill.
+			which is great in summer but less great in winter. If you already have a heat pump water
+			heater, you may be able to hook up the bottom element to solar, but I have not tried this myself. 
 		</p>
 	</article>
 
@@ -165,10 +166,8 @@
 			You need to mount the solar disconnect switch outside in a readily accessible place near the
 			panels. This is so firefighters/electricians/plumbers/etc can turn your panels off while they
 			are working. Search for "Solar Disconnect Switch" or "Solar Circuit Breaker Waterproof
-			Isolator". You can get a combo unit that is both a switch and a circuit breaker. You can also
-			mount a second shutoff switch near the water heater to make working on it safer. I kinda wish
-			I had one.
-		</p>
+			Isolator". You can get a combo unit that is both a switch and a circuit breaker. You should also
+			mount a second shutoff switch near the water heater to make working on it safer. </p>
 	</article>
 
 	<article class="faq">
@@ -233,8 +232,8 @@
 				>varies widely</a
 			>, from 20W for a new well-insulated tank to 200W for an old badly insulated tank. The higher
 			your tank's UEF rating, the lower the standby losses. If your tank has a UEF rating above
-			0.93, you probably want to use a thermostat so your tank will not overheat when you go on
-			summer vacation.
+			0.90, you will want to use a thermostat so your tank will not overheat when you go on summer
+			vacation.
 		</p>
 	</article>
 
@@ -242,8 +241,9 @@
 		<h2>Really you don't use thermostat?</h2>
 		<p>
 			My system has been running for three years with no thermostat. BUT I have a crappy old water
-			heater with bad insulation, and I have trees that shade the solar panels for about 1/2 of the
-			day. I think most people would want a thermostat.
+			heater with bad insulation (high standby losses), and I have trees that shade the solar panels
+			for about 1/2 of the day. So my 1.7kW becomes more like 0.8kW. If ever replace the water
+			heater, or the trees fall down, I will get a thermostat.
 		</p>
 	</article>
 

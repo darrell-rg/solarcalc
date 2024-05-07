@@ -5,12 +5,20 @@
 	import { round, tokWh, clamp } from '$lib/components/util';
 
 	function getSourceUrl(itm) {
+		if (itm.link) return itm.link;
 
-		if(itm.link) 
-			return itm.link;
-		
 		let url = 'https://www.ebay.com/itm/' + itm.ebayid;
 		return url;
+	}
+
+	function getSourceName(itm) {
+		if (itm.link) {
+			if (itm.link.includes('ebay')) return 'eBay';
+
+			if (itm.link.includes('santansolar')) return 'SanTan Solar';
+		}
+
+		return 'link';
 	}
 	/* Fetch and update the state once */
 	// onMount(async () => {
@@ -59,9 +67,7 @@
 <div class="text-column">
 	<h1>Bill Of Materials Spreadsheet</h1>
 
-	<p>
-		You can use this sheet to estimate your costs.
-	</p>
+	<p>You can use this sheet to estimate your costs.</p>
 	<table class="bomTable" id="bomTable" bind:this={tbl}>
 		<tr>
 			<th>PN</th>
@@ -79,8 +85,8 @@
 				<td>{r.Price}</td>
 				<td>{round(r.Total)}</td>
 				<td>
-					{#if r.ebayid}
-						<a href={getSourceUrl(r)}>eBay</a>
+					{#if r.link}
+						<a href={getSourceUrl(r)}>{getSourceName(r)}</a>
 					{/if}
 				</td>
 			</tr>
@@ -96,7 +102,10 @@
 
 	<!-- <button on:click={exportFile}>Export XLSX</button> -->
 
-	<p>This website may receive a small commission if you use the links in the "Source" column to purchase parts. </p>
+	<p>
+		This website may receive a small commission if you use the links in the "Source" column to
+		purchase parts.
+	</p>
 </div>
 
 <style>

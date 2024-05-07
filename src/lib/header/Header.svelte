@@ -26,8 +26,12 @@
 				<a href="/instructions">Instructions</a>
 			</li>
 			<li aria-current={$page.url.pathname === '/bom' ? 'page' : undefined}>
-				<a href="/bom">BOM Price Calc</a>
+				<a href="/bom">BOM</a>
 			</li>
+			<li aria-current={$page.url.pathname === '/links' ? 'links' : undefined}>
+				<a href="/links">LINKS</a>
+			</li>
+			
 		</ul>
 		<svg viewBox="0 0 2 3" aria-hidden="true">
 			<path d="M0,0 L0,3 C0.5,3 0.5,3 1,2 L2,0 Z" />
