@@ -215,6 +215,13 @@ def convert_day_of_year( day_of_year, year = 2020):
     # Format the date to "Month, Day"
     return actual_date.strftime("%B %d")
 
+    # returns standby loss in watts
+def standbyLoss(ef=0.9,Ttank=40, Tamb=16):
+    # formula 4 from in Water_Heater_Energy_Storage_wStaffResponse.pdf
+    ua = 8.445 / ef - 8.617
+    # add 22% for pipe losses per SS84_Panel5_Paper_06.pdf
+    # append conversion from C to F 
+    return  1.22*ua*((Ttank-Tamb)*(9.0/5.0))
 
 # water heater search:  https://www.ahridirectory.org/NewSearch?programId=24&searchTypeId=3  
 # https://www.centerpointenergy.com/en-us/SaveEnergyandMoney/Pages/CNP_Calculators/Thermal-Efficiency-Calculator.aspx?sa=MN&au=res
@@ -233,6 +240,7 @@ def nsrdb_plot(df, day, filename, tankSize = 189, startingTemp = 40, uef=0.9):
     i = day * timeSteps
     j = i + timeSteps
     filename = filename.replace(".csv", f"_{tankSize}_{startingTemp}_{uef}_{day}.png")
+    filenameCsv = filename.replace(".png", f"_data.csv")
 
     if not os.path.exists(filename):
         # Create a figure
@@ -258,7 +266,7 @@ def nsrdb_plot(df, day, filename, tankSize = 189, startingTemp = 40, uef=0.9):
         singleDay["T&P Valve Limit"] = 98
         singleDay["Desired Output Temp"] = startingTemp
 
-        #TODO: improve standby loss estimate
+        #do a rough first pass with rough standby losses
         singleDay["standbyLoss"] = 60 
         if uef > 0.92:
             singleDay["standbyLoss"] = 40 
@@ -268,11 +276,31 @@ def nsrdb_plot(df, day, filename, tankSize = 189, startingTemp = 40, uef=0.9):
         singleDay["Net Power"]  =  singleDay["generation"] - singleDay["standbyLoss"] 
         singleDay["energyFlux"]  =  singleDay["Net Power"]* 60 * float(interval)
         singleDay["Tank Temperature"] =  (singleDay["energyFlux"].cumsum()  /  (heatCapOfWater * tankSize) ) + startingTemp
+
+        #now do a better calculation with more accurate standby loss
+        singleDay["Ambient Temperature"] = 16
+        singleDay["standbyLoss"] = standbyLoss(uef,singleDay["Tank Temperature"],singleDay["Ambient Temperature"])
+        singleDay["Net Power"]  =  singleDay["generation"] - singleDay["standbyLoss"] 
+        singleDay["energyFlux"]  =  singleDay["Net Power"]* 60 * float(interval)
+        singleDay["Tank Temperature"] =  (singleDay["energyFlux"].cumsum()  /  (heatCapOfWater * tankSize) ) + startingTemp
+
+        #one more round to converge better
+        singleDay["standbyLoss"] = standbyLoss(uef,singleDay["Tank Temperature"],singleDay["Ambient Temperature"])
+        singleDay["Net Power"]  =  singleDay["generation"] - singleDay["standbyLoss"] 
+        singleDay["energyFlux"]  =  singleDay["Net Power"]* 60 * float(interval)
+        singleDay["Tank Temperature"] =  (singleDay["energyFlux"].cumsum()  /  (heatCapOfWater * tankSize) ) + startingTemp
+
         jouleSum = singleDay["energyFlux"].sum()
+        maxStandbyLoss = singleDay["standbyLoss"].max()
+        maxSolarPower = singleDay["generation"].max()
+        maxTankTemp = singleDay["Tank Temperature"].max()
+        
         total_kWh = jouleSum * 0.0000002778 
 
         d = convert_day_of_year(day)
-        ax.set_title(f"{d},  Net Thermal Energy Gain = {total_kWh:.2f} (kWh)")
+        ax.set_title(f"{d},  Net Thermal Energy Gain = {total_kWh:.2f} (kWh)", size="xx-large")
+        # fig.supxlabel(f"uef= {uef:.2f} tankSize ={tankSize}")
+        fig.supxlabel(f"UEF={uef:.2f}   Max Solar Power={maxSolarPower:.1f}(W)   Max Standby Loss={maxStandbyLoss:.1f}(W)   Max Tank Temp={maxTankTemp:.1f}(℃)" , size="large")
     
         ax.plot( 'DNI',"-s", data=singleDay, label="DNI" )
         ax.plot( 'DHI',"->", data=singleDay )
@@ -306,10 +334,12 @@ def nsrdb_plot(df, day, filename, tankSize = 189, startingTemp = 40, uef=0.9):
         twin2.legend(loc=1, ncol=1, frameon=False)
         twin1.legend(loc=1, ncol=1, frameon=False)
 
-        fig.savefig(filename)
+        plt.tight_layout()
 
-    # singleDay.to_csv("debug.csv")
-    return filename
+        fig.savefig(filename)
+        singleDay.to_csv(filenameCsv)
+
+    return filenameCsv, filename
 
 
 @app.route("/sim/graph", methods=["POST", "GET"])
@@ -331,7 +361,7 @@ def getGraph():
 
     df, filename = runSim(lat, lon, year, power_kW,tilt,azimuth, module_type, losses, folder)
 
-    graph = nsrdb_plot(df, day, filename,tankSize=liters,startingTemp=startingTemp,uef=uef)
+    csv, graph = nsrdb_plot(df, day, filename,tankSize=liters,startingTemp=startingTemp,uef=uef)
 
     if os.path.exists(graph):
         response = send_file(graph, mimetype="image/png")
