@@ -241,9 +241,8 @@
 						Edemand: dailyDemand * daysInMonth(year, index),
 						Esolar: data.outputs.dc_monthly[index] / 1000.0,
 						savings: (data.outputs.dc_monthly[index] / 1000.0) * avgPowerPrice,
-						Epercent:0,
-						Ecity:0
-						
+						Epercent: 0,
+						Ecity: 0
 					};
 
 					m.Epercent = clamp((m.Esolar / m.Edemand) * 100.0, 0, 200);
@@ -725,7 +724,6 @@
 		in extra narrow spaces */
 		grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--min)), 1fr));
 	}
-
 
 	.smol-sidebar {
 		margin-top: 2rem;

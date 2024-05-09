@@ -28,7 +28,7 @@ servers:
   - url: http://localhost:5000
 tags:
   - name: solar
-    description: In-memory solar pv sim 
+    description: In-memory solar pv sim
 paths:
   /graph:
     summary: generate a graph
@@ -38,13 +38,13 @@ paths:
       tags:
         - solar
       responses:
-        "200":
+        '200':
           description: Successful operation
           content:
             image/png:
-              schema: 
-                  type: string
-                  format: binary
+              schema:
+                type: string
+                format: binary
 
   /csv:
     summary: generate a csv
@@ -54,12 +54,12 @@ paths:
       tags:
         - solar
       responses:
-        "200":
+        '200':
           description: Successful operation
           content:
             text/csv:
-              schema: 
-                  type: string
+              schema:
+                type: string
 
   /json:
     summary: get Monthly output from PvWatts V8
@@ -69,22 +69,22 @@ paths:
       tags:
         - solar
       responses:
-        "200":
+        '200':
           description: Successful operation
           content:
             application/json:
-              schema: 
-                  type: object
-          
+              schema:
+                type: object
+
   /:
     summary: health check
     get:
       summary: health check
       operationId: HealthCheck
       responses:
-        "200":
+        '200':
           description: Successful operation
           content:
             text/plain:
-              schema: 
-                  type: string
+              schema:
+                type: string

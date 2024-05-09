@@ -19,7 +19,7 @@ version: 0.3
 
 # +required List of endpoints to create
 endpoints:
-# +required Unique name for the endpoint. (This name will be used when generating the managed API)
+  # +required Unique name for the endpoint. (This name will be used when generating the managed API)
   - name: Solar Sim
     # +required Numeric port value that gets exposed via this endpoint
     port: 5000

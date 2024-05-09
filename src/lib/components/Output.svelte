@@ -7,16 +7,15 @@
 	export let readonly = true;
 </script>
 
-
 <label>
-	 <input readonly={readonly} bind:value={val} min={min} max={max}> 
-	 {#if units}
-	 ({units}) 
-	 {/if}
-	 
-	 {label} 
+	<input {readonly} bind:value={val} {min} {max} />
+	{#if units}
+		({units})
+	{/if}
+
+	{label}
 </label>
-<br>
+<br />
 
 <style>
 	input:read-only {

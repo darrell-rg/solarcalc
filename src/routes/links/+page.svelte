@@ -29,8 +29,8 @@
 	</p>
 
 	<p>
-		<a target="_blank" href="https://www.ebay.com/itm/263523458861">The FOTO BOOSTER</a> another
-		german MPPT thermostat. Around $250. Requires city power to operate.
+		<a target="_blank" href="https://www.ebay.com/itm/263523458861">The FOTO BOOSTER</a> another german
+		MPPT thermostat. Around $250. Requires city power to operate.
 	</p>
 
 	<h2>Suppliers/Stores</h2>

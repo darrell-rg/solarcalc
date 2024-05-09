@@ -3,6 +3,7 @@
 This is a simple Flask application developed to simulate solar PV with PVwatts
 
 ## Deploying the application in Choreo
+
 1. Fork this repository.
 2. Get an API key for NRDS and PVWatts V8 from NREL
 3. Create a `Service` component in Choreo.

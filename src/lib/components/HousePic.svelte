@@ -137,7 +137,6 @@
 		</g>
 	</g>
 
-
 	<g class="electrical">
 		<path
 			class="blackWire"

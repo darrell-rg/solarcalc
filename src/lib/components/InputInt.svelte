@@ -24,8 +24,8 @@
 		type="number"
 		inputmode="numeric"
 		bind:value={val}
-		min={min}
-		max={max}
+		{min}
+		{max}
 		{step}
 		style="width: 5em;"
 	/>

@@ -6,7 +6,6 @@ import { readable, derived, writable } from 'svelte/store';
 // export const Imp = writable(8.06);
 // export const Voc = writable(55.2);
 
-
 //BiHiKu7
 export const Vmp = writable(38.1);
 export const Imp = writable(17.2);
@@ -15,8 +14,3 @@ export const Isc = writable(18.43);
 
 export const lat = writable(40.5);
 export const lng = writable(-104.7);
-
-
-
-
-
