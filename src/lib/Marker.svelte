@@ -1,14 +1,23 @@
 <script lang="ts">
-	import { onMount, onDestroy, getContext, setContext } from 'svelte';
+	import { onMount, onDestroy, getContext, setContext, createEventDispatcher } from 'svelte';
 	import L from 'leaflet';
+	import { writable } from 'svelte/store';
 
 	export let width: number;
 	export let height: number;
-	export let latLng: L.LatLngExpression;
+	export let lat: number;
+	export let lng: number;
 
 	let marker: L.Marker | undefined;
 	let markerElement: HTMLElement;
 
+	export function updateLatLng(newLat: number, newLng: number) {
+		lat = newLat;
+		lng = newLng;
+		marker?.setLatLng([newLat, newLng]);
+	}
+
+	const dispatch = createEventDispatcher();
 	const { getMap }: { getMap: () => L.Map | undefined } = getContext('map');
 	const map = getMap();
 
@@ -24,7 +33,9 @@
 				className: 'map-marker',
 				iconSize: L.point(width, height)
 			});
-			marker = L.marker(latLng, { icon }).addTo(map);
+			let options = { draggable: true, icon: icon };
+			marker = L.marker([lat, lng], options).addTo(map);
+			marker.on('move', (e) => dispatch('move', e));
 		}
 	});
 
