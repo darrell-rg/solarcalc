@@ -35,7 +35,7 @@ Move the solar panel icon to set your lat/lng. Or:
 
 <button on:click={(e) => getCurrentPosition()}> Use Browser Location</button>
 
-<div class="w-full h-screen">
+<div class="leafletMap">
 	<Leaflet view={initialView} zoom={14}>
 		{#each markerLocations as latLng}
 			<Marker {latLng} width={40} height={40}>
@@ -116,4 +116,10 @@ Move the solar panel icon to set your lat/lng. Or:
 	.solarMarker {
 		height: 30px;
 	}
+
+    .leafletMap{
+        
+		height: 300px;
+		width: 300px;
+    }
 </style>

@@ -5,9 +5,9 @@
 	import Output from '$lib/components/Output.svelte';
 	import { Vmp, Voc, Imp, Isc, lat, lng } from '$lib/components/stores.js';
 	import { round, tokWh, clamp, vpToR } from '$lib/components/util';
-	import Map from '$lib/components/Map.svelte';
 	import { PUBLIC_API_URL } from '$env/static/public';
 	import InputInt from '$lib/components/InputInt.svelte';
+	import LeafletMap from '$lib/components/LeafletMap.svelte';
 
 	let jsonUrlBase = '/json?';
 	let graphUrlBase = '/graph?';
@@ -332,7 +332,7 @@
 	</span>
 	<span>
 		<span>
-			<Map />
+			<LeafletMap />
 		</span>
 	</span>
 </div>
