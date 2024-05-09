@@ -25,9 +25,9 @@
 		});
 	}
 
-	const initialView: LatLngExpression = [51.514244, 7.468429]; // Dortmund, Germany
+	const initialView: LatLngExpression = [$lat, $lng]; // Dortmund, Germany
 	const markerLocations: Array<LatLngExpression> = [
-		[51.513870009926, 7.473969975241] // ShipBit Office
+		[$lat, $lng] // ShipBit Office
 	];
 </script>
 
@@ -38,7 +38,7 @@ Move the solar panel icon to set your lat/lng. Or:
 <div class="leafletMap">
 	<Leaflet view={initialView} zoom={14}>
 		{#each markerLocations as latLng}
-			<Marker {latLng} width={40} height={40}>
+			<Marker {latLng} width={20} height={20}>
 				<!-- Solar Icon-->
 				<!-- License: CC0. Made by SVG Repo: https://www.svgrepo.com/svg/169795/solar-energy -->
 				<svg
@@ -48,8 +48,8 @@ Move the solar panel icon to set your lat/lng. Or:
 					xmlns:xlink="http://www.w3.org/1999/xlink"
 					x="0px"
 					y="0px"
-					width="106.583px"
-					height="106.583px"
+					width="50.583px"
+					height="50.583px"
 					viewBox="0 0 106.583 106.583"
 					style="enable-background:new 0 0 106.583 106.583;"
 					xml:space="preserve"
