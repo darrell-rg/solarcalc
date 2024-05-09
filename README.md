@@ -1,8 +1,14 @@
 # DIY solar calculator for PV hot water
 
-A design aid for DC solar hot water systems.
+A few years ago I hooked some some panels to the bottom element of my water heater. It has worked so well, I wanted to make it easier for more people to try it. So I made this tool for design of PV hot water systems. 
 
-Try it out at [pvh2o.com](https://www.hot-h2o.us/).
+At 85C, you can store around 10kWh of thermal energy in an average sized water heater.  With PG&E power prices, thats about 5 bucks worth, and the system will pay for itself in under two years.   A thermostatic mixing valve is used to bring the water down to a safe temperature before it is used. 
+
+The simulator uses Typical Meteorological Year Data (TMY2020) for your location and simulates your solar hot water system at 30 minute intervals.  
+
+The best part is, since this system is not connected to the grid, there are few or no permits required. You can do the install in a weekend and have free hot water monday afternoon.
+
+Try it out at [pvh2o.com](https://www.pvh2o.com/).
 
 ![Screenshot](/static/Screenshot.png)
 

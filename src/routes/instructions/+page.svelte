@@ -1,6 +1,5 @@
 <script>
-	import HousePic from "$lib/components/HousePic.svelte";
-
+	import HousePic from '$lib/components/HousePic.svelte';
 </script>
 
 <svelte:head>
@@ -14,44 +13,70 @@
 		<HousePic style="" />
 		<figcaption>Soon it will be you enjoying that shower</figcaption>
 	</figure>
-	<ol>
+	<ol type="i">
 		<li>
 			Calculate/Design
 			<ol>
-				<li>Determine existing cost of power used for water heating</li>
 				<li>Design your system using the simulator.</li>
-				<li>Price out the BOM and calculate payback.</li>
+				<li>Fill in what you know, leave the rest on defaults.</li>
+				<li>Simulate your design to figure out the minium number of panels required.</li>
+				<li>The sim will estimate the yearly cost of power used for water heating</li>
+				<li>
+					Look at your water heater and figure out what kind of fittings you will need to install
+					mixing valve.
+				</li>
+				<li>
+					Divide the BOM total by "Estimated Value Of Generated Solar Power" to calculate your
+					payback
+				</li>
 			</ol>
 		</li>
 		<li>Order Materials</li>
 		<ol>
-			<li>Used panels are great for this, and can be had for very cheap.</li>
-			<li>Big solar panels will ship via freight so you may have to be home to receive them</li>
+			<li>Check out the example parts listed on the BOM page</li>
 			<li>
-				The panels are easily damaged on the back/plastic covered side. A damaged panel will limit
-				the current of the entire array, so you may want to order a spare.
+				Try to find a local panel supplier to avoid freight charges. Used panels are fine if they
+				all match.
 			</li>
-			<li>Most of the stuff I got from ebay/craigslist/amazon</li>
+			<li>
+				The panels are tough on the glass side, but easily damaged on the plastic covered side. A
+				damaged panel will limit the current of the entire array, so you may want to buy a spare.
+				Make sure to wear clothes with no buttons when you lift the panels so they do not get
+				scratched.
+			</li>
+			<li>
+				Special Tools you may need:
+				<ol type="a">
+					<li>DC clamp meter</li>
+					<li>Water Heater Element Wrench</li>
+					<li>MC4 Crimper set</li>
+					<li>Pipe Soldering Tools</li>
+				</ol>
+			</li>
 		</ol>
 		<li>
 			Install Panels
 			<ol>
 				<li>Replace the shingles first if they are in bad shape.</li>
 				<li>Install Roof anchors.</li>
-				<li>Attach Rails to anchors.</li>
+				<li>Attach Rails to anchors. Use anti-seize on stainless hardware.</li>
 				<li>Attach Panels to rails.</li>
 				<li>Attach grounding system.</li>
-				<li>
-					Run plastic conduit from panels to house, and metal conduit inside the house going to the
-					water heater.
-				</li>
-				<li>Pull wire through conduit and connect it to the shutoff switch</li>
-				<li>Lockout/Tagout shutoff switch before working inside</li>
+				<li>Trench in plastic conduit from panels to house.</li>
+				<li>Pull wire through conduit and connect it to the outdoor disconnect switch</li>
+				<li>Turn off disconnect switch, lock it out and/or finish wiring at night</li>
+				<li>Solar wiring is safe at night, just don't fall off the roof in the dark</li>
 			</ol>
 		</li>
-		<li>Electrical</li>
+		<li>Indoor Work</li>
 		<ol>
-			<li>Turn off power to water heater</li>
+			<li>
+				Drill hole in wall near water heater and mount a Type-LB Conduit Body on each side as
+				passthrough.
+			</li>
+			<li>Install indoor conduit as required. (just use flex, so easy)</li>
+			<li>Install indoor shutoff switch.</li>
+			<li>Turn off power and cold water supply to water heater</li>
 			<li>Drain water heater</li>
 			<li>Install Mixing valve</li>
 			<li>Remove bottom element cover, take picture of wires for future reference.</li>
@@ -59,13 +84,21 @@
 				Disconnect bottom element from city power and secure wires so they will not short out on
 				anything.
 			</li>
-			<li>Install new bottom element.</li>
+			<li>Install new bottom element (if needed).</li>
+			<li>Measure resistance of element and write it on water heater for future reference</li>
 			<li>Refill water heater.</li>
 			<li>
-				Connect bottom element to panels. (make sure there is water in there or you will burn out
-				the elements)
+				Connect bottom element to indoor shutoff. (make sure there is water in there or you will
+				burn out the elements)
 			</li>
-			<li>Turn power back on to top element.</li>
+			<li>Finish wiring and button up what you can</li>
+			<li>Wait for daytime to Turn solar power switches on, Check for smoke.</li>
+			<li>
+				You can safely measure current with a DC clamp Meter. Only clamp one wire or else they will
+				cancel out.
+			</li>
+			<li>P = I<sup>2</sup>R</li>
+			<li>Turn city power back on to top element.</li>
 		</ol>
 	</ol>
 

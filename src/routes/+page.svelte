@@ -244,7 +244,6 @@
 </svelte:head>
 
 <h1>Free Hot Water!</h1>
-
 <ul class="smol-css-grid">
 	<li style="max-width: 300px;">
 		<figure>
@@ -266,6 +265,13 @@
 		</figure>
 	</li>
 </ul>
+<p>
+	At 85°C, you can cram around 10kWh of solar energy into an average sized water heater. At PG&E
+	power prices, thats worth about $5/day. A thermostatic mixing valve is used to bring the water
+	down to a safe temperature before use. Because this is a DC system, not connected to the grid, few
+	or no permits are required. You can do the install in a weekend and have free hot water monday
+	afternoon. This tool will help you design an optimal system for your home.
+</p>
 
 <div class="smol-sidebar">
 	<span data-text>
@@ -604,7 +610,7 @@
 			<button on:click={(e) => makeGraphUrl(270, e)}> Graph random day in Q4</button>
 		</div>
 	</span>
-	<br>
+	<br />
 	<span>
 		<figure>
 			<img alt="SolarSimGraph" src="sampleGraph.png" id="solarGraph" style="padding-top:10px;" />
