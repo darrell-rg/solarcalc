@@ -23,6 +23,10 @@
 	// but by using 0 as the day it will give us the last day of the prior
 	// month. So passing in 1 as the month number will return the last day
 	// of January, not February
+	/**
+	 * @param {number} year
+	 * @param {number} month
+	 */
 	function daysInMonth(year, month) {
 		return new Date(year, month + 1, 0).getDate();
 	}
@@ -128,6 +132,9 @@
 
 	let year = new Date().getFullYear();
 
+	/**
+	 * @type {any[]}
+	 */
 	let monthData = [];
 
 	let yearlySavings = 0;
@@ -170,6 +177,9 @@
 	$: mismatch = Math.abs(100 - ((elementR + wireResistance) / Rsource) * 100.0);
 	$: dailyEnergyDemand = (tanksUsedPerDay * energyToHeatOneTank) / 3600e3;
 
+	/**
+	 * @param {any} event
+	 */
 	function makeGraphUrl(startDay = 45, event) {
 		//pick a random day in the season
 		let day = Math.floor(Math.random() * 90) + startDay;
@@ -195,6 +205,9 @@
 		return url;
 	}
 
+	/**
+	 * @param {any} runMonthlySimButton
+	 */
 	function updateMonthlyTable(runMonthlySimButton) {
 		let url = PUBLIC_API_URL + jsonUrlBase;
 
@@ -205,6 +218,9 @@
 			`lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}&losses=${losses}&module_type=${selectedModuleType.id}`;
 
 		let newYearlySavings = 0;
+		/**
+		 * @type {any[]}
+		 */
 		let newMonthData = [];
 
 		// console.log(runMonthlySimButton)
@@ -224,7 +240,10 @@
 						insolation: data.outputs.solrad_monthly[index],
 						Edemand: dailyDemand * daysInMonth(year, index),
 						Esolar: data.outputs.dc_monthly[index] / 1000.0,
-						savings: (data.outputs.dc_monthly[index] / 1000.0) * avgPowerPrice
+						savings: (data.outputs.dc_monthly[index] / 1000.0) * avgPowerPrice,
+						Epercent:0,
+						Ecity:0
+						
 					};
 
 					m.Epercent = clamp((m.Esolar / m.Edemand) * 100.0, 0, 200);
@@ -640,9 +659,6 @@
 </div>
 
 <style>
-	.map {
-		height: 300px;
-	}
 	h1,
 	figure,
 	p {
@@ -710,24 +726,6 @@
 		grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--min)), 1fr));
 	}
 
-	.smol-flexbox-grid {
-		--min: 10ch;
-		--gap: 1rem;
-
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--gap);
-	}
-
-	.smol-flexbox-grid > * {
-		flex: 1 1 var(--min);
-		/* border: 1px solid red; */
-	}
-
-	.smol-flexbox-grid > div:first-child {
-		max-width: 350px;
-		border-radius: 0.5rem 0.5rem 0 0;
-	}
 
 	.smol-sidebar {
 		margin-top: 2rem;

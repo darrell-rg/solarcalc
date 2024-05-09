@@ -33,9 +33,6 @@
 		padding: 40px;
 	}
 
-	footer a {
-		font-weight: bold;
-	}
 
 	@media (min-width: 480px) {
 		footer {

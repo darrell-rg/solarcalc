@@ -2,15 +2,15 @@
 	/**
 	 * @type {any}
 	 */
-	 export let val;
+	export let val;
 	export let label;
 	export let units;
-    /**
-	 * @type {number}
+	/**
+	 * @type {number|string}
 	 */
 	export let min = 0;
-        /**
-	 * @type {number}
+	/**
+	 * @type {number|string}
 	 */
 	export let max = 100;
 	export let step = 1;
@@ -24,8 +24,8 @@
 		type="number"
 		inputmode="numeric"
 		bind:value={val}
-		{min}
-		{max}
+		min={min}
+		max={max}
 		{step}
 		style="width: 5em;"
 	/>

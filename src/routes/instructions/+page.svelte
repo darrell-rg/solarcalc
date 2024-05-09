@@ -205,9 +205,5 @@
 		.floatRightBig {
 			width: 310px;
 		}
-		.rightSideImg {
-			max-width: 300px;
-			min-width: 200px;
-		}
 	}
 </style>

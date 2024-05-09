@@ -96,7 +96,7 @@
 
 	<article class="faq">
 		<figure>
-			<img src="solarShed/deadTigos.jpg" class="rightSideImg" />
+			<img alt="dead tigos" src="solarShed/deadTigos.jpg" class="rightSideImg" />
 			<figcaption>Dead TS4-A-O solar optimizers</figcaption>
 		</figure>
 		<h2>What DC solar optimizers did you try?</h2>
@@ -213,7 +213,7 @@
 
 	<article class="faq">
 		<figure>
-			<img src="mppt_thermostat.jpg" class="rightSideImg" />
+			<img alt="mppt thermostat" src="mppt_thermostat.jpg" class="rightSideImg" />
 			<figcaption>MPPT thermostat</figcaption>
 		</figure>
 		<h2>Do I need a thermostat?</h2>
