@@ -19,17 +19,16 @@
 		wireGuages,
 		moduleTypes,
 		elements,
-		getMonthData
+		getMonthData,
+		year
 	} from '$lib/components/util';
 	import { PUBLIC_API_URL } from '$env/static/public';
 	import { onMount } from 'svelte';
 	let jsonUrlBase = '/json?';
 	let graphUrlBase = '/graph?';
 
-	/**
-	 * @param {any} event
-	 */
-	function makeGraphUrl(startDay = 45, event) {
+
+	function makeGraphUrl(startDay = 45, event:any) {
 		//pick a random day in the season
 		let day = Math.floor(Math.random() * 90) + startDay;
 		let url = PUBLIC_API_URL + graphUrlBase;
@@ -114,19 +113,15 @@
 
 	let modules: any = [];
 	let selectedModule: any = null;
-	let selectedModuleIndex = 0;
 
 	/* Fetch and update the list of modules once */
-	onMount(async () => {
+	async function loadModules() {
 		const f = await (await fetch('CECModules2023-11-17combined.csv')).arrayBuffer();
 		const wb = read(f); // parse the array buffer
 		modules = utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-
 		console.log('loaded modules ', modules.length);
-		// selectedModule = modules[200];
-		// console.log(selectedModule);
-		// const ws = wb.Sheets[wb.SheetNames[0]]; // get the first worksheet
-	});
+		// return modules;
+	}
 
 	function onModuleChange(newModule: any) {
 		if(newModule)
@@ -139,8 +134,9 @@
 		}
 	}
 
-	function searchModule(keyword:string, nb_items_max:number) {
-		// await new Promise((r) => setTimeout(r, 3000))
+	async function searchModule(keyword:string, nb_items_max:number) {
+		if(modules.length < 1)
+			await loadModules();
 		let query = keyword.toLowerCase();
 		return modules.filter((el:any) => el['Name'].toLowerCase().includes(query)).slice(0, nb_items_max);
 	}
@@ -172,7 +168,7 @@
 	let energyFactor = 0.91;
 	let powerPerPanel = 0;
 	let nominalPower = 0;
-	let energyToHeatOneTank = 0;
+	let 	energyToHeatOneTank = 0;
 	let tanksUsedPerDay = 0;
 	let dailyDemand = 0;
 
@@ -351,6 +347,8 @@
 				noInputStyles={false}
 				hideArrow={false}
 				create={false}
+				readonly={true}
+				className="elementInput"
 			/>
 			Element
 			<!-- <InputInt bind:val={elementP} label="Element Power Rating" units="W" min="100" max="10000" />
@@ -398,9 +396,7 @@
 			</p>
 
 			<p>
-				<b> Element Resistance</b> Often water heater elements are rated by Volts and Watts instead
-				of Ohms. You can put in <b>Element Power Rating</b> and <b>Element Voltage Rating</b> to calculate
-				the Ohms.
+				<b> Element</b>  power rating must exceed <b>Nominal Array Power</b>.  The voltage rating is more flexible, you can go over this a bit.
 			</p>
 		</Box>
 	</span>
@@ -458,7 +454,7 @@
 			<Output val={round(stringVoc)} label="Voc of full string" units="V" />
 			<Output val={round($Vmp * panelsPerString)} label="Vmp of full string" units="V" />
 			<Output val={round($Isc * parallelStrings)} label="Isc of parallel strings" units="A" />
-			<Output val={round(nominalPower)} label="Nominal power of string" units="W" />
+			<Output val={round(nominalPower)} label="Nominal Array Power" units="W" />
 			<br />
 			<Output val={round(Rsource)} label="Source Impedance" units="Ω" />
 			<Output val={round(mismatch)} label="Mismatch" units="%" />
@@ -475,7 +471,7 @@
 			searchFunction={searchModule}
 			bind:selectedItem={selectedModule}
 			onChange={onModuleChange}
-			maxItemsToShowInList={10}
+			maxItemsToShowInList={15}
 			minCharactersToSearch={3}
 			delay={200}
 			localFiltering={false}
@@ -735,6 +731,8 @@
 		background-color: grey;
 	}
 
-	input.autocomplete-input {
+	input .elementInput {
+		padding-top: 2px;
+		padding-bottom: 2px;
 	}
 </style>
