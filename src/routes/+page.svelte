@@ -3,179 +3,26 @@
 	import Input from '$lib/components/Input.svelte';
 	import HousePic from '$lib/components/HousePic.svelte';
 	import Output from '$lib/components/Output.svelte';
-	import { Vmp, Voc, Imp, Isc, lat, lng } from '$lib/components/stores.js';
-	import { round, tokWh, clamp, vpToR } from '$lib/components/util';
-	import { PUBLIC_API_URL } from '$env/static/public';
 	import InputInt from '$lib/components/InputInt.svelte';
 	import LeafletMap from '$lib/components/LeafletMap.svelte';
-
+	import AutoComplete from 'simple-svelte-autocomplete';
+	import { Vmp, Voc, Imp, Isc, lat, lng } from '$lib/components/stores.js';
+	import {
+		round,
+		clamp,
+		months,
+		indexToTime,
+		daysInMonth,
+		toGal,
+		heatCapOfWater,
+		wireGuages,
+		moduleTypes,
+		elements,
+		getMonthData
+	} from '$lib/components/util';
+	import { PUBLIC_API_URL } from '$env/static/public';
 	let jsonUrlBase = '/json?';
 	let graphUrlBase = '/graph?';
-
-	const formatter = new Intl.DateTimeFormat('en', {
-		hour12: true,
-		hour: 'numeric',
-		minute: '2-digit',
-		second: '2-digit'
-	});
-
-	// Month in JavaScript is 0-indexed (January is 0, February is 1, etc),
-	// but by using 0 as the day it will give us the last day of the prior
-	// month. So passing in 1 as the month number will return the last day
-	// of January, not February
-	/**
-	 * @param {number} year
-	 * @param {number} month
-	 */
-	function daysInMonth(year, month) {
-		return new Date(year, month + 1, 0).getDate();
-	}
-
-	/**
-	 * @param {number} liters
-	 */
-	function toGal(liters) {
-		return Math.round(liters * 0.264172);
-	}
-
-	/**
-	 * @param {number} i
-	 */
-	function indexToTime(i) {
-		let amPm = 'AM';
-
-		if (i == 0) return 'Midnight';
-		// i = i + 1;
-		if (i == 12) return 'Noon';
-
-		if (i >= 12) {
-			i = i - 12;
-			amPm = 'PM';
-		}
-
-		return '' + i + amPm;
-	}
-
-	let wireGuages = [
-		{ id: 1, r: 2.1, text: `8AWG 2.1Ω/km 40A max` },
-		{ id: 2, r: 3.35, text: `10AWG 3.35Ω/km 30A max` },
-		{ id: 3, r: 5.31, text: `12AWG 5.31Ω/km 20A max` },
-		{ id: 4, r: 8.46, text: `14AWG 8.46Ω/km 15A max` }
-	];
-
-	let moduleTypes = [
-		{ id: 0, text: `Standard, 19% eff` },
-		{ id: 1, text: `Premium, 21% eff` },
-		{ id: 2, text: `Thin Film,  18% eff` }
-	];
-
-	let selectedWire = wireGuages[1];
-
-	let selectedModuleType = moduleTypes[1];
-
-	let months = [
-		'January',
-		'February',
-		'March',
-		'April',
-		'May',
-		'June',
-		'July',
-		'August',
-		'September',
-		'October',
-		'November',
-		'December'
-	];
-	let panelsPerString = 3;
-	let parallelStrings = 1;
-	let azimuth = 180;
-	let elevation = 40;
-	let wireLength = 60;
-	let peakPrice = 0.285;
-	let offPeakPrice = 0.0792;
-
-	let useMixingValve = 1;
-	let mixingValveConstant = 1.5;
-
-	let losses = 12;
-	let wireResistance = 2.1;
-
-	let elementR = 0;
-	let elementV = 120;
-	let elementP = 2000;
-
-	let tankSize = 189; //50 gal
-	//heat capacity Cp of water is 4.186kJ/kg-K
-	let heatCapOfWater = 4186; // j/l/k
-	let hotWaterOutTemp = 40;
-	let hotWaterPerPersonDay = 64; // l/person/day
-	let personsInHoushold = 4;
-	let groundTemp = 5;
-	let energyFactor = 0.91;
-	let powerPerPanel = $Vmp * $Imp;
-	let nominalPower = powerPerPanel * panelsPerString * parallelStrings;
-	let energyToHeatOneTank = heatCapOfWater * tankSize * (hotWaterOutTemp - groundTemp);
-	let tanksUsedPerDay = round((hotWaterPerPersonDay * personsInHoushold) / tankSize);
-	let dailyDemand = round((tanksUsedPerDay * energyToHeatOneTank) / 3600e3);
-
-	let mismatch = 10;
-	let Rsource = 1;
-	let Rmp = 1;
-	let stringVoc = $Voc * panelsPerString;
-	let peakHours = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0];
-	let peakHourCount = peakHours.reduce((accumulator, currentValue) => {
-		return accumulator + currentValue;
-	}, 0);
-	let avgPowerPrice =
-		(0.0 + peakHourCount / 24.0) * peakPrice + ((24.0 - peakHourCount) / 24.0) * offPeakPrice;
-
-	let year = new Date().getFullYear();
-
-	/**
-	 * @type {any[]}
-	 */
-	let monthData = [];
-
-	let yearlySavings = 0;
-	let dailyEnergyDemand = 0;
-
-	months.forEach((month, index) => {
-		let m = {
-			month: months[index],
-			days: daysInMonth(year, index),
-			insolation: 0,
-			Edemand: 0,
-			Esolar: 0,
-			Ecity: 0,
-			Epercent: 0,
-			savings: 0
-		};
-
-		monthData.push(m);
-	});
-
-	// the `$:` means 're-run whenever these values change'
-	// does not listen to changes happening inside components
-	$: peakHourCount = peakHours.reduce((accumulator, currentValue) => {
-		return accumulator + currentValue;
-	}, 0);
-	$: avgPowerPrice =
-		(peakHourCount / 24.0) * peakPrice + ((24 - peakHourCount) / 24.0) * offPeakPrice;
-	$: wireResistance = (selectedWire.r * wireLength) / 1000;
-	$: energyToHeatOneTank =
-		(heatCapOfWater * tankSize * (hotWaterOutTemp - groundTemp) * 1) / energyFactor;
-	$: costToHeatOneTank = round((avgPowerPrice * energyToHeatOneTank) / 3600e3);
-	$: tanksUsedPerDay = round((hotWaterPerPersonDay * personsInHoushold) / tankSize);
-	$: powerPerPanel = $Vmp * $Imp;
-	$: nominalPower = powerPerPanel * panelsPerString * parallelStrings;
-	$: stringVoc = $Voc * panelsPerString;
-	$: elementR = vpToR(elementV, elementP);
-	$: dailyDemand = round((tanksUsedPerDay * energyToHeatOneTank) / 3600e3);
-	$: Rmp = ($Vmp * panelsPerString) / $Imp / parallelStrings;
-	$: Rsource = Rmp;
-	$: mismatch = Math.abs(100 - ((elementR + wireResistance) / Rsource) * 100.0);
-	$: dailyEnergyDemand = (tanksUsedPerDay * energyToHeatOneTank) / 3600e3;
 
 	/**
 	 * @param {any} event
@@ -255,6 +102,71 @@
 				yearlySavings = newYearlySavings;
 			});
 	}
+
+	let selectedWire = wireGuages[1];
+	let selectedModuleType = moduleTypes[1];
+	let panelsPerString = 3;
+	let parallelStrings = 1;
+	let azimuth = 180;
+	let elevation = 40;
+	let wireLength = 60;
+	let wireResistance = 2.1;
+	let peakPrice = 0.285;
+	let offPeakPrice = 0.0792;
+	let useMPPT = 1;
+	let losses = 12;
+
+	let selectedElement = elements[0];
+	let elementR = 0;
+	// $: elementR = vpToR(elementV, elementP);
+	// let elementV = 120;
+	// let elementP = 2000;
+
+	let tankSize = 189; //50 gal
+	let hotWaterOutTemp = 40;
+	let hotWaterPerPersonDay = 64; // l/person/day
+	let personsInHoushold = 4;
+	let groundTemp = 5;
+	let energyFactor = 0.91;
+	let powerPerPanel = 0;
+	let nominalPower = 0;
+	let energyToHeatOneTank = 0;
+	let tanksUsedPerDay = 0;
+	let dailyDemand = 0;
+
+	let mismatch = 10;
+	let Rsource = 1;
+	let Rmp = 1;
+	let stringVoc = $Voc * panelsPerString;
+	let peakHours = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0];
+	let peakHourCount = 0;
+	let avgPowerPrice = 0;
+
+	let yearlySavings = 0;
+	let dailyEnergyDemand = 0;
+
+	let monthData = getMonthData();
+
+	// the `$:` means 're-run whenever these values change'
+	// does not listen to changes happening inside components
+	$: peakHourCount = peakHours.reduce((accumulator, currentValue) => {
+		return accumulator + currentValue;
+	}, 0);
+	$: avgPowerPrice =
+		(peakHourCount / 24.0) * peakPrice + ((24 - peakHourCount) / 24.0) * offPeakPrice;
+	$: wireResistance = (selectedWire.r * wireLength) / 1000;
+	$: energyToHeatOneTank =
+		(heatCapOfWater * tankSize * (hotWaterOutTemp - groundTemp) * 1) / energyFactor;
+	$: costToHeatOneTank = round((avgPowerPrice * energyToHeatOneTank) / 3600e3);
+	$: tanksUsedPerDay = round((hotWaterPerPersonDay * personsInHoushold) / tankSize);
+	$: powerPerPanel = $Vmp * $Imp;
+	$: nominalPower = powerPerPanel * panelsPerString * parallelStrings;
+	$: stringVoc = $Voc * panelsPerString;
+	$: dailyDemand = round((tanksUsedPerDay * energyToHeatOneTank) / 3600e3);
+	$: Rmp = ($Vmp * panelsPerString) / $Imp / parallelStrings;
+	$: Rsource = Rmp;
+	$: mismatch = Math.abs(100 - ((elementR + wireResistance) / Rsource) * 100.0);
+	$: dailyEnergyDemand = (tanksUsedPerDay * energyToHeatOneTank) / 3600e3;
 </script>
 
 <svelte:head>
@@ -387,12 +299,25 @@
 			/>
 			<!-- <Input val={50} label="ThermostatSetting" units="°C" /> -->
 			<br />
-			<InputInt bind:val={elementP} label="Element Power Rating" units="W" min="100" max="10000" />
-			<InputInt bind:val={elementV} label="Element Voltage Rating" units="V" min="12" max="600" />
-			<!-- <label>
-				<input type="checkbox" bind:checked={useMixingValve} />
-				Use Thermostatic mixing valve
-			</label> -->
+
+			<AutoComplete
+				items={elements}
+				bind:selectedItem={selectedElement}
+				bind:value={elementR}
+				labelFieldName="label"
+				valueFieldName="resistance"
+				noInputStyles="false"
+				hideArrow="false"
+				create="false"
+			/>
+			Element
+			<!-- <InputInt bind:val={elementP} label="Element Power Rating" units="W" min="100" max="10000" />
+			<InputInt bind:val={elementV} label="Element Voltage Rating" units="V" min="12" max="600" /> -->
+			<br />
+			<label>
+				<input type="checkbox" bind:checked={useMPPT} />
+				Use MPPT Thermostat
+			</label>
 			<hr />
 			<Output val={round(energyToHeatOneTank / 3600e3)} label="Energy to heat 1 tank" units="kWh" />
 			<Output val={costToHeatOneTank} label="Cost to heat one tank" units="$" />
@@ -751,5 +676,8 @@
 	}
 	input:read-only {
 		background-color: grey;
+	}
+
+	input.autocomplete-input {
 	}
 </style>

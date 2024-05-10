@@ -15,6 +15,8 @@
 		lat = newLat;
 		lng = newLng;
 		marker?.setLatLng([newLat, newLng]);
+
+		map?.setView([newLat, newLng]);
 	}
 
 	const dispatch = createEventDispatcher();
