@@ -53,6 +53,14 @@
 		<a target="_blank" href="https://diysolarforum.com/">DIY Solar Power Forum</a> a pretty good forum
 		for people who like to mess with solar panels.
 	</p>
+
+	<p>
+		<a
+			target="_blank"
+			href="https://help-center.helioscope.com/hc/en-us/articles/13804165205395-Modeling-101/"
+			>Solar Performance Modeling Overview
+		</a>
+	</p>
 </div>
 
 <style>
