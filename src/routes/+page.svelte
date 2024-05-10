@@ -6,7 +6,6 @@
 	import InputInt from '$lib/components/InputInt.svelte';
 	import LeafletMap from '$lib/components/LeafletMap.svelte';
 	import AutoComplete from 'simple-svelte-autocomplete';
-	import { read, utils, writeFileXLSX } from 'xlsx';
 	import { Vmp, Voc, Imp, Isc, lat, lng } from '$lib/components/stores.js';
 	import {
 		round,
@@ -116,9 +115,11 @@
 
 	/* Fetch and update the list of modules once */
 	async function loadModules() {
+		// dynamic import for this large js lib
+		const xlsx = (await import('xlsx')).default;
 		const f = await (await fetch('CECModules2023-11-17combined.csv')).arrayBuffer();
-		const wb = read(f); // parse the array buffer
-		modules = utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+		const wb = xlsx.read(f); // parse the array buffer
+		modules = xlsx.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
 		console.log('loaded modules ', modules.length);
 		// return modules;
 	}
@@ -337,7 +338,7 @@
 			/>
 			<!-- <Input val={50} label="ThermostatSetting" units="°C" /> -->
 			<br />
-
+			
 			<AutoComplete
 				items={elements}
 				bind:selectedItem={selectedElement}
@@ -345,17 +346,19 @@
 				labelFieldName="label"
 				valueFieldName="resistance"
 				noInputStyles={false}
-				hideArrow={false}
+				hideArrow={true}
 				create={false}
 				readonly={true}
-				className="elementInput"
+				inputClassName="elementInput"
+				inputId="elementInput"
 			/>
-			Element
+			
+			<label for="elementInput" class="elementInputLabel">Element</label>
 			<!-- <InputInt bind:val={elementP} label="Element Power Rating" units="W" min="100" max="10000" />
 			<InputInt bind:val={elementV} label="Element Voltage Rating" units="V" min="12" max="600" /> -->
 			<br />
 			<label>
-				<input type="checkbox" bind:checked={useMPPT} />
+				<input type="checkbox" bind:checked={useMPPT} disabled />
 				Use MPPT Thermostat
 			</label>
 			<hr />
@@ -479,6 +482,7 @@
 			labelFieldName="Name"
 			valueFieldName="__rowNum__"
 			create={false}
+			hideArrow={true}
 		/>
 	</p>
 			<p>
@@ -731,8 +735,20 @@
 		background-color: grey;
 	}
 
-	input .elementInput {
-		padding-top: 2px;
-		padding-bottom: 2px;
-	}
+	.elementInputLabel{
+		line-height:30px;
+	} 
+	:global(.elementInput) {
+		padding-top: 1px  !important;
+
+		padding-left: 4px  !important;
+		padding-bottom: 1px  !important;
+		font-size: 16px  !important;
+	} 	
+	
+	select {
+		padding-top: 1px;
+		padding-bottom: 1px;
+		font-size: 16px;
+	} 
 </style>
