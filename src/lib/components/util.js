@@ -130,8 +130,7 @@ const elementString = ` 3500W x 480V = 65.8Ω
 5500W x 208V = 7.87Ω
 6000W x 208V = 7.21Ω
 2000W x 120V = 7.2Ω
-2500W x 120v = 5.76Ω
-`;
+2500W x 120v = 5.76Ω`;
 
 /**
  * @param {string} str
@@ -143,11 +142,12 @@ function parseHeaterElement(str) {
 	// Extract values and units
 	const watts = parseFloat(parts[0]);
 	const volts = parseFloat(parts[1]);
-	const resistance = parseFloat(parts[2]);
+	// const resistance = parseFloat(parts[2]);
+	const resistance = round(vpToR(volts,watts));
 
 	// Create the object with the extracted values
 	const result = {
-		label: str,
+		label:  `${volts}V x ${watts}W ≈ ${resistance}Ω`,
 		watts: watts,
 		volts: volts,
 		resistance: resistance
@@ -162,4 +162,9 @@ function convertElements() {
 	return parts.map(parseHeaterElement);
 }
 
-export const elements = convertElements();
+
+function compareElements(a, b) {
+	return a.resistance - b.resistance;
+  }
+
+export const elements = convertElements().sort(compareElements);

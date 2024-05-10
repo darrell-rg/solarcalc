@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import Box from '$lib/components/Box.svelte';
 	import Input from '$lib/components/Input.svelte';
 	import HousePic from '$lib/components/HousePic.svelte';
@@ -6,6 +6,7 @@
 	import InputInt from '$lib/components/InputInt.svelte';
 	import LeafletMap from '$lib/components/LeafletMap.svelte';
 	import AutoComplete from 'simple-svelte-autocomplete';
+	import { read, utils, writeFileXLSX } from 'xlsx';
 	import { Vmp, Voc, Imp, Isc, lat, lng } from '$lib/components/stores.js';
 	import {
 		round,
@@ -21,6 +22,7 @@
 		getMonthData
 	} from '$lib/components/util';
 	import { PUBLIC_API_URL } from '$env/static/public';
+	import { onMount } from 'svelte';
 	let jsonUrlBase = '/json?';
 	let graphUrlBase = '/graph?';
 
@@ -55,7 +57,7 @@
 	/**
 	 * @param {any} runMonthlySimButton
 	 */
-	function updateMonthlyTable(runMonthlySimButton) {
+	function updateMonthlyTable(runMonthlySimButton:any) {
 		let url = PUBLIC_API_URL + jsonUrlBase;
 
 		//pwr should be in W
@@ -65,10 +67,17 @@
 			`lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}&losses=${losses}&module_type=${selectedModuleType.id}`;
 
 		let newYearlySavings = 0;
-		/**
-		 * @type {any[]}
-		 */
-		let newMonthData = [];
+
+		let newMonthData: {
+			month: string;
+			days: number;
+			insolation: any;
+			Edemand: number;
+			Esolar: number;
+			savings: number;
+			Epercent: number;
+			Ecity: number;
+		}[] = [];
 
 		// console.log(runMonthlySimButton)
 		runMonthlySimButton.srcElement.setAttribute('disabled', true);
@@ -101,6 +110,39 @@
 				monthData = newMonthData;
 				yearlySavings = newYearlySavings;
 			});
+	}
+
+	let modules: any = [];
+	let selectedModule: any = null;
+	let selectedModuleIndex = 0;
+
+	/* Fetch and update the list of modules once */
+	onMount(async () => {
+		const f = await (await fetch('CECModules2023-11-17combined.csv')).arrayBuffer();
+		const wb = read(f); // parse the array buffer
+		modules = utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+
+		console.log('loaded modules ', modules.length);
+		// selectedModule = modules[200];
+		// console.log(selectedModule);
+		// const ws = wb.Sheets[wb.SheetNames[0]]; // get the first worksheet
+	});
+
+	function onModuleChange(newModule: any) {
+		if(newModule)
+		{
+			$Vmp = newModule.V_mp_ref;
+			$Imp = newModule.I_mp_ref;
+			$Voc = newModule.V_oc_ref;
+			$Isc = newModule.I_sc_ref;
+			console.log('moduleChanged!', newModule);
+		}
+	}
+
+	function searchModule(keyword:string, nb_items_max:number) {
+		// await new Promise((r) => setTimeout(r, 3000))
+		let query = keyword.toLowerCase();
+		return modules.filter((el:any) => el['Name'].toLowerCase().includes(query)).slice(0, nb_items_max);
 	}
 
 	let selectedWire = wireGuages[1];
@@ -306,9 +348,9 @@
 				bind:value={elementR}
 				labelFieldName="label"
 				valueFieldName="resistance"
-				noInputStyles="false"
-				hideArrow="false"
-				create="false"
+				noInputStyles={false}
+				hideArrow={false}
+				create={false}
 			/>
 			Element
 			<!-- <InputInt bind:val={elementP} label="Element Power Rating" units="W" min="100" max="10000" />
@@ -363,14 +405,13 @@
 		</Box>
 	</span>
 </div>
-
 <div class="smol-sidebar">
 	<span data-text>
 		<h2>Step 3</h2>
 		Set<b>Azimuth </b> and <b>Elevation</b> to match the roof where you plan to install the panels.
 		The ideal elevation is equal to your Latitude.
 		<br /> <br />
-		Put in the rest of the specs for the solar panels you want to Simulate, or use the defaults to start.
+		Put in the rest of the specs for the solar panels you want to Simulate, or use <b>Search for Panel by PN</b>
 		<br /> <br />
 		The bottom of this section will show you the source impedance you want to match with your water heater
 		element.
@@ -395,9 +436,9 @@
 			</label>
 			<br />
 			<Input bind:val={$Voc} label="Voc" units="V" />
+			<Input bind:val={$Isc} label="Isc" units="A" />
 			<Input bind:val={$Vmp} label="Vmp" units="V" />
 			<Input bind:val={$Imp} label="Imp" units="A" />
-			<Input bind:val={$Isc} label="Isc" units="A" />
 			<br />
 			<label>
 				<select bind:value={selectedWire}>
@@ -428,6 +469,22 @@
 	</span>
 	<span>
 		<Box>
+			<p>
+			<b>Search for Panel by PN:</b><br>
+			<AutoComplete
+			searchFunction={searchModule}
+			bind:selectedItem={selectedModule}
+			onChange={onModuleChange}
+			maxItemsToShowInList={10}
+			minCharactersToSearch={3}
+			delay={200}
+			localFiltering={false}
+			localSorting={true}
+			labelFieldName="Name"
+			valueFieldName="__rowNum__"
+			create={false}
+		/>
+	</p>
 			<p>
 				<b>Vmp, Imp</b>, find these in the spec sheet of your solar panels (<a
 					target="_blank"
