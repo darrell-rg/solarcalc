@@ -118,6 +118,9 @@ def runSimJson(lat=40.57, lon=-105.07, power_kW=1, tilt=40, azimuth=180, module_
 def runSim(lat=40.57, lon=-105.07, year=2010, power_kW=1, tilt=40, azimuth=180, module_type=0, losses=14, folder="/tmp"):
 
     filename, hash = downloadWeatherData(lat, lon, year, folder)
+    paramsString = f"${power_kW}_${tilt}_${azimuth}_${module_type}_${losses}"
+    hash = hashlib.shake_128((hash+paramsString).encode()).hexdigest(32)
+
     # load the data
     # Return just the first 2 lines to get metadata:
     info = pd.read_csv(filename, nrows=1)

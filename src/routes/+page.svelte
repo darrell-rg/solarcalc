@@ -153,7 +153,7 @@
 	let peakPrice = 0.285;
 	let offPeakPrice = 0.0792;
 	let useMPPT = 1;
-	let losses = 12;
+	let losses = 14;
 
 	let selectedElement = elements[0];
 	let elementR = 0;
@@ -348,7 +348,7 @@
 				noInputStyles={false}
 				hideArrow={true}
 				create={false}
-				readonly={true}
+				readonly={false}
 				inputClassName="elementInput"
 				inputId="elementInput"
 			/>
