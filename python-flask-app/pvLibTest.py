@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import pprint
 import PySAM.PySSC as pssc
+from scipy.interpolate import CubicSpline
 
 # Example module parameters for the Canadian Solar CS5P-220M:
 parameters = {
@@ -31,36 +32,8 @@ parameters = {
     "Technology": "Mono-c-Si",
 }
 
-samples = 200
+samples = 100
 
-
-def getPvAtCond(parameters, Geff, Tcell, R_load):
-    # adjust the reference parameters according to the operating
-    # conditions using the De Soto model:
-    IL, I0, Rs, Rsh, nNsVth = pvsystem.calcparams_desoto(
-        Geff,
-        Tcell,
-        alpha_sc=parameters["alpha_sc"],
-        a_ref=parameters["a_ref"],
-        I_L_ref=parameters["I_L_ref"],
-        I_o_ref=parameters["I_o_ref"],
-        R_sh_ref=parameters["R_sh_ref"],
-        R_s=parameters["R_s"],
-        EgRef=1.121,
-        dEgdT=-0.0002677,
-    )
-
-    # plug the parameters into the SDE and solve for IV curves:
-    SDE_params = {
-        "photocurrent": IL,
-        "saturation_current": I0,
-        "resistance_series": Rs + R_load,
-        "resistance_shunt": Rsh,
-        "nNsVth": nNsVth,
-    }
-    curve_info = pvsystem.singlediode(method="lambertw", **SDE_params)
-
-    return curve_info
 
 
 def getPvSystem(parameters):
@@ -130,8 +103,6 @@ def plotPanelCurve(Rload=9.9):
     v_load = []
     plt.figure()
     for idx, case in conditions.iterrows():
-        closest_v_idx = 0
-        closest_r_delta = 99999999
         label = (
             "$G_{eff}$ " + f"{case['Geff']} $W/m^2$\n"
             "$T_{cell}$ " + f"{case['Tcell']} $\\degree C$"
@@ -142,7 +113,9 @@ def plotPanelCurve(Rload=9.9):
         r_mp = v_mp / i_mp
         p_mp = v_mp * i_mp
         label_Rmp = f"Rmp   {r_mp:2.1f} {p_mp:3.0f}W"
-        pprint.pp(v[idx])
+        # pprint.pp(v[idx])
+        closest_v_idx = 0
+        closest_r_delta = 99999999
         for j, volts in v[idx].items():
             r = v[idx][j] / i[idx][j]
             delta = abs(r - Rload)
@@ -269,8 +242,70 @@ def ssc_table_numbers_to_dict_empty(cmod_name):
     return ssc_out
 
 
+def getPowerAtLoadFakeParam(Geff, Tcell, R_load):
+    return getPowerAtLoad(parameters,Geff, Tcell, R_load)
+
+def getPowerAtLoad(parameters, Geff, Tcell, R_load):
+    # adjust the reference parameters according to the operating
+    # conditions using the De Soto model:
+    IL, I0, Rs, Rsh, nNsVth = pvsystem.calcparams_desoto(
+        Geff,
+        Tcell,
+        alpha_sc=parameters["alpha_sc"],
+        a_ref=parameters["a_ref"],
+        I_L_ref=parameters["I_L_ref"],
+        I_o_ref=parameters["I_o_ref"],
+        R_sh_ref=parameters["R_sh_ref"],
+        R_s=parameters["R_s"],
+        EgRef=1.121,
+        dEgdT=-0.0002677,
+    )
+
+    # plug the parameters into the SDE and solve for IV curves:
+    SDE_params = {
+        "photocurrent": IL,
+        "saturation_current": I0,
+        "resistance_series": Rs,
+        "resistance_shunt": Rsh,
+        "nNsVth": nNsVth,
+    }
+    curve_info = pvsystem.singlediode(method="lambertw", **SDE_params)
+
+    v = np.linspace(0.0, curve_info["v_oc"], samples)
+    i = pvsystem.i_from_v(voltage=v, method="lambertw", **SDE_params)
+    # r = v/i
+    # spl = CubicSpline(v,r)
+    # i_load = spl(R_load)
+    # v_load = pvsystem.v_from_i(current=i_load, method="lambertw", **SDE_params)
+    p_load = np.zeros_like(Geff)
+
+    #fix backwards numpy indexing
+    v=np.transpose(v)
+    i=np.transpose(i)
+
+    for idx, Geff in enumerate(p_load):
+        closest_v_idx = 0
+        closest_r_delta = 99999999
+        # print(v[idx])
+        # print(i[idx])
+        # print()
+        for j, volts in enumerate(v[idx]):
+            r = volts / i[idx][j]
+            delta = abs(r - R_load)
+            if delta < closest_r_delta:
+                closest_v_idx = j
+                closest_r_delta = delta
+
+        p_load[idx] = v[idx][closest_v_idx] * i[idx][closest_v_idx]
+
+    
+
+    return p_load
+
+
 if __name__ == "__main__":
-    curve = getPvAtCond(parameters, 800, 22, 10)
-    pprint.pp(curve)
+    r=9.9
+    p = getPowerAtLoad(parameters, np.array([400,600,800,1000]), np.array([55,55,55,55]), r)
+    print(f"power at {r}R = {p}W")
     plotPanelCurve()
     # runSimJson()

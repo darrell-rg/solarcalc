@@ -297,7 +297,7 @@ def standbyLoss(ef=0.9, Ttank=40, Tamb=16):
 #  https://www.energytrust.org/wp-content/uploads/2017/11/Water_Heater_Energy_Storage_wStaffResponse.pdf
 #
 #
-def nsrdb_plot(df, day, filename, tankSize=189, startingTemp=40, uef=0.9):
+def nsrdb_plot(df, day, filename, tankSize=189, startingTemp=40, uef=0.9, elementR = 9.9):
 
     timeSteps = 24
 
