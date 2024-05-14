@@ -35,6 +35,35 @@ parameters = {
 samples = 100
 
 
+module_params = {
+    "Name": "SunSpark Technology Inc. SST-M156(HCBF)-600W",
+    "Manufacturer": "SunSpark Technology Inc.",
+    "Technology": "Mono-c-Si",
+    "Bifacial": 1,
+    "STC": 601.437,
+    "PTC": 562.8,
+    "A_c": 2.77,
+    "N_s": 78,
+    "I_sc_ref": 13.86,
+    "V_oc_ref": 55.1,
+    "I_mp_ref": 12.99,
+    "V_mp_ref": 46.3,
+    "alpha_sc": 0.0066528,
+    "beta_oc": -0.141607,
+    "T_NOCT": 44.6,
+    "a_ref": 2.048,
+    "I_L_ref": 13.8753,
+    "I_o_ref": 2.80156e-11,
+    "R_s": 0.184367,
+    "R_sh_ref": 166.971,
+    "Adjust": 11.8772,
+    "gamma_r": -0.338,
+    "BIPV": "N",
+    "Version": "2023.10.31",
+    "Date": 44881
+}
+
+
 
 def getPvSystem(parameters):
 
@@ -93,7 +122,7 @@ def draw_arrow(ax, label, x0, y0, rotation, size, direction):
     bb.set_boxstyle(style, pad=0.6)
 
 
-def plotPanelCurve(Rload=9.9):
+def plotPanelCurve(parameters,Rload=9.9):
 
     conditions, curve_info, v, i = getPvSystem(parameters)
 
@@ -242,8 +271,6 @@ def ssc_table_numbers_to_dict_empty(cmod_name):
     return ssc_out
 
 
-def getPowerAtLoadFakeParam(Geff, Tcell, R_load):
-    return getPowerAtLoad(parameters,Geff, Tcell, R_load)
 
 def getPowerAtLoad(parameters, Geff, Tcell, R_load):
     # adjust the reference parameters according to the operating
@@ -304,8 +331,8 @@ def getPowerAtLoad(parameters, Geff, Tcell, R_load):
 
 
 if __name__ == "__main__":
-    r=9.9
-    p = getPowerAtLoad(parameters, np.array([400,600,800,1000]), np.array([55,55,55,55]), r)
+    r=3.3
+    p = getPowerAtLoad(module_params, np.array([400,600,800,1000]), np.array([55,55,55,55]), r)
     print(f"power at {r}R = {p}W")
-    plotPanelCurve()
+    plotPanelCurve(module_params,r)
     # runSimJson()

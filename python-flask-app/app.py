@@ -67,6 +67,34 @@ email = "darrell@pvh2o.com"
 folder = "/tmp"
 
 
+module_params = {
+    "Name": "SunSpark Technology Inc. SST-M156(HCBF)-600W",
+    "Manufacturer": "SunSpark Technology Inc.",
+    "Technology": "Mono-c-Si",
+    "Bifacial": 1,
+    "STC": 601.437,
+    "PTC": 562.8,
+    "A_c": 2.77,
+    "N_s": 78,
+    "I_sc_ref": 13.86,
+    "V_oc_ref": 55.1,
+    "I_mp_ref": 12.99,
+    "V_mp_ref": 46.3,
+    "alpha_sc": 0.0066528,
+    "beta_oc": -0.141607,
+    "T_NOCT": 44.6,
+    "a_ref": 2.048,
+    "I_L_ref": 13.8753,
+    "I_o_ref": 2.80156e-11,
+    "R_s": 0.184367,
+    "R_sh_ref": 166.971,
+    "Adjust": 11.8772,
+    "gamma_r": -0.338,
+    "BIPV": "N",
+    "Version": "2023.10.31",
+    "Date": 44881
+}
+
 def downloadTMYWeatherData(lat=40.57, lon=-105.07, year=2022, folder="/tmp"):
     # Declare all variables as strings. Spaces must be replaced with '+', i.e., change 'John Smith' to 'John+Smith'.
     # "weather_data_source":"NSRDB PSM V3 GOES tmy-2022 3.2.0"
@@ -231,6 +259,8 @@ def runSim(
     ssc.module_exec(mod, dat)
     df["generation"] = np.array(ssc.data_get_array(dat, b"gen"))
     df["tcell"] = np.array(ssc.data_get_array(dat, b"tcell"))
+    df["tpoa"] = np.array(ssc.data_get_array(dat, b"tpoa"))
+    df["poa"] = np.array(ssc.data_get_array(dat, b"poa"))
 
     monthly = {
             "ac_monthly": ssc.data_get_array(dat, b"ac_monthly"),
@@ -239,8 +269,10 @@ def runSim(
             "dc_monthly": ssc.data_get_array(dat, b"dc_monthly"),
         }
 
-    simData = pvLibTest.ssc_table_to_dict(mod, dat)
-    pprint.pp(simData.keys())
+    #simData = pvLibTest.ssc_table_to_dict(mod, dat)
+    # pprint.pp(simData.keys())
+    #dict_keys(['gen', 'annual_energy_distribution_time', 'solar_resource_data', 'albedo_default', 'albedo_default_snow', 'use_wf_albedo', 'system_use_lifetime_output', 'system_capacity', 'module_type', 'dc_ac_ratio', 'bifaciality', 'array_type', 'tilt', 'azimuth', 'gcr', 'rotlim', 'losses', 'enable_wind_stow', 'stow_wspd', 'wind_stow_angle', 'en_snowloss', 'inv_eff', 'xfmr_nll', 'xfmr_ll', 'shading_en_string_option', 'shading_string_option', 'shading_en_timestep', 'shading_en_mxh', 'shading_en_azal', 'shading_en_diff', 'batt_simple_enable', 'gh', 'dn', 'df', 'tamb', 'wspd', 'snow', 'alb', 'soiling_f', 'sunup', 'shad_beam_factor', 'ss_beam_factor', 'ss_sky_diffuse_factor', 'ss_gnd_diffuse_factor', 'aoi', 'poa', 'tpoa', 'tcell', 'dcsnowderate', 'dc', 'ac', 'ac_pre_adjust', 'inv_eff_output', 'poa_monthly', 'solrad_monthly', 'dc_monthly', 'ac_monthly', 'monthly_energy', 'solrad_annual', 'ac_annual', 'ac_annual_pre_adjust', 'annual_energy', 'capacity_factor', 'capacity_factor_ac', 'kwh_per_kw', 'location', 'city', 'state', 'lat', 'lon', 'tz', 'elev', 'inverter_efficiency', 'ts_shift_hours', 'percent_complete', 'adjust_constant', 'adjust_en_timeindex', 'adjust_en_periods'])
+
 
     # free the memory
     ssc.data_free(dat)
@@ -297,7 +329,7 @@ def standbyLoss(ef=0.9, Ttank=40, Tamb=16):
 #  https://www.energytrust.org/wp-content/uploads/2017/11/Water_Heater_Energy_Storage_wStaffResponse.pdf
 #
 #
-def nsrdb_plot(df, day, filename, tankSize=189, startingTemp=40, uef=0.9, elementR = 9.9):
+def nsrdb_plot(df, day, filename, tankSize=189, startingTemp=40, uef=0.9, elementR = 9.9, stringLen=3, losses=14):
 
     timeSteps = 24
 
@@ -305,7 +337,7 @@ def nsrdb_plot(df, day, filename, tankSize=189, startingTemp=40, uef=0.9, elemen
         timeSteps = 48
     i = day * timeSteps
     j = i + timeSteps
-    filename = filename.replace(".csv", f"_{tankSize}_{startingTemp}_{uef}_{day}.png")
+    filename = filename.replace(".csv", f"_{tankSize}_{startingTemp}_{uef}_{day}_{elementR}_{stringLen}_{losses}.png")
     filenameCsv = filename.replace(".png", f"_data.csv")
 
     if not os.path.exists(filename):
@@ -374,6 +406,13 @@ def nsrdb_plot(df, day, filename, tankSize=189, startingTemp=40, uef=0.9, elemen
 
         total_kWh = jouleSum * 0.0000002778
 
+        # tpoa, poa = (Transmitted) plane of array irradiance [W/m2]
+        
+        #pvlib is a bit more optimistic then pvwatts, so we add a fudge factor
+        conversion_factor = 0.9
+        singleDay["No MPPT Power"] = pvLibTest.getPowerAtLoad(module_params,singleDay["tpoa"].to_numpy(), singleDay["tcell"].to_numpy(),elementR/stringLen) * stringLen * (1.0-(losses/100.0))
+        singleDay["No MPPT Power"] = (singleDay["No MPPT Power"] * conversion_factor) - singleDay["standbyLoss"]
+
         d = convert_day_of_year(day)
         ax.set_title(
             f"{d},  Net Thermal Energy Gain = {total_kWh:.2f} (kWh)", size="xx-large"
@@ -406,6 +445,7 @@ def nsrdb_plot(df, day, filename, tankSize=189, startingTemp=40, uef=0.9, elemen
         ax2.tick_params(axis="y", colors="b", **tkw)
 
         twin2.plot("Net Power", "g-", data=singleDay)
+        twin2.plot("No MPPT Power", "g.", data=singleDay)
         twin2.set_ylabel("Net Water Heating Power(W)")
         twin2.tick_params(axis="y", colors="g", **tkw)
         twin2.yaxis.label.set_color("g")
@@ -440,13 +480,15 @@ def getGraph():
     azimuth = int(request.args.get("azimuth", "180"))
     losses = int(request.args.get("losses", "14"))
     module_type = int(request.args.get("module_type", "0"))
+    string_length = int(request.args.get("pps", "3"))
+    elementR = float(request.args.get("Re", "10.2"))
 
     df, filename, filenameJson = runSim(
         lat, lon, year, power_kW, tilt, azimuth, module_type, losses, folder
     )
 
     csv, graph = nsrdb_plot(
-        df, day, filename, tankSize=liters, startingTemp=startingTemp, uef=uef
+        df, day, filename, tankSize=liters, startingTemp=startingTemp, uef=uef, elementR=elementR,stringLen=string_length,losses=losses
     )
 
     if os.path.exists(graph):
