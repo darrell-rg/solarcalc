@@ -2,7 +2,7 @@ from pvlib import pvsystem
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
+import pprint
 import PySAM.PySSC as pssc
 
 # Example module parameters for the Canadian Solar CS5P-220M:
@@ -31,10 +31,41 @@ parameters = {
     "Technology": "Mono-c-Si",
 }
 
+samples = 200
+
+
+def getPvAtCond(parameters, Geff, Tcell, R_load):
+    # adjust the reference parameters according to the operating
+    # conditions using the De Soto model:
+    IL, I0, Rs, Rsh, nNsVth = pvsystem.calcparams_desoto(
+        Geff,
+        Tcell,
+        alpha_sc=parameters["alpha_sc"],
+        a_ref=parameters["a_ref"],
+        I_L_ref=parameters["I_L_ref"],
+        I_o_ref=parameters["I_o_ref"],
+        R_sh_ref=parameters["R_sh_ref"],
+        R_s=parameters["R_s"],
+        EgRef=1.121,
+        dEgdT=-0.0002677,
+    )
+
+    # plug the parameters into the SDE and solve for IV curves:
+    SDE_params = {
+        "photocurrent": IL,
+        "saturation_current": I0,
+        "resistance_series": Rs + R_load,
+        "resistance_shunt": Rsh,
+        "nNsVth": nNsVth,
+    }
+    curve_info = pvsystem.singlediode(method="lambertw", **SDE_params)
+
+    return curve_info
+
 
 def getPvSystem(parameters):
 
-    cases = [(1000, 55), (800, 55), (600, 55), (400, 25), (400, 40), (400, 55)]
+    cases = [(1000, 55), (800, 55), (600, 55), (400, 0), (400, 25), (400, 55)]
 
     conditions = pd.DataFrame(cases, columns=["Geff", "Tcell"])
 
@@ -63,7 +94,7 @@ def getPvSystem(parameters):
     }
     curve_info = pvsystem.singlediode(method="lambertw", **SDE_params)
 
-    v = pd.DataFrame(np.linspace(0.0, curve_info["v_oc"], 100))
+    v = pd.DataFrame(np.linspace(0.0, curve_info["v_oc"], samples))
     i = pd.DataFrame(pvsystem.i_from_v(voltage=v, method="lambertw", **SDE_params))
 
     return conditions, curve_info, v, i
@@ -89,13 +120,18 @@ def draw_arrow(ax, label, x0, y0, rotation, size, direction):
     bb.set_boxstyle(style, pad=0.6)
 
 
-def plotPanelCurve():
+def plotPanelCurve(Rload=9.9):
 
     conditions, curve_info, v, i = getPvSystem(parameters)
 
     # plot the calculated curves:
+
+    i_load = []
+    v_load = []
     plt.figure()
     for idx, case in conditions.iterrows():
+        closest_v_idx = 0
+        closest_r_delta = 99999999
         label = (
             "$G_{eff}$ " + f"{case['Geff']} $W/m^2$\n"
             "$T_{cell}$ " + f"{case['Tcell']} $\\degree C$"
@@ -103,9 +139,38 @@ def plotPanelCurve():
         plt.plot(v[idx], i[idx], label=label)
         v_mp = curve_info["v_mp"][idx]
         i_mp = curve_info["i_mp"][idx]
-        # mark the MPP
-        plt.plot([v_mp], [i_mp], ls="", marker="o", c="k")
+        r_mp = v_mp / i_mp
+        p_mp = v_mp * i_mp
+        label_Rmp = f"Rmp   {r_mp:2.1f} {p_mp:3.0f}W"
+        pprint.pp(v[idx])
+        for j, volts in v[idx].items():
+            r = v[idx][j] / i[idx][j]
+            delta = abs(r - Rload)
+            if delta < closest_r_delta:
+                closest_v_idx = j
+                closest_r_delta = delta
 
+        p_load = v[idx][closest_v_idx] * i[idx][closest_v_idx]
+
+        percent = p_load / p_mp * 100
+        label_Rload = f"RLoad {Rload:2.1f}   {percent:.0f}%"
+
+        # mark the MPP
+        plt.plot([v_mp], [i_mp], ls="", marker="o", c="k", label=label_Rmp)
+        plt.plot(
+            [v[idx][closest_v_idx]],
+            [i[idx][closest_v_idx]],
+            ls="",
+            marker="s",
+            c="k",
+            label=label_Rload,
+        )
+        v_load = pd.DataFrame(np.linspace(0.0, curve_info["v_oc"][idx], samples))
+        i_load = pd.DataFrame(
+            np.linspace(0.0, curve_info["v_oc"][idx] / Rload, samples)
+        )
+
+    plt.plot(v_load, i_load, c="k", label=f"RLoad {Rload:2.1f}")
     plt.legend(loc=(1.0, 0))
     plt.xlabel("Module voltage [V]")
     plt.ylabel("Module current [A]")
@@ -114,7 +179,7 @@ def plotPanelCurve():
 
     ax = plt.gca()
     draw_arrow(ax, "Irradiance", 20, 2.5, 90, 15, "r")
-    draw_arrow(ax, "Temperature", 35, 1, 0, 15, "l")
+    draw_arrow(ax, "Temperature", 18, 1, 0, 15, "l")
     plt.show()
 
     print(
@@ -205,5 +270,7 @@ def ssc_table_numbers_to_dict_empty(cmod_name):
 
 
 if __name__ == "__main__":
+    curve = getPvAtCond(parameters, 800, 22, 10)
+    pprint.pp(curve)
     plotPanelCurve()
     # runSimJson()

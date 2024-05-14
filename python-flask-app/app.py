@@ -239,8 +239,8 @@ def runSim(
             "dc_monthly": ssc.data_get_array(dat, b"dc_monthly"),
         }
 
-    # simData = pvLibTest.ssc_table_to_dict(mod, dat)
-    # pprint.pp(simData.keys())
+    simData = pvLibTest.ssc_table_to_dict(mod, dat)
+    pprint.pp(simData.keys())
 
     # free the memory
     ssc.data_free(dat)
@@ -513,6 +513,6 @@ def health_check_root():
 
 
 if __name__ == "__main__":
-    app.run()
-    #runSim()
+   #app.run()
+    runSim()
     #runMonthlySimJson()
