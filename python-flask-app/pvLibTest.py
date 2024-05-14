@@ -3,110 +3,207 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+import PySAM.PySSC as pssc
+
 # Example module parameters for the Canadian Solar CS5P-220M:
 parameters = {
-    'Name': 'Canadian Solar CS5P-220M',
-    'BIPV': 'N',
-    'Date': '10/5/2009',
-    'T_NOCT': 42.4,
-    'A_c': 1.7,
-    'N_s': 96,
-    'I_sc_ref': 5.1,
-    'V_oc_ref': 59.4,
-    'I_mp_ref': 4.69,
-    'V_mp_ref': 46.9,
-    'alpha_sc': 0.004539,
-    'beta_oc': -0.22216,
-    'a_ref': 2.6373,
-    'I_L_ref': 5.114,
-    'I_o_ref': 8.196e-10,
-    'R_s': 1.065,
-    'R_sh_ref': 381.68,
-    'Adjust': 8.7,
-    'gamma_r': -0.476,
-    'Version': 'MM106',
-    'PTC': 200.1,
-    'Technology': 'Mono-c-Si',
+    "Name": "Canadian Solar CS5P-220M",
+    "BIPV": "N",
+    "Date": "10/5/2009",
+    "T_NOCT": 42.4,
+    "A_c": 1.7,
+    "N_s": 96,
+    "I_sc_ref": 5.1,
+    "V_oc_ref": 59.4,
+    "I_mp_ref": 4.69,
+    "V_mp_ref": 46.9,
+    "alpha_sc": 0.004539,
+    "beta_oc": -0.22216,
+    "a_ref": 2.6373,
+    "I_L_ref": 5.114,
+    "I_o_ref": 8.196e-10,
+    "R_s": 1.065,
+    "R_sh_ref": 381.68,
+    "Adjust": 8.7,
+    "gamma_r": -0.476,
+    "Version": "MM106",
+    "PTC": 200.1,
+    "Technology": "Mono-c-Si",
 }
 
-cases = [
-    (1000, 55),
-    (800, 55),
-    (600, 55),
-    (400, 25),
-    (400, 40),
-    (400, 55)
-]
 
-conditions = pd.DataFrame(cases, columns=['Geff', 'Tcell'])
+def getPvSystem(parameters):
 
-# adjust the reference parameters according to the operating
-# conditions using the De Soto model:
-IL, I0, Rs, Rsh, nNsVth = pvsystem.calcparams_desoto(
-    conditions['Geff'],
-    conditions['Tcell'],
-    alpha_sc=parameters['alpha_sc'],
-    a_ref=parameters['a_ref'],
-    I_L_ref=parameters['I_L_ref'],
-    I_o_ref=parameters['I_o_ref'],
-    R_sh_ref=parameters['R_sh_ref'],
-    R_s=parameters['R_s'],
-    EgRef=1.121,
-    dEgdT=-0.0002677
-)
+    cases = [(1000, 55), (800, 55), (600, 55), (400, 25), (400, 40), (400, 55)]
 
-# plug the parameters into the SDE and solve for IV curves:
-SDE_params = {
-    'photocurrent': IL,
-    'saturation_current': I0,
-    'resistance_series': Rs,
-    'resistance_shunt': Rsh,
-    'nNsVth': nNsVth
-}
-curve_info = pvsystem.singlediode(method='lambertw', **SDE_params)
-v = pd.DataFrame(np.linspace(0., curve_info['v_oc'], 100))
-i = pd.DataFrame(pvsystem.i_from_v(voltage=v, method='lambertw', **SDE_params))
+    conditions = pd.DataFrame(cases, columns=["Geff", "Tcell"])
 
-# plot the calculated curves:
-plt.figure()
-for idx, case in conditions.iterrows():
-    label = (
-        "$G_{eff}$ " + f"{case['Geff']} $W/m^2$\n"
-        "$T_{cell}$ " + f"{case['Tcell']} $\\degree C$"
+    # adjust the reference parameters according to the operating
+    # conditions using the De Soto model:
+    IL, I0, Rs, Rsh, nNsVth = pvsystem.calcparams_desoto(
+        conditions["Geff"],
+        conditions["Tcell"],
+        alpha_sc=parameters["alpha_sc"],
+        a_ref=parameters["a_ref"],
+        I_L_ref=parameters["I_L_ref"],
+        I_o_ref=parameters["I_o_ref"],
+        R_sh_ref=parameters["R_sh_ref"],
+        R_s=parameters["R_s"],
+        EgRef=1.121,
+        dEgdT=-0.0002677,
     )
-    plt.plot(v[idx], i[idx], label=label)
-    v_mp = curve_info['v_mp'][idx]
-    i_mp = curve_info['i_mp'][idx]
-    # mark the MPP
-    plt.plot([v_mp], [i_mp], ls='', marker='o', c='k')
 
-plt.legend(loc=(1.0, 0))
-plt.xlabel('Module voltage [V]')
-plt.ylabel('Module current [A]')
-plt.title(parameters['Name'])
-plt.gcf().set_tight_layout(True)
+    # plug the parameters into the SDE and solve for IV curves:
+    SDE_params = {
+        "photocurrent": IL,
+        "saturation_current": I0,
+        "resistance_series": Rs,
+        "resistance_shunt": Rsh,
+        "nNsVth": nNsVth,
+    }
+    curve_info = pvsystem.singlediode(method="lambertw", **SDE_params)
+
+    v = pd.DataFrame(np.linspace(0.0, curve_info["v_oc"], 100))
+    i = pd.DataFrame(pvsystem.i_from_v(voltage=v, method="lambertw", **SDE_params))
+
+    return conditions, curve_info, v, i
 
 
 # draw trend arrows
 def draw_arrow(ax, label, x0, y0, rotation, size, direction):
-    style = direction + 'arrow'
+    style = direction + "arrow"
     bbox_props = dict(boxstyle=style, fc=(0.8, 0.9, 0.9), ec="b", lw=1)
-    t = ax.text(x0, y0, label, ha="left", va="bottom", rotation=rotation,
-                size=size, bbox=bbox_props, zorder=-1)
+    t = ax.text(
+        x0,
+        y0,
+        label,
+        ha="left",
+        va="bottom",
+        rotation=rotation,
+        size=size,
+        bbox=bbox_props,
+        zorder=-1,
+    )
 
     bb = t.get_bbox_patch()
     bb.set_boxstyle(style, pad=0.6)
 
 
-ax = plt.gca()
-draw_arrow(ax, 'Irradiance', 20, 2.5, 90, 15, 'r')
-draw_arrow(ax, 'Temperature', 35, 1, 0, 15, 'l')
-plt.show()
+def plotPanelCurve():
 
-print(pd.DataFrame({
-    'i_sc': curve_info['i_sc'],
-    'v_oc': curve_info['v_oc'],
-    'i_mp': curve_info['i_mp'],
-    'v_mp': curve_info['v_mp'],
-    'p_mp': curve_info['p_mp'],
-}))
+    conditions, curve_info, v, i = getPvSystem(parameters)
+
+    # plot the calculated curves:
+    plt.figure()
+    for idx, case in conditions.iterrows():
+        label = (
+            "$G_{eff}$ " + f"{case['Geff']} $W/m^2$\n"
+            "$T_{cell}$ " + f"{case['Tcell']} $\\degree C$"
+        )
+        plt.plot(v[idx], i[idx], label=label)
+        v_mp = curve_info["v_mp"][idx]
+        i_mp = curve_info["i_mp"][idx]
+        # mark the MPP
+        plt.plot([v_mp], [i_mp], ls="", marker="o", c="k")
+
+    plt.legend(loc=(1.0, 0))
+    plt.xlabel("Module voltage [V]")
+    plt.ylabel("Module current [A]")
+    plt.title(parameters["Name"])
+    plt.gcf().set_tight_layout(True)
+
+    ax = plt.gca()
+    draw_arrow(ax, "Irradiance", 20, 2.5, 90, 15, "r")
+    draw_arrow(ax, "Temperature", 35, 1, 0, 15, "l")
+    plt.show()
+
+    print(
+        pd.DataFrame(
+            {
+                "i_sc": curve_info["i_sc"],
+                "v_oc": curve_info["v_oc"],
+                "i_mp": curve_info["i_mp"],
+                "v_mp": curve_info["v_mp"],
+                "p_mp": curve_info["p_mp"],
+            }
+        )
+    )
+
+
+# Returns python dictionary representing SSC compute module w/ all required inputs/outputs defined
+def ssc_table_to_dict(cmod, dat):
+    ssc = pssc.PySSC()
+    i = 0
+    ssc_out = {}
+    while True:
+        p_ssc_entry = ssc.module_var_info(cmod, i)
+        ssc_output_data_type = ssc.info_data_type(p_ssc_entry)
+        if ssc_output_data_type <= 0 or ssc_output_data_type > 5:
+            break
+        ssc_output_data_name = str(ssc.info_name(p_ssc_entry).decode("ascii"))
+        ssc_data_query = ssc.data_query(dat, ssc_output_data_name.encode("ascii"))
+        if ssc_data_query > 0:
+            if ssc_output_data_type == 1:
+                ssc_out[ssc_output_data_name] = ssc.data_get_string(
+                    dat, ssc_output_data_name.encode("ascii")
+                ).decode("ascii")
+            elif ssc_output_data_type == 2:
+                ssc_out[ssc_output_data_name] = ssc.data_get_number(
+                    dat, ssc_output_data_name.encode("ascii")
+                )
+            elif ssc_output_data_type == 3:
+                ssc_out[ssc_output_data_name] = ssc.data_get_array(
+                    dat, ssc_output_data_name.encode("ascii")
+                )
+            elif ssc_output_data_type == 4:
+                ssc_out[ssc_output_data_name] = ssc.data_get_matrix(
+                    dat, ssc_output_data_name.encode("ascii")
+                )
+            elif ssc_output_data_type == 5:
+                ssc_out[ssc_output_data_name] = ssc.data_get_table(
+                    dat, ssc_output_data_name.encode("ascii")
+                )
+        i = i + 1
+
+    return ssc_out
+
+
+# Returns python dictionary with empty lists for each SSC NUMBER input/output
+def ssc_table_numbers_to_dict_empty(cmod_name):
+    ssc = pssc.PySSC()
+    cmod = ssc.module_create(cmod_name.encode("utf-8"))
+    i = 0
+    ssc_out = {}
+    while True:
+
+        p_ssc_entry = ssc.module_var_info(cmod, i)
+
+        ssc_output_data_type = ssc.info_data_type(p_ssc_entry)
+
+        # 1 = String, 2 = Number, 3 = Array, 4 = Matrix, 5 = Table
+        if ssc_output_data_type <= 0 or ssc_output_data_type > 5:
+            break
+
+        ssc_output_data_name = str(ssc.info_name(p_ssc_entry).decode("ascii"))
+
+        if ssc_output_data_type == 1:
+            ssc_out[ssc_output_data_name] = []
+        elif ssc_output_data_type == 2:
+            ssc_out[ssc_output_data_name] = []
+        elif ssc_output_data_type == 3:
+            ssc_out[ssc_output_data_name] = []
+        elif ssc_output_data_type == 4:
+            ssc_out[ssc_output_data_name] = []
+        elif ssc_output_data_type == 5:
+            ssc_out[ssc_output_data_name] = []
+
+        i = i + 1
+
+    pssc.PySSC().module_free(cmod)
+
+    return ssc_out
+
+
+if __name__ == "__main__":
+    plotPanelCurve()
+    # runSimJson()
