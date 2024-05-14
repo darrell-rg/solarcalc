@@ -528,7 +528,7 @@
 		<h2>Step 4</h2>
 		<p>
 			Click <b>Simulate Monthly Generation</b> This will feed the simulator with the solar panel data
-			you entered above and Typical Meteorological Year Data (TMY) 2020 for your lat/lng.
+			you entered above and Typical Meteorological Year Data (TMY-{year}) for your lat/lng.
 		</p>
 		<p>
 			If you are going much over 100% for <b>Solar Power Used</b> your array is bigger then it needs
@@ -545,7 +545,7 @@
 		/>
 		<br />
 		<p id="apiWarn" style="display: none;">
-			This calls a NREL PVwatts API rate limited to 1000 req/day so you may have to try again
+			This gets Weather data from an NREL API rate limited to 5000 req/day so you may have to try again
 			tomorrow if it is not working.
 		</p>
 		<div>
@@ -584,7 +584,7 @@
 		</div>
 		<hr />
 		<p>
-			This graph uses the TMY simulation data to help you size your array. <span class="blue"
+			This graph uses the TMY-{year} weather data to run a daily PV simulation to help you size your array. <span class="blue"
 				><b>Mean Tank Temperature</b></span
 			> assumes fully mixed water. On most days, the tank will not get as hot as the graph shows because
 			you will be withdrawing hot water from the top, which adds cold water to the bottom.

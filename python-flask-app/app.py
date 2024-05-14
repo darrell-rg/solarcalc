@@ -25,6 +25,7 @@ import pandas as pd
 import numpy as np
 import hashlib
 from datetime import datetime, timedelta
+import json
 # from IPython.display import display
 import urllib.request
 import os
@@ -39,17 +40,19 @@ from matplotlib import dates as mdates
 plt.style.use("ggplot")
 
 import PySAM.PySSC as pssc
+import pvLibTest
+import pprint
 
 
 # Download PySAM here: https://pypi.org/project/NREL-PySAM/
 # You must request an NSRDB api key from the link above
-api_key = os.getenv('NRDSBAPIKEY', "UF7n")
+api_key = os.getenv("NRDSBAPIKEY", "UF7n")
 # Set the attributes to extract (e.g., dhi, ghi, etc.), separated by commas.
-attributes = "ghi,dhi,dni,wind_speed,air_temperature,solar_zenith_angle"
+# attributes = "ghi,dhi,dni,wind_speed,air_temperature,solar_zenith_angle"
 # Set leap year to true or false. True will return leap day data if present, false will not.
-leap_year = "false"
+# leap_year = "false"
 # Set time interval in minutes, i.e., '30' is half hour intervals. Valid intervals are 30 & 60.
-interval = "30"
+interval = 30
 # Specify Coordinated Universal Time (UTC), 'true' will use UTC, 'false' will use the local time zone of the data.
 # NOTE: In order to use the NSRDB data in SAM, you must specify UTC as 'false'. SAM requires the data to be in the
 # local time zone.
@@ -57,69 +60,106 @@ utc = "false"
 # Your full name, use '+' instead of spaces.
 your_name = "Darrell+Taylor"
 # Your reason for using the NSRDB.
-reason_for_use = "testing"
-# Your affiliation
-your_affiliation = "none"
+reason_for_use = "PV_hot_water_sim_at_pvh2o_dot_com"
 # Your email address
-your_email = "darrell@realgo.com"
-# Please join our mailing list so we can keep you up-to-date on new developments.
-mailing_list = "false"
+email = "darrell@pvh2o.com"
 
 folder = "/tmp"
 
 
-def downloadWeatherData(lat=40.57, lon=-105.07, year=2010, folder="/tmp"):
+def downloadTMYWeatherData(lat=40.57, lon=-105.07, year=2022, folder="/tmp"):
     # Declare all variables as strings. Spaces must be replaced with '+', i.e., change 'John Smith' to 'John+Smith'.
-    # Define the lat, long of the location and the year
+    # "weather_data_source":"NSRDB PSM V3 GOES tmy-2022 3.2.0"
 
-    # Declare url string
-    url = "https://developer.nrel.gov/api/nsrdb/v2/solar/psm3-download.csv?wkt=POINT({lon}%20{lat})&names={year}&leap_day={leap}&interval={interval}&utc={utc}&full_name={name}&email={email}&affiliation={affiliation}&mailing_list={mailing_list}&reason={reason}&api_key={api}&attributes={attr}".format(
-        year=year,
-        lat=lat,
-        lon=lon,
-        leap=leap_year,
-        interval=interval,
-        utc=utc,
-        name=your_name,
-        email=your_email,
-        mailing_list=mailing_list,
-        affiliation=your_affiliation,
-        reason=reason_for_use,
-        api=api_key,
-        attr=attributes,
-    )
+    # Declare url string, docs at 
+    # https://developer.nrel.gov/docs/solar/nsrdb/psm3-2-2-tmy-download/
 
-    hash = hashlib.shake_128(url.encode()).hexdigest(32)
-    filename = os.path.join(folder, hash + ".csv")
+    # TMY seems to only have 60 min intervals
+
+    weather_dataset_name = f"tmy-{year}" 
+    url = f"https://developer.nrel.gov/api/nsrdb/v2/solar/psm3-2-2-tmy-download.csv?wkt=POINT({lon:.2f}+{lat:.2f})&names={weather_dataset_name}&utc={utc}&email={email}&reason={reason_for_use}&api_key={api_key}"
+
+
+    hash = hashlib.shake_128(url.encode()).hexdigest(8)
+    filename = os.path.join(folder, "weather_"+hash + ".csv")
     if not os.path.exists(filename):
         urllib.request.urlretrieve(url, filename)
 
     return filename, hash
 
 
+def downloadWeatherData(lat=40.57, lon=-105.07, year=2022, folder="/tmp"):
+    # Declare all variables as strings. Spaces must be replaced with '+', i.e., change 'John Smith' to 'John+Smith'.
+    # "weather_data_source":"NSRDB PSM V3 GOES tmy-2022 3.2.0"
 
-def runSimJson(lat=40.57, lon=-105.07, power_kW=1, tilt=40, azimuth=180, module_type=0, losses=14, folder="/tmp"):
+    # Declare url string, docs at 
+    # https://developer.nrel.gov/docs/solar/nsrdb/psm3-2-2-download/
 
-    # this will run PvWatts V8 on nrel's api
-    #https://developer.nrel.gov/docs/solar/pvwatts/v8/
 
-    url= f"https://developer.nrel.gov/api/pvwatts/v8.json?api_key={api_key}&azimuth={azimuth}&system_capacity={power_kW}&losses={losses}&array_type=1&module_type={module_type}&gcr=0.4&dc_ac_ratio=1.2&inv_eff=96.0&radius=0&dataset=nsrdb&tilt={tilt}&lat={lat}&lon={lon}"
-
+    url = f"https://developer.nrel.gov/api/nsrdb/v2/solar/psm3-2-2-download.csv?wkt=POINT({lon:.2f}+{lat:.2f})&names={year}&utc={utc}&email={email}&reason={reason_for_use}&api_key={api_key}&interval={interval}"
 
     # print(url)
-    hash = hashlib.shake_128(url.encode()).hexdigest(32)
-    filename = os.path.join(folder, hash + ".json")
+
+    hash = hashlib.shake_128(url.encode()).hexdigest(8)
+    filename = os.path.join(folder, "weather_"+hash + ".csv")
     if not os.path.exists(filename):
         urllib.request.urlretrieve(url, filename)
 
     return filename, hash
 
 
-def runSim(lat=40.57, lon=-105.07, year=2010, power_kW=1, tilt=40, azimuth=180, module_type=0, losses=14, folder="/tmp"):
 
-    filename, hash = downloadWeatherData(lat, lon, year, folder)
-    paramsString = f"${power_kW}_${tilt}_${azimuth}_${module_type}_${losses}"
-    hash = hashlib.shake_128((hash+paramsString).encode()).hexdigest(32)
+def runMonthlySimJson(
+    lat=40.57,
+    lon=-105.07,
+    year=2022,
+    power_kW=1,
+    tilt=40,
+    azimuth=180,
+    module_type=0,
+    losses=14,
+    folder="/tmp",
+):
+
+    # this will run PvWatts V8 on nrel's api
+    # https://developer.nrel.gov/docs/solar/pvwatts/v8/
+
+    url = f"https://developer.nrel.gov/api/pvwatts/v8.json?api_key={api_key}&azimuth={azimuth}&system_capacity={power_kW:.2f}&losses={losses}&array_type=1&module_type={module_type}&gcr=0.4&dc_ac_ratio=1.2&inv_eff=96.0&radius=0&dataset=nsrdb&tilt={tilt}&lat={lat:.2f}&lon={lon:.2f}&year={year}"
+
+    # print(url)
+    hash = hashlib.shake_128(url.encode()).hexdigest(8)
+    filename_api_json = os.path.join(folder, "monthly_api_" + hash + ".json")
+    filename_monthly = os.path.join(folder, "monthly_" + hash + ".json")
+
+    if not os.path.exists(filename_monthly):
+        # urllib.request.urlretrieve(url, filename_api_json)
+
+        df, filename, filename_monthly = runSim(
+            lat, lon, year, power_kW, tilt, azimuth, module_type, losses, folder
+        )
+        
+
+    return filename_monthly, hash
+
+
+def runSim(
+    lat=40.57,
+    lon=-105.07,
+    year=2022,
+    power_kW=1,
+    tilt=40,
+    azimuth=180,
+    module_type=0,
+    losses=14,
+    folder="/tmp",
+):
+
+    filename, hash = downloadWeatherData(lat=lat, lon=lon, year=year, folder=folder)
+
+    extraVars = "hash={hash}&azimuth={azimuth}&system_capacity={power_kW}&losses={losses}&array_type=1&module_type={module_type}&gcr=0.4&dc_ac_ratio=1.2&inv_eff=96.0&radius=0&dataset=nsrdb&tilt={tilt}&lat={lat}&lon={lon}"
+
+    hash = hashlib.shake_128(extraVars.encode()).hexdigest(8)
+
 
     # load the data
     # Return just the first 2 lines to get metadata:
@@ -134,7 +174,7 @@ def runSim(lat=40.57, lon=-105.07, year=2010, power_kW=1, tilt=40, azimuth=180, 
     df = df.set_index(
         pd.date_range(
             "1/1/{yr}".format(yr=year),
-            freq=interval + "Min",
+            freq=f"{interval}Min",
             periods=525600 / int(interval),
         )
     )
@@ -177,7 +217,7 @@ def runSim(lat=40.57, lon=-105.07, year=2010, power_kW=1, tilt=40, azimuth=180, 
     ssc.data_set_number(dat, b"inv_eff", 96)
     # Set the system losses, in percent
     ssc.data_set_number(dat, b"losses", losses)
-    
+
     ssc.data_set_number(dat, b"module_type", module_type)
     # Specify fixed tilt system (0=Fixed, 1=Fixed Roof, 2=1 Axis Tracker, 3=Backtracted, 4=2 Axis Tracker)
     ssc.data_set_number(dat, b"array_type", 1)
@@ -190,6 +230,17 @@ def runSim(lat=40.57, lon=-105.07, year=2010, power_kW=1, tilt=40, azimuth=180, 
     mod = ssc.module_create(b"pvwattsv8")
     ssc.module_exec(mod, dat)
     df["generation"] = np.array(ssc.data_get_array(dat, b"gen"))
+    df["tcell"] = np.array(ssc.data_get_array(dat, b"tcell"))
+
+    monthly = {
+            "ac_monthly": ssc.data_get_array(dat, b"ac_monthly"),
+            "poa_monthly": ssc.data_get_array(dat, b"poa_monthly"),
+            "solrad_monthly": ssc.data_get_array(dat, b"solrad_monthly"),
+            "dc_monthly": ssc.data_get_array(dat, b"dc_monthly"),
+        }
+
+    # simData = pvLibTest.ssc_table_to_dict(mod, dat)
+    # pprint.pp(simData.keys())
 
     # free the memory
     ssc.data_free(dat)
@@ -204,37 +255,49 @@ def runSim(lat=40.57, lon=-105.07, year=2010, power_kW=1, tilt=40, azimuth=180, 
 
     print(f"total_energy = {total_energy}")
 
-    filename_sim = os.path.join(folder, "sim_" + hash + ".csv")
+    filename_sim = os.path.join(folder, "daily_" + hash + ".csv")
     df.to_csv(filename_sim)
-    return df, filename_sim
+    filename_json = os.path.join(folder, "monthly_" + hash + ".json")
 
-def convert_day_of_year( day_of_year, year = 2020):
+    jOut = {"outputs":monthly}
+    with open(filename_json, 'w') as fp:
+        json.dump( jOut, fp)
+
+
+
+    return df, filename_sim, filename_json
+
+
+def convert_day_of_year(day_of_year, year=2022):
     # Create a date object for the first day of the year
     start_date = datetime(year, 1, 1)
-    
+
     # Calculate the actual date by adding the number of days (minus one)
     actual_date = start_date + timedelta(days=day_of_year - 1)
-    
+
     # Format the date to "Month, Day"
     return actual_date.strftime("%B %d")
 
     # returns standby loss in watts
-def standbyLoss(ef=0.9,Ttank=40, Tamb=16):
+
+
+def standbyLoss(ef=0.9, Ttank=40, Tamb=16):
     # formula 4 from in Water_Heater_Energy_Storage_wStaffResponse.pdf
     ua = 8.445 / ef - 8.617
     # add 22% for pipe losses per SS84_Panel5_Paper_06.pdf
-    # append conversion from C to F 
-    return  1.22*ua*((Ttank-Tamb)*(9.0/5.0))
+    # append conversion from C to F
+    return 1.22 * ua * ((Ttank - Tamb) * (9.0 / 5.0))
 
-# water heater search:  https://www.ahridirectory.org/NewSearch?programId=24&searchTypeId=3  
+
+# water heater search:  https://www.ahridirectory.org/NewSearch?programId=24&searchTypeId=3
 # https://www.centerpointenergy.com/en-us/SaveEnergyandMoney/Pages/CNP_Calculators/Thermal-Efficiency-Calculator.aspx?sa=MN&au=res
 # 98%, 100BTU/hr = 0.93 EF  = 29.3 w
-# 98%, 200BTU/hr = 0.88 EF  = 58.61 w   
-# Tank temp = 58.61, amb temp = 19.4 = delta is 40 C 
+# 98%, 200BTU/hr = 0.88 EF  = 58.61 w
+# Tank temp = 58.61, amb temp = 19.4 = delta is 40 C
 #  https://www.energytrust.org/wp-content/uploads/2017/11/Water_Heater_Energy_Storage_wStaffResponse.pdf
 #
 #
-def nsrdb_plot(df, day, filename, tankSize = 189, startingTemp = 40, uef=0.9):
+def nsrdb_plot(df, day, filename, tankSize=189, startingTemp=40, uef=0.9):
 
     timeSteps = 24
 
@@ -250,12 +313,12 @@ def nsrdb_plot(df, day, filename, tankSize = 189, startingTemp = 40, uef=0.9):
         fig = plt.figure(figsize=(15, 8))
         tkw = dict(size=4, width=1.5)
         ax = fig.add_subplot(4, 1, (1))
-        twin1  = ax.twinx()
+        twin1 = ax.twinx()
         ax.set_ylim(-50, 1050)
         twin1.set_ylim(-10, 40)
 
-        ax2  = fig.add_subplot(4, 1, (2,4),sharex=ax)
-        twin2  = ax2.twinx()
+        ax2 = fig.add_subplot(4, 1, (2, 4), sharex=ax)
+        twin2 = ax2.twinx()
         ax2.set_ylim(-10, 100)
         twin2.set_ylim(-200, 2000)
 
@@ -263,72 +326,88 @@ def nsrdb_plot(df, day, filename, tankSize = 189, startingTemp = 40, uef=0.9):
 
         singleDay = df[:][i:j]
 
-        #heat capacity Cp of water is 4.186kJ/kg-K
-        heatCapOfWater = 4186; # j/l/k
+        # heat capacity Cp of water is 4.186kJ/kg-K
+        heatCapOfWater = 4186
+        # j/l/k
         singleDay["Mixing Valve Limit"] = 85
         singleDay["T&P Valve Limit"] = 98
         singleDay["Desired Output Temp"] = startingTemp
 
-        #do a rough first pass with rough standby losses
-        singleDay["standbyLoss"] = 60 
+        # do a rough first pass with rough standby losses
+        singleDay["standbyLoss"] = 60
         if uef > 0.92:
-            singleDay["standbyLoss"] = 40 
+            singleDay["standbyLoss"] = 40
         if uef > 0.94:
-            singleDay["standbyLoss"] = 20 
+            singleDay["standbyLoss"] = 20
 
-        singleDay["Net Power"]  =  singleDay["generation"] - singleDay["standbyLoss"] 
-        singleDay["energyFlux"]  =  singleDay["Net Power"]* 60 * float(interval)
-        singleDay["Tank Temperature"] =  (singleDay["energyFlux"].cumsum()  /  (heatCapOfWater * tankSize) ) + startingTemp
+        singleDay["Net Power"] = singleDay["generation"] - singleDay["standbyLoss"]
+        singleDay["energyFlux"] = singleDay["Net Power"] * 60 * float(interval)
+        singleDay["Tank Temperature"] = (
+            singleDay["energyFlux"].cumsum() / (heatCapOfWater * tankSize)
+        ) + startingTemp
 
-        #now do a better calculation with more accurate standby loss
+        # now do a better calculation with more accurate standby loss
         singleDay["Ambient Temperature"] = 16
-        singleDay["standbyLoss"] = standbyLoss(uef,singleDay["Tank Temperature"],singleDay["Ambient Temperature"])
-        singleDay["Net Power"]  =  singleDay["generation"] - singleDay["standbyLoss"] 
-        singleDay["energyFlux"]  =  singleDay["Net Power"]* 60 * float(interval)
-        singleDay["Tank Temperature"] =  (singleDay["energyFlux"].cumsum()  /  (heatCapOfWater * tankSize) ) + startingTemp
+        singleDay["standbyLoss"] = standbyLoss(
+            uef, singleDay["Tank Temperature"], singleDay["Ambient Temperature"]
+        )
+        singleDay["Net Power"] = singleDay["generation"] - singleDay["standbyLoss"]
+        singleDay["energyFlux"] = singleDay["Net Power"] * 60 * float(interval)
+        singleDay["Tank Temperature"] = (
+            singleDay["energyFlux"].cumsum() / (heatCapOfWater * tankSize)
+        ) + startingTemp
 
-        #one more round to converge better
-        singleDay["standbyLoss"] = standbyLoss(uef,singleDay["Tank Temperature"],singleDay["Ambient Temperature"])
-        singleDay["Net Power"]  =  singleDay["generation"] - singleDay["standbyLoss"] 
-        singleDay["energyFlux"]  =  singleDay["Net Power"]* 60 * float(interval)
-        singleDay["Tank Temperature"] =  (singleDay["energyFlux"].cumsum()  /  (heatCapOfWater * tankSize) ) + startingTemp
+        # one more round to converge better
+        singleDay["standbyLoss"] = standbyLoss(
+            uef, singleDay["Tank Temperature"], singleDay["Ambient Temperature"]
+        )
+        singleDay["Net Power"] = singleDay["generation"] - singleDay["standbyLoss"]
+        singleDay["energyFlux"] = singleDay["Net Power"] * 60 * float(interval)
+        singleDay["Tank Temperature"] = (
+            singleDay["energyFlux"].cumsum() / (heatCapOfWater * tankSize)
+        ) + startingTemp
 
         jouleSum = singleDay["energyFlux"].sum()
         maxStandbyLoss = singleDay["standbyLoss"].max()
         maxSolarPower = singleDay["generation"].max()
         maxTankTemp = singleDay["Tank Temperature"].max()
-        
-        total_kWh = jouleSum * 0.0000002778 
+
+        total_kWh = jouleSum * 0.0000002778
 
         d = convert_day_of_year(day)
-        ax.set_title(f"{d},  Net Thermal Energy Gain = {total_kWh:.2f} (kWh)", size="xx-large")
+        ax.set_title(
+            f"{d},  Net Thermal Energy Gain = {total_kWh:.2f} (kWh)", size="xx-large"
+        )
         # fig.supxlabel(f"uef= {uef:.2f} tankSize ={tankSize}")
-        fig.supxlabel(f"UEF={uef:.2f}   Max Solar Power={maxSolarPower:.1f}(W)   Max Standby Loss={maxStandbyLoss:.1f}(W)   Max Tank Temp={maxTankTemp:.1f}(℃)" , size="large")
-    
-        ax.plot( 'DNI',"-s", data=singleDay, label="DNI" )
-        ax.plot( 'DHI',"->", data=singleDay )
-        ax.plot( 'GHI',"-o", data=singleDay )
+        fig.supxlabel(
+            f"UEF={uef:.2f}   Max Solar Power={maxSolarPower:.1f}(W)   Max Standby Loss={maxStandbyLoss:.1f}(W)   Max Tank Temp={maxTankTemp:.1f}(℃)",
+            size="large",
+        )
+
+        ax.plot("DNI", "-s", data=singleDay, label="DNI")
+        ax.plot("DHI", "->", data=singleDay)
+        ax.plot("GHI", "-o", data=singleDay)
         ax.grid(False)
-        ax.tick_params('x', labelbottom=False)
+        ax.tick_params("x", labelbottom=False)
         ax.set_ylabel("Solar Radiation (W/m2)")
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%H'))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%H"))
 
         twin1.plot("Temperature", "k--", data=singleDay)
         twin1.yaxis.label.set_color("k")
         twin1.set_ylabel("Outside Air(℃)")
-        twin1.tick_params(axis='y', colors="k", **tkw)
-        
+        twin1.tick_params(axis="y", colors="k", **tkw)
+
         ax2.plot("T&P Valve Limit", "r-", data=singleDay)
         ax2.plot("Mixing Valve Limit", "r--", data=singleDay)
         ax2.plot("Tank Temperature", "b-o", data=singleDay)
         ax2.plot("Desired Output Temp", "k-.", data=singleDay)
         ax2.set_ylabel("Mean Water Tank Temperature (℃)")
         ax2.yaxis.label.set_color("b")
-        ax2.tick_params(axis='y', colors="b", **tkw)
-        
+        ax2.tick_params(axis="y", colors="b", **tkw)
+
         twin2.plot("Net Power", "g-", data=singleDay)
         twin2.set_ylabel("Net Water Heating Power(W)")
-        twin2.tick_params(axis='y', colors="g", **tkw)
+        twin2.tick_params(axis="y", colors="g", **tkw)
         twin2.yaxis.label.set_color("g")
         twin2.grid(False)
 
@@ -351,7 +430,7 @@ def getGraph():
 
     lat = float(request.args.get("lat", "40.57"))
     lon = float(request.args.get("lon", "-105.07"))
-    year = int(request.args.get("year", "2010"))
+    year = int(request.args.get("year", "2022"))
     day = int(request.args.get("day", "180"))
     power_kW = float(request.args.get("pwr", "1000"))
     tilt = float(request.args.get("tilt", "40"))
@@ -362,9 +441,13 @@ def getGraph():
     losses = int(request.args.get("losses", "14"))
     module_type = int(request.args.get("module_type", "0"))
 
-    df, filename = runSim(lat, lon, year, power_kW,tilt,azimuth, module_type, losses, folder)
+    df, filename, filenameJson = runSim(
+        lat, lon, year, power_kW, tilt, azimuth, module_type, losses, folder
+    )
 
-    csv, graph = nsrdb_plot(df, day, filename,tankSize=liters,startingTemp=startingTemp,uef=uef)
+    csv, graph = nsrdb_plot(
+        df, day, filename, tankSize=liters, startingTemp=startingTemp, uef=uef
+    )
 
     if os.path.exists(graph):
         response = send_file(graph, mimetype="image/png")
@@ -379,15 +462,16 @@ def getCsv():
 
     lat = float(request.args.get("lat", "40.57"))
     lon = float(request.args.get("lon", "-105.07"))
-    year = int(request.args.get("year", "2010"))
+    year = int(request.args.get("year", "2022"))
     power_kW = float(request.args.get("pwr", "1000"))
     tilt = float(request.args.get("tilt", "40"))
     azimuth = float(request.args.get("azimuth", "180"))
     losses = float(request.args.get("losses", "14"))
     module_type = int(request.args.get("module_type", "0"))
 
-
-    df, filename = runSim(lat, lon, year,power_kW,tilt,azimuth, module_type, losses, folder)
+    df, filename, filename_json = runSim(
+        lat, lon, year, power_kW, tilt, azimuth, module_type, losses, folder
+    )
 
     if os.path.exists(filename):
         response = send_file(filename, mimetype="text/csv")
@@ -407,17 +491,18 @@ def getJson():
     azimuth = float(request.args.get("azimuth", "180"))
     losses = float(request.args.get("losses", "14"))
     module_type = int(request.args.get("module_type", "0"))
+    year = int(request.args.get("year", "2022"))
 
-
-    filename, hash = runSimJson(lat, lon, power_kW, tilt, azimuth, module_type, losses, folder)
+    filename, hash = runMonthlySimJson(
+        lat, lon, year, power_kW, tilt, azimuth, module_type, losses, folder
+    )
 
     if os.path.exists(filename):
-        response = send_file(filename, mimetype="application/json" )
+        response = send_file(filename, mimetype="application/json")
         response.access_control_allow_origin = "*"
         return response
 
     return "error making json"
-
 
 
 @app.route("/sim/healthCheck", methods=["GET"])
@@ -429,4 +514,5 @@ def health_check_root():
 
 if __name__ == "__main__":
     app.run()
-    # runSimJson()
+    #runSim()
+    #runMonthlySimJson()
