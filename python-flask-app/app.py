@@ -430,7 +430,7 @@ def nsrdb_plot(df, day, filename, tankSize=189, startingTemp=40, uef=0.9, elemen
             singleDay["Sans-MPPT"] = (singleDay["Sans-MPPT"] * conversion_factor) - singleDay["standbyLoss"]
             kWh_NoMPPT = (singleDay["Sans-MPPT"] * 60 * float(interval)).sum() * 0.0000002778
             twin2.plot("Sans-MPPT", "g.", data=singleDay)
-            fixedRTitle = f"    Sans-MPPT ≈ {kWh_NoMPPT:.1f}(kWh) ≈ ({nonMpptPercent:.0f}%)"
+            fixedRTitle = f"    Sans-MPPT ≈ {kWh_NoMPPT:.1f}(kWh net) ≈ ({nonMpptPercent:.0f}% gross)"
 
         ax.set_title(
             f"{d},  Net Thermal Energy Gain = {total_kWh:.2f} (kWh) {fixedRTitle}", size="xx-large"
