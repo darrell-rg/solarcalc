@@ -47,7 +47,7 @@
 		let pwr = nominalPower / 1000.0;
 		url =
 			url +
-			`day=${day}&lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}&losses=${losses}&module_type=${selectedModuleType.id}&liters=${tankSize}&uef=${energyFactor}&startingTemp=${hotWaterOutTemp}&Re=${elementR}&pps=${panelsPerString}&ps=${parallelStrings}`;
+			`day=${day}&lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}&losses=${losses}&module_type=${selectedModuleType.id}&liters=${tankSize}&uef=${energyFactor}&startingTemp=${hotWaterOutTemp}&Re=${Re}&pps=${panelsPerString}&ps=${parallelStrings}`;
 
 		const elem = document.getElementById('solarGraph');
 		if (elem) {
@@ -136,6 +136,7 @@
 			$Imp = newModule.I_mp_ref;
 			$Voc = newModule.V_oc_ref;
 			$Isc = newModule.I_sc_ref;
+			alllowNonMpptt = true;
 			console.log('moduleChanged!', newModule);
 		}
 	}
@@ -157,11 +158,12 @@
 	let wireResistance = 2.1;
 	let peakPrice = 0.285;
 	let offPeakPrice = 0.0792;
-	let nonMpptGraph = 1;
 	let losses = 14;
 
 	let selectedElement = elements[0];
 	let elementR = 0;
+	let alllowNonMpptt = false;
+	let nonMpptGraph = false;
 	// $: elementR = vpToR(elementV, elementP);
 	// let elementV = 120;
 	// let elementP = 2000;
@@ -609,10 +611,13 @@
 			<button on:click={(e) => makeGraphUrl(180, e)}> Graph random day in Q3</button>
 			<button on:click={(e) => makeGraphUrl(270, e)}> Graph random day in Q4</button>
 			
-			<label>
-				<input type="checkbox" bind:checked={nonMpptGraph}  />
-				Estimate No-MPPT power
-			</label>
+			{#if alllowNonMpptt}
+				<label>
+					<input type="checkbox" bind:checked={nonMpptGraph}  />
+					Estimate Non-MPPT Power
+				</label>				
+			{/if}
+
 		</div>
 	</span>
 	<br />

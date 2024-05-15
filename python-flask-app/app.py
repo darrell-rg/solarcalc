@@ -414,17 +414,20 @@ def nsrdb_plot(df, day, filename, tankSize=189, startingTemp=40, uef=0.9, elemen
             f"{d},  Net Thermal Energy Gain = {total_kWh:.2f} (kWh)", size="xx-large"
         )
 
+        fixedRTitle = f" Using MPPT"
         if(elementR > 0):
         #pvlib is a bit more optimistic then pvwatts, so we scale with a fudge factor
             conversion_factor = 0.95
-            singleDay["No MPPT Power"] = pvLibTest.getPowerAtLoad(module_params,singleDay["tpoa"].to_numpy(), singleDay["tcell"].to_numpy(),elementR/stringLen) * stringLen * (1.0-(losses/100.0))
-            singleDay["No MPPT Power"] = (singleDay["No MPPT Power"] * conversion_factor) 
-            kWh_NoMPPT = (singleDay["No MPPT Power"] * 60 * float(interval)).sum() * 0.0000002778
-            mismatchLoss = 100.0-(kWh_NoMPPT / total_generation_kWh * 100)
-            twin2.plot("No MPPT Power", "g.", data=singleDay)
-            ax.set_title(
-                f"{d},  Net Thermal Energy Gain = {total_kWh:.2f} (kWh)  Mismatch Loss = {mismatchLoss:.0f}%", size="xx-large"
-            )
+            singleDay["Sans-MPPT"] = pvLibTest.getPowerAtLoad(module_params,singleDay["tpoa"].to_numpy(), singleDay["tcell"].to_numpy(),elementR/stringLen) * stringLen * (1.0-(losses/100.0))
+            singleDay["Sans-MPPT"] = (singleDay["Sans-MPPT"] * conversion_factor) 
+            kWh_NoMPPT = (singleDay["Sans-MPPT"] * 60 * float(interval)).sum() * 0.0000002778
+            nonMpptPercent = (kWh_NoMPPT / total_generation_kWh * 100)
+            twin2.plot("Sans-MPPT", "g.", data=singleDay)
+            fixedRTitle = f"    Sans-MPPT = {kWh_NoMPPT:.1f}(kWh) ({nonMpptPercent:.0f}%)"
+
+        ax.set_title(
+            f"{d},  Net Thermal Energy Gain = {total_kWh:.2f} (kWh) {fixedRTitle}", size="xx-large"
+        )
         # fig.supxlabel(f"uef= {uef:.2f} tankSize ={tankSize}")
         fig.supxlabel(
             f"UEF={uef:.2f}   Max Solar Power={maxSolarPower:.1f}(W)   Max Standby Loss={maxStandbyLoss:.1f}(W)   Max Tank Temp={maxTankTemp:.1f}(℃)",
