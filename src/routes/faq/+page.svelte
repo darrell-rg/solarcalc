@@ -270,7 +270,7 @@
 		<p>
 			The T&P valve is a safety device that will let some hot water out if your water heater gets
 			too hot or has too high pressure. T&P valves used on residential water heaters are designed to
-			open at 150 psi or 98C. When water is heated it expands. In a 40-gallon water heater, water
+			open at 150 psi or 98C. When water is heated it expands. In a 50-gallon water heater, water
 			being heated to the thermostat setting expands by approximately 1/2 gallon. In most houses the
 			extra pressure will push back into the city water supply but if you have a really tight
 			backflow preventer installed on the water main feeding the house there is nowhere for the
@@ -317,7 +317,7 @@
 	<article class="faq">
 		<h2>How big an array do I need?</h2>
 		<p>
-			I have 1.7kW on a standard 40 gallon water heater and it works great. In the summer this is
+			I have 1.7kW on a standard 50 gallon water heater and it works great. In the summer this is
 			almost too much, the water gets up to around 70C. In the winter I still need a bit of city
 			power from time to time. I suggest you start with 1-2kW and if that does not meet your needs
 			you can add more panels. If you plug your numbers into the simulator and you have multiple

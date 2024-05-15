@@ -405,18 +405,26 @@ def nsrdb_plot(df, day, filename, tankSize=189, startingTemp=40, uef=0.9, elemen
         maxTankTemp = singleDay["Tank Temperature"].max()
 
         total_kWh = jouleSum * 0.0000002778
+        total_generation_kWh = (singleDay["Net Power"] * 60 * float(interval)).sum() * 0.0000002778
 
         # tpoa, poa = (Transmitted) plane of array irradiance [W/m2]
         
-        #pvlib is a bit more optimistic then pvwatts, so we add a fudge factor
-        conversion_factor = 0.9
-        singleDay["No MPPT Power"] = pvLibTest.getPowerAtLoad(module_params,singleDay["tpoa"].to_numpy(), singleDay["tcell"].to_numpy(),elementR/stringLen) * stringLen * (1.0-(losses/100.0))
-        singleDay["No MPPT Power"] = (singleDay["No MPPT Power"] * conversion_factor) - singleDay["standbyLoss"]
-
         d = convert_day_of_year(day)
         ax.set_title(
             f"{d},  Net Thermal Energy Gain = {total_kWh:.2f} (kWh)", size="xx-large"
         )
+
+        if(elementR > 0):
+        #pvlib is a bit more optimistic then pvwatts, so we scale with a fudge factor
+            conversion_factor = 0.95
+            singleDay["No MPPT Power"] = pvLibTest.getPowerAtLoad(module_params,singleDay["tpoa"].to_numpy(), singleDay["tcell"].to_numpy(),elementR/stringLen) * stringLen * (1.0-(losses/100.0))
+            singleDay["No MPPT Power"] = (singleDay["No MPPT Power"] * conversion_factor) 
+            kWh_NoMPPT = (singleDay["No MPPT Power"] * 60 * float(interval)).sum() * 0.0000002778
+            mismatchLoss = 100.0-(kWh_NoMPPT / total_generation_kWh * 100)
+            twin2.plot("No MPPT Power", "g.", data=singleDay)
+            ax.set_title(
+                f"{d},  Net Thermal Energy Gain = {total_kWh:.2f} (kWh)  Mismatch Loss = {mismatchLoss:.0f}%", size="xx-large"
+            )
         # fig.supxlabel(f"uef= {uef:.2f} tankSize ={tankSize}")
         fig.supxlabel(
             f"UEF={uef:.2f}   Max Solar Power={maxSolarPower:.1f}(W)   Max Standby Loss={maxStandbyLoss:.1f}(W)   Max Tank Temp={maxTankTemp:.1f}(℃)",
@@ -445,7 +453,6 @@ def nsrdb_plot(df, day, filename, tankSize=189, startingTemp=40, uef=0.9, elemen
         ax2.tick_params(axis="y", colors="b", **tkw)
 
         twin2.plot("Net Power", "g-", data=singleDay)
-        twin2.plot("No MPPT Power", "g.", data=singleDay)
         twin2.set_ylabel("Net Water Heating Power(W)")
         twin2.tick_params(axis="y", colors="g", **tkw)
         twin2.yaxis.label.set_color("g")

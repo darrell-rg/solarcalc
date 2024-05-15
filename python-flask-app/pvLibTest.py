@@ -32,7 +32,7 @@ parameters = {
     "Technology": "Mono-c-Si",
 }
 
-samples = 100
+samples = 255
 
 
 module_params = {

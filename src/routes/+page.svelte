@@ -38,6 +38,11 @@
 		};
 		event.srcElement.setAttribute('disabled', true);
 
+		let Re = elementR * -1;
+
+		if (nonMpptGraph)
+			Re = elementR;
+
 		//pwr should be in kW
 		let pwr = nominalPower / 1000.0;
 		url =
@@ -152,7 +157,7 @@
 	let wireResistance = 2.1;
 	let peakPrice = 0.285;
 	let offPeakPrice = 0.0792;
-	let useMPPT = 1;
+	let nonMpptGraph = 1;
 	let losses = 14;
 
 	let selectedElement = elements[0];
@@ -356,11 +361,6 @@
 			<label for="elementInput" class="elementInputLabel">Element</label>
 			<!-- <InputInt bind:val={elementP} label="Element Power Rating" units="W" min="100" max="10000" />
 			<InputInt bind:val={elementV} label="Element Voltage Rating" units="V" min="12" max="600" /> -->
-			<br />
-			<label>
-				<input type="checkbox" bind:checked={useMPPT} disabled />
-				Use MPPT Thermostat
-			</label>
 			<hr />
 			<Output val={round(energyToHeatOneTank / 3600e3)} label="Energy to heat 1 tank" units="kWh" />
 			<Output val={costToHeatOneTank} label="Cost to heat one tank" units="$" />
@@ -608,6 +608,11 @@
 			<button on:click={(e) => makeGraphUrl(90, e)}> Graph random day in Q2</button>
 			<button on:click={(e) => makeGraphUrl(180, e)}> Graph random day in Q3</button>
 			<button on:click={(e) => makeGraphUrl(270, e)}> Graph random day in Q4</button>
+			
+			<label>
+				<input type="checkbox" bind:checked={nonMpptGraph}  />
+				Estimate No-MPPT power
+			</label>
 		</div>
 	</span>
 	<br />
