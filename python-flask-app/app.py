@@ -405,7 +405,7 @@ def nsrdb_plot(df, day, filename, tankSize=189, startingTemp=40, uef=0.9, elemen
         maxTankTemp = singleDay["Tank Temperature"].max()
 
         total_kWh = jouleSum * 0.0000002778
-        total_generation_kWh = (singleDay["Net Power"] * 60 * float(interval)).sum() * 0.0000002778
+        total_generation_kWh = (singleDay["generation"] * 60 * float(interval)).sum() * 0.0000002778
 
         # tpoa, poa = (Transmitted) plane of array irradiance [W/m2]
         
@@ -414,23 +414,30 @@ def nsrdb_plot(df, day, filename, tankSize=189, startingTemp=40, uef=0.9, elemen
             f"{d},  Net Thermal Energy Gain = {total_kWh:.2f} (kWh)", size="xx-large"
         )
 
-        fixedRTitle = f" Using MPPT"
+        fixedRTitle = f" "
+        heaterElementTitle = f"Element Using MPPT"
+        # pass in a positive elementR to estimate non-mppt
         if(elementR > 0):
-        #pvlib is a bit more optimistic then pvwatts, so we scale with a fudge factor
+            #pvlib is a bit more optimistic then pvwatts, so we scale with a fudge factor
+            heaterElementTitle = f"  Element≈{elementR:.1f}(Ω)"
             conversion_factor = 0.95
             singleDay["Sans-MPPT"] = pvLibTest.getPowerAtLoad(module_params,singleDay["tpoa"].to_numpy(), singleDay["tcell"].to_numpy(),elementR/stringLen) * stringLen * (1.0-(losses/100.0))
+            #calc percents without the standby loss so dark days work
             singleDay["Sans-MPPT"] = (singleDay["Sans-MPPT"] * conversion_factor) 
             kWh_NoMPPT = (singleDay["Sans-MPPT"] * 60 * float(interval)).sum() * 0.0000002778
             nonMpptPercent = (kWh_NoMPPT / total_generation_kWh * 100)
+            #now add in standby loss for graphing 
+            singleDay["Sans-MPPT"] = (singleDay["Sans-MPPT"] * conversion_factor) - singleDay["standbyLoss"]
+            kWh_NoMPPT = (singleDay["Sans-MPPT"] * 60 * float(interval)).sum() * 0.0000002778
             twin2.plot("Sans-MPPT", "g.", data=singleDay)
-            fixedRTitle = f"    Sans-MPPT = {kWh_NoMPPT:.1f}(kWh) ({nonMpptPercent:.0f}%)"
+            fixedRTitle = f"    Sans-MPPT ≈ {kWh_NoMPPT:.1f}(kWh) ≈ ({nonMpptPercent:.0f}%)"
 
         ax.set_title(
             f"{d},  Net Thermal Energy Gain = {total_kWh:.2f} (kWh) {fixedRTitle}", size="xx-large"
         )
         # fig.supxlabel(f"uef= {uef:.2f} tankSize ={tankSize}")
         fig.supxlabel(
-            f"UEF={uef:.2f}   Max Solar Power={maxSolarPower:.1f}(W)   Max Standby Loss={maxStandbyLoss:.1f}(W)   Max Tank Temp={maxTankTemp:.1f}(℃)",
+            f"UEF={uef:.2f}   Max Solar Power={maxSolarPower:.1f}(W)   Max Standby Loss={maxStandbyLoss:.1f}(W)   Max Tank Temp={maxTankTemp:.1f}(℃) {heaterElementTitle}",
             size="large",
         )
 

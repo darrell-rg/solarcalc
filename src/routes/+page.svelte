@@ -423,7 +423,7 @@
 			<InputInt bind:val={azimuth} label="Azimuth  180=South" units="°" min="0" max="359" />
 			<InputInt bind:val={elevation} label="Elevation 0=Flat" units="°" min="0" max="90" />
 			<InputInt bind:val={panelsPerString} label="Panels per string" units="" min="1" max="100" />
-			<InputInt bind:val={parallelStrings} label="Parallel strings" units="" min="1" max="10" />
+			<InputInt bind:val={parallelStrings} label="Parallel strings" units="" min="1" max="10" readonly={true}/>
 			<br />
 			<label>
 				<select bind:value={selectedModuleType}>
@@ -513,8 +513,8 @@
 
 			<p>
 				<b>Source Impedance</b> is the resistance value you want to match with your lower heating
-				element. I suggest a <b>Mismatch</b> below 20% is good enough; the heater elements are not made
-				to a very precise resistance anyway.
+				element. I suggest a <b>Mismatch</b> below 15% is good; the heater elements are not made
+				to a very precise resistance anyway. MPPT will correct the mismatch(within reason).
 			</p>
 
 			<p>
@@ -629,6 +629,13 @@
 	<p>Graph Assumptions:</p>
 
 	<ul>
+		{#if alllowNonMpptt}
+		<li>
+			Non-MPPT Power estimates are an experimental feature, do not expect high accuracy. This uses the <a href="https://pvlib-python.readthedocs.io/en/v0.6.0/singlediode.html">lambertw single diode model</a> to estimate power into a fixed load (your heater element). Notice that MPPT is most useful when there are clouds. To use Non-MPPT you must select a panel by name/PN.
+		</li>				
+		{/if}
+
+
 		<li>No hot water withdraws (aka nobody is home)</li>
 		<li>The tank water starts at your <b>Desired Output Temp</b> ({hotWaterOutTemp}℃)</li>
 		<li>
