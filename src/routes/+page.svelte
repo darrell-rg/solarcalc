@@ -45,7 +45,7 @@
 		let pwr = nominalPower / 1000.0;
 		url =
 			url +
-			`day=${day}&lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}&losses=${losses}&module_type=${selectedModuleType.id}&liters=${tankSize}&uef=${energyFactor}&startingTemp=${hotWaterOutTemp}&Re=${Re}&pps=${panelsPerString}&ps=${parallelStrings}&MN=${selectedModuleName}`;
+			`day=${day}&lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}&losses=${losses}&module_type=${selectedModuleType.id}&liters=${tankSize}&uef=${energyFactor}&startingTemp=${hotWaterOutTemp}&Rw=${wireResistance}&Re=${Re}&pps=${panelsPerString}&ps=${parallelStrings}&MN=${selectedModuleName}`;
 
 		const elem = document.getElementById('solarGraph');
 		if (elem) {
@@ -61,11 +61,13 @@
 	function updateMonthlyTable(runMonthlySimButton: any) {
 		let url = PUBLIC_API_URL + jsonUrlBase;
 
+		let Re = elementR * -1;
+
 		//pwr should be in W
 		let pwr = nominalPower / 1000.0;
 		url =
 			url +
-			`lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}&losses=${losses}&module_type=${selectedModuleType.id}`;
+			`lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}&losses=${losses}&module_type=${selectedModuleType.id}&liters=${tankSize}&uef=${energyFactor}&startingTemp=${hotWaterOutTemp}&Rw=${wireResistance}&Re=${Re}&pps=${panelsPerString}&ps=${parallelStrings}&MN=${selectedModuleName}`;
 
 		let newYearlySavings = 0;
 
@@ -437,7 +439,7 @@
 					units=""
 					min="1"
 					max="10"
-					readonly={true}
+					readonly={false}
 				/>
 				<br />
 				<label>

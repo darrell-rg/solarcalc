@@ -308,7 +308,9 @@ def loadPanelData():
     if not os.path.exists(cecInTmp):
         copyStartupData()
 
-    with open(cecInTmp, newline="") as csvfile:
+    cecInData = os.path.join("data", csvFileName)    
+
+    with open(cecInData, newline="") as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             data[row["Name"]] = convert_to_float_if_possible(row)
@@ -349,6 +351,8 @@ def nsrdb_plot(
     uef=0.9,
     elementR=9.9,
     stringLen=3,
+    parallelStrings=1,
+    nominalPower = 1000,
     losses=14,
     panelParams=None,
 ):
@@ -361,7 +365,7 @@ def nsrdb_plot(
     j = i + timeSteps
     filename = filename.replace(
         ".csv",
-        f"_{tankSize}_{startingTemp}_{uef}_{day}_{elementR}_{stringLen}_{losses}.png",
+        f"_{tankSize}_{startingTemp}_{uef}_{day}_{elementR}_{stringLen}_{losses}_{parallelStrings}_{nominalPower}.png",
     )
     filenameCsv = filename.replace(".png", f"_data.csv")
 
@@ -442,14 +446,16 @@ def nsrdb_plot(
         )
 
         fixedRTitle = f" "
-        heaterElementTitle = f"Element Using MPPT"
+        heaterElementTitle = f"Using MPPT"
         # pass in a positive elementR to estimate non-mppt
 
         pprint.pp(panelParams)
         if elementR > 0 and panelParams:
             # pvlib is a bit more optimistic then pvwatts, so we scale with a fudge factor
-            heaterElementTitle = f"  Element≈{elementR:.1f}(Ω)"
+            heaterElementTitle = f"  Element≈{elementR:.1f}Ω"
             conversion_factor = 0.95
+
+            # TODO: fix this for parallel strings
             singleDay["Sans-MPPT"] = (
                 pvLibTest.getPowerAtLoad(
                     panelParams,
@@ -480,9 +486,14 @@ def nsrdb_plot(
             f"{d},  Net Thermal Energy Gain = {total_kWh:.2f} (kWh) {fixedRTitle}",
             size="xx-large",
         )
+
+        nomPanelPower = nominalPower/(stringLen*parallelStrings)
+        panelName = f"{stringLen}S {parallelStrings}P {nomPanelPower:0.0f}W Generic"
+        if panelParams:
+            panelName = f"{stringLen}S {parallelStrings}P {panelParams['Name']}"
         # fig.supxlabel(f"uef= {uef:.2f} tankSize ={tankSize}")
         fig.supxlabel(
-            f"UEF={uef:.2f}   Max Solar Power={maxSolarPower:.1f}(W)   Max Standby Loss={maxStandbyLoss:.1f}(W)   Max Tank Temp={maxTankTemp:.1f}(℃) {heaterElementTitle}",
+            f"UEF={uef:.2f}   Max Solar Power={maxSolarPower:.0f}W   Max Standby Loss={maxStandbyLoss:.0f}W   Max Tank Temp={maxTankTemp:.0f}℃ {heaterElementTitle}  Array={panelName}",
             size="large",
         )
 
@@ -543,6 +554,7 @@ def getGraph():
     losses = int(request.args.get("losses", "14"))
     module_type = int(request.args.get("module_type", "0"))
     string_length = int(request.args.get("pps", "3"))
+    parallelStrings = int(request.args.get("ps", "1"))
     elementR = float(request.args.get("Re", "10.2"))
     moduleName = request.args.get("MN", "fake test panel")
 
@@ -569,7 +581,9 @@ def getGraph():
         uef=uef,
         elementR=elementR,
         stringLen=string_length,
+        parallelStrings=parallelStrings,
         losses=losses,
+        nominalPower = power_kW,
         panelParams=panelParams,
     )
 
