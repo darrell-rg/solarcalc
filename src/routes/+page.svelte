@@ -47,7 +47,7 @@
 		let pwr = nominalPower / 1000.0;
 		url =
 			url +
-			`day=${day}&lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}&losses=${losses}&module_type=${selectedModuleType.id}&liters=${tankSize}&uef=${energyFactor}&startingTemp=${hotWaterOutTemp}&Re=${Re}&pps=${panelsPerString}&ps=${parallelStrings}`;
+			`day=${day}&lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}&losses=${losses}&module_type=${selectedModuleType.id}&liters=${tankSize}&uef=${energyFactor}&startingTemp=${hotWaterOutTemp}&Re=${Re}&pps=${panelsPerString}&ps=${parallelStrings}&MN=${selectedModuleName}`;
 
 		const elem = document.getElementById('solarGraph');
 		if (elem) {
@@ -117,12 +117,13 @@
 
 	let modules: any = [];
 	let selectedModule: any = null;
+	let selectedModuleName: any = null;
 
 	/* Fetch and update the list of modules once */
 	async function loadModules() {
 		// dynamic import for this large js lib
 		const xlsx = (await import('xlsx')).default;
-		const f = await (await fetch('CECModules2023-11-17combined.csv')).arrayBuffer();
+		const f = await (await fetch('CECModules2023.csv')).arrayBuffer();
 		const wb = xlsx.read(f); // parse the array buffer
 		modules = xlsx.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
 		console.log('loaded modules ', modules.length);
@@ -136,6 +137,7 @@
 			$Imp = newModule.I_mp_ref;
 			$Voc = newModule.V_oc_ref;
 			$Isc = newModule.I_sc_ref;
+			selectedModuleName = newModule.Name;
 			alllowNonMpptt = true;
 			console.log('moduleChanged!', newModule);
 		}

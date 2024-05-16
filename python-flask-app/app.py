@@ -14,8 +14,11 @@
 # specific language governing permissions and Limitations
 # under the License.
 
+from collections import defaultdict
+import glob
 import json
 import ast
+import shutil
 from flask import Flask, request, send_file
 from types import SimpleNamespace
 
@@ -26,9 +29,11 @@ import numpy as np
 import hashlib
 from datetime import datetime, timedelta
 import json
+
 # from IPython.display import display
 import urllib.request
 import os
+import csv
 
 # import additional module for SAM simulation:
 # import site
@@ -64,77 +69,53 @@ reason_for_use = "PV_hot_water_sim_at_pvh2o_dot_com"
 # Your email address
 email = "darrell@pvh2o.com"
 
-folder = "/tmp"
+tmp_folder = "/tmp"
+
+#global to hold cached cec data
+panelData = None
+csvFileName = "CECModules2023.csv"
 
 
-module_params = {
-    "Name": "SunSpark Technology Inc. SST-M156(HCBF)-600W",
-    "Manufacturer": "SunSpark Technology Inc.",
-    "Technology": "Mono-c-Si",
-    "Bifacial": 1,
-    "STC": 601.437,
-    "PTC": 562.8,
-    "A_c": 2.77,
-    "N_s": 78,
-    "I_sc_ref": 13.86,
-    "V_oc_ref": 55.1,
-    "I_mp_ref": 12.99,
-    "V_mp_ref": 46.3,
-    "alpha_sc": 0.0066528,
-    "beta_oc": -0.141607,
-    "T_NOCT": 44.6,
-    "a_ref": 2.048,
-    "I_L_ref": 13.8753,
-    "I_o_ref": 2.80156e-11,
-    "R_s": 0.184367,
-    "R_sh_ref": 166.971,
-    "Adjust": 11.8772,
-    "gamma_r": -0.338,
-    "BIPV": "N",
-    "Version": "2023.10.31",
-    "Date": 44881
-}
+def downloadTMYWeatherData(lat=40.57, lon=-105.07, year=2022):
 
-def downloadTMYWeatherData(lat=40.57, lon=-105.07, year=2022, folder="/tmp"):
+    global tmp_folder
     # Declare all variables as strings. Spaces must be replaced with '+', i.e., change 'John Smith' to 'John+Smith'.
     # "weather_data_source":"NSRDB PSM V3 GOES tmy-2022 3.2.0"
 
-    # Declare url string, docs at 
+    # Declare url string, docs at
     # https://developer.nrel.gov/docs/solar/nsrdb/psm3-2-2-tmy-download/
 
     # TMY seems to only have 60 min intervals
 
-    weather_dataset_name = f"tmy-{year}" 
+    weather_dataset_name = f"tmy-{year}"
     url = f"https://developer.nrel.gov/api/nsrdb/v2/solar/psm3-2-2-tmy-download.csv?wkt=POINT({lon:.2f}+{lat:.2f})&names={weather_dataset_name}&utc={utc}&email={email}&reason={reason_for_use}&api_key={api_key}"
 
-
     hash = hashlib.shake_128(url.encode()).hexdigest(8)
-    filename = os.path.join(folder, "weather_"+hash + ".csv")
+    filename = os.path.join(tmp_folder, "weather_" + hash + ".csv")
     if not os.path.exists(filename):
         urllib.request.urlretrieve(url, filename)
 
     return filename, hash
 
 
-def downloadWeatherData(lat=40.57, lon=-105.07, year=2022, folder="/tmp"):
+def downloadWeatherData(lat=40.57, lon=-105.07, year=2022):
+    global tmp_folder
     # Declare all variables as strings. Spaces must be replaced with '+', i.e., change 'John Smith' to 'John+Smith'.
     # "weather_data_source":"NSRDB PSM V3 GOES tmy-2022 3.2.0"
 
-    # Declare url string, docs at 
+    # Declare url string, docs at
     # https://developer.nrel.gov/docs/solar/nsrdb/psm3-2-2-download/
-
 
     url = f"https://developer.nrel.gov/api/nsrdb/v2/solar/psm3-2-2-download.csv?wkt=POINT({lon:.2f}+{lat:.2f})&names={year}&utc={utc}&email={email}&reason={reason_for_use}&api_key={api_key}&interval={interval}"
 
     # print(url)
 
     hash = hashlib.shake_128(url.encode()).hexdigest(8)
-    filename = os.path.join(folder, "weather_"+hash + ".csv")
+    filename = os.path.join(tmp_folder, "weather_" + hash + ".csv")
     if not os.path.exists(filename):
         urllib.request.urlretrieve(url, filename)
 
     return filename, hash
-
 
 
 def runMonthlySimJson(
@@ -146,9 +127,9 @@ def runMonthlySimJson(
     azimuth=180,
     module_type=0,
     losses=14,
-    folder="/tmp",
+    panelParams=None,
 ):
-
+    global tmp_folder
     # this will run PvWatts V8 on nrel's api
     # https://developer.nrel.gov/docs/solar/pvwatts/v8/
 
@@ -156,16 +137,15 @@ def runMonthlySimJson(
 
     # print(url)
     hash = hashlib.shake_128(url.encode()).hexdigest(8)
-    filename_api_json = os.path.join(folder, "monthly_api_" + hash + ".json")
-    filename_monthly = os.path.join(folder, "monthly_" + hash + ".json")
+    filename_api_json = os.path.join(tmp_folder, "monthly_api_" + hash + ".json")
+    filename_monthly = os.path.join(tmp_folder, "monthly_" + hash + ".json")
 
     if not os.path.exists(filename_monthly):
         # urllib.request.urlretrieve(url, filename_api_json)
 
         df, filename, filename_monthly = runSim(
-            lat, lon, year, power_kW, tilt, azimuth, module_type, losses, folder
+            lat, lon, year, power_kW, tilt, azimuth, module_type, losses, panelParams
         )
-        
 
     return filename_monthly, hash
 
@@ -179,15 +159,14 @@ def runSim(
     azimuth=180,
     module_type=0,
     losses=14,
-    folder="/tmp",
+    panelParams=None,
 ):
-
-    filename, hash = downloadWeatherData(lat=lat, lon=lon, year=year, folder=folder)
+    global tmp_folder
+    filename, hash = downloadWeatherData(lat=lat, lon=lon, year=year)
 
     extraVars = "hash={hash}&azimuth={azimuth}&system_capacity={power_kW}&losses={losses}&array_type=1&module_type={module_type}&gcr=0.4&dc_ac_ratio=1.2&inv_eff=96.0&radius=0&dataset=nsrdb&tilt={tilt}&lat={lat}&lon={lon}"
 
     hash = hashlib.shake_128(extraVars.encode()).hexdigest(8)
-
 
     # load the data
     # Return just the first 2 lines to get metadata:
@@ -263,16 +242,15 @@ def runSim(
     df["poa"] = np.array(ssc.data_get_array(dat, b"poa"))
 
     monthly = {
-            "ac_monthly": ssc.data_get_array(dat, b"ac_monthly"),
-            "poa_monthly": ssc.data_get_array(dat, b"poa_monthly"),
-            "solrad_monthly": ssc.data_get_array(dat, b"solrad_monthly"),
-            "dc_monthly": ssc.data_get_array(dat, b"dc_monthly"),
-        }
+        "ac_monthly": ssc.data_get_array(dat, b"ac_monthly"),
+        "poa_monthly": ssc.data_get_array(dat, b"poa_monthly"),
+        "solrad_monthly": ssc.data_get_array(dat, b"solrad_monthly"),
+        "dc_monthly": ssc.data_get_array(dat, b"dc_monthly"),
+    }
 
-    #simData = pvLibTest.ssc_table_to_dict(mod, dat)
+    # simData = pvLibTest.ssc_table_to_dict(mod, dat)
     # pprint.pp(simData.keys())
-    #dict_keys(['gen', 'annual_energy_distribution_time', 'solar_resource_data', 'albedo_default', 'albedo_default_snow', 'use_wf_albedo', 'system_use_lifetime_output', 'system_capacity', 'module_type', 'dc_ac_ratio', 'bifaciality', 'array_type', 'tilt', 'azimuth', 'gcr', 'rotlim', 'losses', 'enable_wind_stow', 'stow_wspd', 'wind_stow_angle', 'en_snowloss', 'inv_eff', 'xfmr_nll', 'xfmr_ll', 'shading_en_string_option', 'shading_string_option', 'shading_en_timestep', 'shading_en_mxh', 'shading_en_azal', 'shading_en_diff', 'batt_simple_enable', 'gh', 'dn', 'df', 'tamb', 'wspd', 'snow', 'alb', 'soiling_f', 'sunup', 'shad_beam_factor', 'ss_beam_factor', 'ss_sky_diffuse_factor', 'ss_gnd_diffuse_factor', 'aoi', 'poa', 'tpoa', 'tcell', 'dcsnowderate', 'dc', 'ac', 'ac_pre_adjust', 'inv_eff_output', 'poa_monthly', 'solrad_monthly', 'dc_monthly', 'ac_monthly', 'monthly_energy', 'solrad_annual', 'ac_annual', 'ac_annual_pre_adjust', 'annual_energy', 'capacity_factor', 'capacity_factor_ac', 'kwh_per_kw', 'location', 'city', 'state', 'lat', 'lon', 'tz', 'elev', 'inverter_efficiency', 'ts_shift_hours', 'percent_complete', 'adjust_constant', 'adjust_en_timeindex', 'adjust_en_periods'])
-
+    # dict_keys(['gen', 'annual_energy_distribution_time', 'solar_resource_data', 'albedo_default', 'albedo_default_snow', 'use_wf_albedo', 'system_use_lifetime_output', 'system_capacity', 'module_type', 'dc_ac_ratio', 'bifaciality', 'array_type', 'tilt', 'azimuth', 'gcr', 'rotlim', 'losses', 'enable_wind_stow', 'stow_wspd', 'wind_stow_angle', 'en_snowloss', 'inv_eff', 'xfmr_nll', 'xfmr_ll', 'shading_en_string_option', 'shading_string_option', 'shading_en_timestep', 'shading_en_mxh', 'shading_en_azal', 'shading_en_diff', 'batt_simple_enable', 'gh', 'dn', 'df', 'tamb', 'wspd', 'snow', 'alb', 'soiling_f', 'sunup', 'shad_beam_factor', 'ss_beam_factor', 'ss_sky_diffuse_factor', 'ss_gnd_diffuse_factor', 'aoi', 'poa', 'tpoa', 'tcell', 'dcsnowderate', 'dc', 'ac', 'ac_pre_adjust', 'inv_eff_output', 'poa_monthly', 'solrad_monthly', 'dc_monthly', 'ac_monthly', 'monthly_energy', 'solrad_annual', 'ac_annual', 'ac_annual_pre_adjust', 'annual_energy', 'capacity_factor', 'capacity_factor_ac', 'kwh_per_kw', 'location', 'city', 'state', 'lat', 'lon', 'tz', 'elev', 'inverter_efficiency', 'ts_shift_hours', 'percent_complete', 'adjust_constant', 'adjust_en_timeindex', 'adjust_en_periods'])
 
     # free the memory
     ssc.data_free(dat)
@@ -287,15 +265,13 @@ def runSim(
 
     print(f"total_energy = {total_energy}")
 
-    filename_sim = os.path.join(folder, "daily_" + hash + ".csv")
+    filename_sim = os.path.join(tmp_folder, "daily_" + hash + ".csv")
     df.to_csv(filename_sim)
-    filename_json = os.path.join(folder, "monthly_" + hash + ".json")
+    filename_json = os.path.join(tmp_folder, "monthly_" + hash + ".json")
 
-    jOut = {"outputs":monthly}
-    with open(filename_json, 'w') as fp:
-        json.dump( jOut, fp)
-
-
+    jOut = {"outputs": monthly}
+    with open(filename_json, "w") as fp:
+        json.dump(jOut, fp)
 
     return df, filename_sim, filename_json
 
@@ -311,6 +287,41 @@ def convert_day_of_year(day_of_year, year=2022):
     return actual_date.strftime("%B %d")
 
     # returns standby loss in watts
+
+def convert_to_float_if_possible(d):
+    for key, value in d.items():
+        try:
+            # Try to convert the value to a float
+            d[key] = float(value)
+        except:
+            # If the conversion fails, leave the value as is
+            pass
+    return d
+
+def loadPanelData():
+    global csvFileName
+    global tmp_folder
+    data = defaultdict()
+
+    cecInTmp = os.path.join(tmp_folder, csvFileName)
+
+    if not os.path.exists(cecInTmp):
+        copyStartupData()
+
+    with open(cecInTmp, newline="") as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            data[row["Name"]] = convert_to_float_if_possible(row)
+
+    return data
+
+
+def findPanelByName(moduleName):
+    global panelData
+    if panelData == None:
+        panelData = loadPanelData()
+
+    return panelData.get(moduleName)
 
 
 def standbyLoss(ef=0.9, Ttank=40, Tamb=16):
@@ -329,15 +340,29 @@ def standbyLoss(ef=0.9, Ttank=40, Tamb=16):
 #  https://www.energytrust.org/wp-content/uploads/2017/11/Water_Heater_Energy_Storage_wStaffResponse.pdf
 #
 #
-def nsrdb_plot(df, day, filename, tankSize=189, startingTemp=40, uef=0.9, elementR = 9.9, stringLen=3, losses=14):
-
+def nsrdb_plot(
+    df,
+    day,
+    filename,
+    tankSize=189,
+    startingTemp=40,
+    uef=0.9,
+    elementR=9.9,
+    stringLen=3,
+    losses=14,
+    panelParams=None,
+):
+    global tmp_folder
     timeSteps = 24
 
     if int(interval) < 59:
         timeSteps = 48
     i = day * timeSteps
     j = i + timeSteps
-    filename = filename.replace(".csv", f"_{tankSize}_{startingTemp}_{uef}_{day}_{elementR}_{stringLen}_{losses}.png")
+    filename = filename.replace(
+        ".csv",
+        f"_{tankSize}_{startingTemp}_{uef}_{day}_{elementR}_{stringLen}_{losses}.png",
+    )
     filenameCsv = filename.replace(".png", f"_data.csv")
 
     if not os.path.exists(filename):
@@ -405,10 +430,12 @@ def nsrdb_plot(df, day, filename, tankSize=189, startingTemp=40, uef=0.9, elemen
         maxTankTemp = singleDay["Tank Temperature"].max()
 
         total_kWh = jouleSum * 0.0000002778
-        total_generation_kWh = (singleDay["generation"] * 60 * float(interval)).sum() * 0.0000002778
+        total_generation_kWh = (
+            singleDay["generation"] * 60 * float(interval)
+        ).sum() * 0.0000002778
 
         # tpoa, poa = (Transmitted) plane of array irradiance [W/m2]
-        
+
         d = convert_day_of_year(day)
         ax.set_title(
             f"{d},  Net Thermal Energy Gain = {total_kWh:.2f} (kWh)", size="xx-large"
@@ -417,23 +444,41 @@ def nsrdb_plot(df, day, filename, tankSize=189, startingTemp=40, uef=0.9, elemen
         fixedRTitle = f" "
         heaterElementTitle = f"Element Using MPPT"
         # pass in a positive elementR to estimate non-mppt
-        if(elementR > 0):
-            #pvlib is a bit more optimistic then pvwatts, so we scale with a fudge factor
+
+        pprint.pp(panelParams)
+        if elementR > 0 and panelParams:
+            # pvlib is a bit more optimistic then pvwatts, so we scale with a fudge factor
             heaterElementTitle = f"  Element≈{elementR:.1f}(Ω)"
             conversion_factor = 0.95
-            singleDay["Sans-MPPT"] = pvLibTest.getPowerAtLoad(module_params,singleDay["tpoa"].to_numpy(), singleDay["tcell"].to_numpy(),elementR/stringLen) * stringLen * (1.0-(losses/100.0))
-            #calc percents without the standby loss so dark days work
-            singleDay["Sans-MPPT"] = (singleDay["Sans-MPPT"] * conversion_factor) 
-            kWh_NoMPPT = (singleDay["Sans-MPPT"] * 60 * float(interval)).sum() * 0.0000002778
-            nonMpptPercent = (kWh_NoMPPT / total_generation_kWh * 100)
-            #now add in standby loss for graphing 
-            singleDay["Sans-MPPT"] = (singleDay["Sans-MPPT"] * conversion_factor) - singleDay["standbyLoss"]
-            kWh_NoMPPT = (singleDay["Sans-MPPT"] * 60 * float(interval)).sum() * 0.0000002778
+            singleDay["Sans-MPPT"] = (
+                pvLibTest.getPowerAtLoad(
+                    panelParams,
+                    singleDay["tpoa"].to_numpy(),
+                    singleDay["tcell"].to_numpy(),
+                    elementR / stringLen,
+                )
+                * stringLen
+                * (1.0 - (losses / 100.0))
+            )
+            # calc percents without the standby loss so dark days work
+            singleDay["Sans-MPPT"] = singleDay["Sans-MPPT"] * conversion_factor
+            kWh_NoMPPT = (
+                singleDay["Sans-MPPT"] * 60 * float(interval)
+            ).sum() * 0.0000002778
+            nonMpptPercent = kWh_NoMPPT / total_generation_kWh * 100
+            # now add in standby loss for graphing
+            singleDay["Sans-MPPT"] = (
+                singleDay["Sans-MPPT"] * conversion_factor
+            ) - singleDay["standbyLoss"]
+            kWh_NoMPPT = (
+                singleDay["Sans-MPPT"] * 60 * float(interval)
+            ).sum() * 0.0000002778
             twin2.plot("Sans-MPPT", "g.", data=singleDay)
             fixedRTitle = f"    Sans-MPPT ≈ {kWh_NoMPPT:.1f}(kWh net) ≈ ({nonMpptPercent:.0f}% gross)"
 
         ax.set_title(
-            f"{d},  Net Thermal Energy Gain = {total_kWh:.2f} (kWh) {fixedRTitle}", size="xx-large"
+            f"{d},  Net Thermal Energy Gain = {total_kWh:.2f} (kWh) {fixedRTitle}",
+            size="xx-large",
         )
         # fig.supxlabel(f"uef= {uef:.2f} tankSize ={tankSize}")
         fig.supxlabel(
@@ -499,13 +544,33 @@ def getGraph():
     module_type = int(request.args.get("module_type", "0"))
     string_length = int(request.args.get("pps", "3"))
     elementR = float(request.args.get("Re", "10.2"))
+    moduleName = request.args.get("MN", "fake test panel")
+
+    panelParams = findPanelByName(moduleName)
 
     df, filename, filenameJson = runSim(
-        lat, lon, year, power_kW, tilt, azimuth, module_type, losses, folder
+        lat,
+        lon,
+        year,
+        power_kW,
+        tilt,
+        azimuth,
+        module_type,
+        losses,
+        panelParams=panelParams,
     )
 
     csv, graph = nsrdb_plot(
-        df, day, filename, tankSize=liters, startingTemp=startingTemp, uef=uef, elementR=elementR,stringLen=string_length,losses=losses
+        df,
+        day,
+        filename,
+        tankSize=liters,
+        startingTemp=startingTemp,
+        uef=uef,
+        elementR=elementR,
+        stringLen=string_length,
+        losses=losses,
+        panelParams=panelParams,
     )
 
     if os.path.exists(graph):
@@ -529,7 +594,7 @@ def getCsv():
     module_type = int(request.args.get("module_type", "0"))
 
     df, filename, filename_json = runSim(
-        lat, lon, year, power_kW, tilt, azimuth, module_type, losses, folder
+        lat, lon, year, power_kW, tilt, azimuth, module_type, losses
     )
 
     if os.path.exists(filename):
@@ -553,7 +618,7 @@ def getJson():
     year = int(request.args.get("year", "2022"))
 
     filename, hash = runMonthlySimJson(
-        lat, lon, year, power_kW, tilt, azimuth, module_type, losses, folder
+        lat, lon, year, power_kW, tilt, azimuth, module_type, losses
     )
 
     if os.path.exists(filename):
@@ -571,7 +636,38 @@ def health_check_root():
     return "Hello, the server is alive!"
 
 
+def copyStartupData():
+    # Define the source and destination folders
+    source_folder = "./data"
+    global tmp_folder
+
+    # Create the destination folder if it doesn't exist
+    os.makedirs(tmp_folder, exist_ok=True)
+
+    # Get a list of all .csv files in the source folder
+    csv_files = glob.glob(os.path.join(source_folder, "*.csv"))
+
+    # Copy each .csv file to the destination folder
+    for file in csv_files:
+        # Get the base name of the file (i.e., the file name without the directory)
+        file_name = os.path.basename(file)
+        destination_file = os.path.join(tmp_folder, file_name)
+        
+        # Check if the file already exists in the destination folder
+        if not os.path.exists(destination_file):
+            shutil.copy(file, tmp_folder)
+            print(f"Copied {file} to {tmp_folder}")
+        else:
+            print(f"File {destination_file} already exists, skipping.")
+
+
 if __name__ == "__main__":
-   #app.run()
-    runSim()
-    #runMonthlySimJson()
+
+    # load panel data into memory
+    copyStartupData()
+
+    # app.run()
+    # runSim()
+    # runMonthlySimJson()
+
+    pprint.pp(findPanelByName("SunSpark Technology Inc. SST-M156(HCBF)-600W"))

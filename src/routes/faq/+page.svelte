@@ -338,6 +338,10 @@
 	</article>
 
 	<article class="faq">
+		<figure>
+			<img alt="Melted Fuse Holder" src="meltedFuse1.jpg" class="rightSideImg" />
+			<figcaption>Melted Inline Fuse Holder</figcaption>
+		</figure>
 		<h2>What problems have you run into?</h2>
 		<p>
 			Squirrels chewed some of the wires and I had to replace them. A cheap ebay inline fuse holder
