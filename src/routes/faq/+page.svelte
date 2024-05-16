@@ -262,10 +262,10 @@
 			<img alt="T&P valve" src="solarShed/pAndTValve.webp" class="rightSideImg" />
 			<figcaption>T&P Valve</figcaption>
 		</figure>
-		<figure>
+		<!-- <figure>
 			<img alt="T&P valve popping" src="tempering-diagram.jpg" class="rightSideImg" />
 			<figcaption>The T&P valve is popping</figcaption>
-		</figure>
+		</figure> -->
 		<h2>What is a Temperature and Pressure (T&P) Relief valve?</h2>
 		<p>
 			The T&P valve is a safety device that will let some hot water out if your water heater gets

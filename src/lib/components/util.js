@@ -80,7 +80,7 @@ export const months = [
 	'December'
 ];
 
-// 2022 is the latest tmy available at 
+// 2022 is the latest tmy available at
 // https://developer.nrel.gov/docs/solar/nsrdb/psm3-2-2-tmy-download/
 export const year = 2022;
 
@@ -146,11 +146,11 @@ function parseHeaterElement(str) {
 	const watts = parseFloat(parts[0]);
 	const volts = parseFloat(parts[1]);
 	// const resistance = parseFloat(parts[2]);
-	const resistance = round(vpToR(volts,watts));
+	const resistance = round(vpToR(volts, watts));
 
 	// Create the object with the extracted values
 	const result = {
-		label:  `${volts}V x ${watts}W ≈ ${resistance}Ω`,
+		label: `${volts}V x ${watts}W ≈ ${resistance}Ω`,
 		watts: watts,
 		volts: volts,
 		resistance: resistance
@@ -165,9 +165,8 @@ function convertElements() {
 	return parts.map(parseHeaterElement);
 }
 
-
 function compareElements(a, b) {
 	return a.resistance - b.resistance;
-  }
+}
 
 export const elements = convertElements().sort(compareElements);
