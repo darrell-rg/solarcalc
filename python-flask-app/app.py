@@ -455,13 +455,13 @@ def nsrdb_plot(
             heaterElementTitle = f"  Element≈{elementR:.1f}Ω"
             conversion_factor = 0.95
 
-            # TODO: fix this for parallel strings
             singleDay["Sans-MPPT"] = (
                 pvLibTest.getPowerAtLoad(
                     panelParams,
                     singleDay["tpoa"].to_numpy(),
                     singleDay["tcell"].to_numpy(),
                     elementR / stringLen,
+                    parallelStrings
                 )
                 * stringLen
                 * (1.0 - (losses / 100.0))

@@ -482,7 +482,7 @@
 				<Output val={round(mismatch)} label="Mismatch" units="%" />
 				<br />
 				<Output val={wireResistance} label="Resistance of wire" units="Ω" />
-				<Output val={round($Imp * $Imp * wireResistance)} label="Wire Losses at Mpp" units="W" />
+				<Output val={round(($Imp * parallelStrings ) * ($Imp * parallelStrings ) * wireResistance)} label="Wire Losses at Mpp" units="W" />
 			</Box>
 		</span>
 		<span>

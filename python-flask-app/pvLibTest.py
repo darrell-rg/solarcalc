@@ -272,7 +272,8 @@ def ssc_table_numbers_to_dict_empty(cmod_name):
 
 
 
-def getPowerAtLoad(parameters, Geff, Tcell, R_load):
+# TODO: parallel strings estimate may be wrong
+def getPowerAtLoad(parameters, Geff, Tcell, R_load, parallel=1):
     # adjust the reference parameters according to the operating
     # conditions using the De Soto model:
     IL, I0, Rs, Rsh, nNsVth = pvsystem.calcparams_desoto(
@@ -280,8 +281,8 @@ def getPowerAtLoad(parameters, Geff, Tcell, R_load):
         Tcell,
         alpha_sc=parameters["alpha_sc"],
         a_ref=parameters["a_ref"],
-        I_L_ref=parameters["I_L_ref"],
-        I_o_ref=parameters["I_o_ref"],
+        I_L_ref=parameters["I_L_ref"] * parallel,
+        I_o_ref=parameters["I_o_ref"] * parallel,
         R_sh_ref=parameters["R_sh_ref"],
         R_s=parameters["R_s"],
         EgRef=1.121,
