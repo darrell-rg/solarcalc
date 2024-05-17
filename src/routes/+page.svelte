@@ -625,25 +625,12 @@
 		<span data-text>
 			<h2>Step 5: Simulate 1 Day</h2>
 			<p>
-				This graph uses the TMY-{year} weather data to run a daily PV simulation to help you size your
-				array. <span class="blue"><b>Mean Tank Temperature</b></span> assumes fully mixed water. On most
-				days, the tank will not get as hot as the graph shows because you will be withdrawing hot water
-				from the top, which adds cold water to the bottom.
-			</p>
-			<p>
 				Click a <b>Graph random day</b> button a few times until you find a nice sunny day (lots of
-				<b>Solar Radiation</b>).
+				<b>Solar Radiation</b>). This graph uses the TMY-{year} weather data to run a daily PV simulation to help you size your
+				array.  The important thing to look at here is <span class="blue"> <b>Tank Temperature</b></span>.
+
 			</p>
-			<p>
-				If your <b>Net Thermal Energy Gain</b> is more than
-				<b>Daily Energy Demand ({round(dailyEnergyDemand)}kWh)</b>
-				on a sunny day, then your solar array is oversized. If the
-				<span class="blue"><b>Tank Temperature</b></span>
-				is going over the
-				<span class="red"><b>Mixing Valve Limit</b></span>
-				and you still are making less then 2/3 of your <b>Daily Energy Demand</b>, then your tank is
-				undersized.
-			</p>
+
 			<div class="smol-css-grid">
 				<button on:click={(e) => makeGraphUrl(0, e)}> Graph random day in Q1</button>
 				<button on:click={(e) => makeGraphUrl(90, e)}> Graph random day in Q2</button>
@@ -667,6 +654,17 @@
 				<img alt="SolarSimGraph" src="sampleGraph.png" id="solarGraph" style="padding-top:10px;" />
 			</figure>
 		</span>
+		<p>
+			If your <b>Net Thermal Energy Gain</b> is more than
+			<b>Daily Energy Demand ({round(dailyEnergyDemand)}kWh)</b>
+			on a sunny day, then your solar array is oversized. If the
+			<span class="blue"><b>Tank Temperature</b></span>
+			is going over the
+			<span class="red"><b>Mixing Valve Limit</b></span>
+			and you still are making less then 2/3 of your <b>Daily Energy Demand</b>, then your tank is
+			undersized.
+		</p>
+
 		<p>Graph Assumptions:</p>
 
 		<ul>
@@ -680,10 +678,10 @@
 				</li>
 			{/if}
 
-			<li>No hot water withdraws (aka nobody is home)</li>
+			<li>No hot water withdraws (aka nobody is home). On most days you will be using hot water which will lower the <span class="blue"><b>Tank Temperature</b></span></li>
 			<li>The tank water starts at your <b>Desired Output Temp</b> ({$pv.hotWaterOutTemp}℃)</li>
 			<li>
-				<span class="blue"><b>Mean Tank Temperature</b></span> assumes fully mixed water. In the real
+				<span class="blue"><b>Tank Temperature</b></span> assumes fully mixed water. In the real
 				world the hottest water moves to the top of the tank and the coldest to the bottom.
 			</li>
 			<li>
@@ -693,7 +691,7 @@
 			<li>The top element is disconnected (no city power).</li>
 			<li>
 				No thermostat is installed on the bottom element. If there was a thermostat the <span
-					class="blue"><b>Mean Tank Temperature</b></span
+					class="blue"><b>Tank Temperature</b></span
 				>
 				would not exceed the <span class="red"><b>Mixing Valve Limit</b> </span>
 			</li>
