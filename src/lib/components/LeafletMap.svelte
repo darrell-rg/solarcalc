@@ -3,25 +3,25 @@
 	import Leaflet from '$lib/Leaflet.svelte';
 	import Marker from '$lib/Marker.svelte';
 	import Popup from '$lib/Popup.svelte';
-	import { lat, lng } from '$lib/components/stores.js';
+	import { pv } from '$lib/components/stores.ts';
 	import { round } from './util';
 
 	let marker: Marker;
-	const initialView: LatLngExpression = [$lat, $lng];
+	const initialView: LatLngExpression = [$pv.lat, $pv.lng];
 
 	function updatePos(event: any) {
 		// console.log("marker dragged!",event);
-		lng.set(event.detail.latlng.lng);
-		lat.set(event.detail.latlng.lat);
+		$pv.lng = event.detail.latlng.lng;
+		$pv.lat = event.detail.latlng.lat;
 	}
 
 	function getCurrentPosition() {
 		// this set the lat,lng from the browser location api
 		navigator.geolocation.getCurrentPosition(function (position) {
-			$lat = round(position.coords.latitude);
-			$lng = round(position.coords.longitude);
+			$pv.lat = round(position.coords.latitude);
+			$pv.lng = round(position.coords.longitude);
 			//tell leaflet to move the marker
-			marker.updateLatLng($lat, $lng);
+			marker.updateLatLng($pv.lat, $pv.lng);
 		});
 	}
 </script>
@@ -32,8 +32,8 @@
 	<Leaflet view={initialView} zoom={3}>
 		<Marker
 			bind:this={marker}
-			bind:lat={$lat}
-			bind:lng={$lng}
+			bind:lat={$pv.lat}
+			bind:lng={$pv.lng}
 			width={20}
 			height={20}
 			on:move={updatePos}

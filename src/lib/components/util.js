@@ -99,7 +99,7 @@ export function getMonthData() {
 	});
 }
 
-export const wireGuages = [
+export const wireGauges = [
 	{ id: 1, r: 2.1, text: `8AWG 2.1Ω/km 40A max` },
 	{ id: 2, r: 3.35, text: `10AWG 3.35Ω/km 30A max` },
 	{ id: 3, r: 5.31, text: `12AWG 5.31Ω/km 20A max` },
@@ -170,3 +170,34 @@ function compareElements(a, b) {
 }
 
 export const elements = convertElements().sort(compareElements);
+
+export const defaultPrefs = {
+	lat: 40.5,
+	lng: -104.7,
+	selectedModule: null,
+	selectedModuleName: null,
+	selectedWireId: 2,
+	selectedModuleTypeId: 1,
+	selectedElement: elements[6],
+	Vmp: 38.1,
+	Imp: 17.2,
+	Voc: 45.2,
+	Isc: 18.43,
+	panelsPerString: 3,
+	parallelStrings: 1,
+	azimuth: 180,
+	elevation: 40,
+	wireLength: 60,
+	peakHours: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+	peakPrice: 0.285,
+	offPeakPrice: 0.0792,
+	losses: 14,
+	tankSize: 189, //50 gal
+	hotWaterOutTemp: 40,
+	hotWaterPerPersonDay: 64, // l/person/day
+	personsInHoushold: 4,
+	groundTemp: 5,
+	energyFactor: 0.91,
+	alllowNonMpptt: false,
+	nonMpptGraph: false
+};

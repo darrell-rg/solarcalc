@@ -6,7 +6,7 @@
 	import InputInt from '$lib/components/InputInt.svelte';
 	import LeafletMap from '$lib/components/LeafletMap.svelte';
 	import AutoComplete from 'simple-svelte-autocomplete';
-	import { Vmp, Voc, Imp, Isc, lat, lng } from '$lib/components/stores.js';
+	import { pv } from '$lib/components/stores.ts';
 	import {
 		round,
 		clamp,
@@ -15,16 +15,30 @@
 		daysInMonth,
 		toGal,
 		heatCapOfWater,
-		wireGuages,
+		wireGauges,
 		moduleTypes,
 		elements,
 		getMonthData,
-		year
+		year,
+		defaultPrefs
 	} from '$lib/components/util';
 	import { PUBLIC_API_URL } from '$env/static/public';
-	import { onMount } from 'svelte';
 	let jsonUrlBase = '/json?';
 	let graphUrlBase = '/graph?';
+	// cloudflare pages will compress .txt but not .csv, so we add a .txt to the file name
+	let cecModuleUrl = 'CECModules201920202023.csv.txt';
+
+	/* Fetch and update the list of modules once */
+	async function loadModules() {
+		// dynamic import for this large js lib
+		const xlsx = (await import('xlsx')).default;
+		const f = await (await fetch(cecModuleUrl)).arrayBuffer();
+
+		const wb = xlsx.read(f); // parse the array buffer
+		modules = xlsx.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+		console.log('loaded modules ', modules.length);
+		// return modules;
+	}
 
 	function makeGraphUrl(startDay = 45, event: any) {
 		//pick a random day in the season
@@ -38,14 +52,13 @@
 		event.srcElement.setAttribute('disabled', true);
 
 		let Re = elementR * -1;
-
-		if (nonMpptGraph) Re = elementR;
+		if ($pv.nonMpptGraph) Re = elementR;
 
 		//pwr should be in kW
 		let pwr = nominalPower / 1000.0;
 		url =
 			url +
-			`day=${day}&lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}&losses=${losses}&module_type=${selectedModuleType.id}&liters=${tankSize}&uef=${energyFactor}&startingTemp=${hotWaterOutTemp}&Rw=${wireResistance}&Re=${Re}&pps=${panelsPerString}&ps=${parallelStrings}&MN=${selectedModuleName}`;
+			`day=${day}&lat=${$pv.lat}&lng=${$pv.lng}&tilt=${$pv.elevation}&$pv.azimuth=${$pv.azimuth}&pwr=${nominalPower}&$pv.losses=${$pv.losses}&module_type=${$pv.selectedModuleTypeId}&liters=${$pv.tankSize}&uef=${$pv.energyFactor}&startingTemp=${$pv.hotWaterOutTemp}&Rw=${wireResistance}&Re=${Re}&pps=${$pv.panelsPerString}&ps=${$pv.parallelStrings}&MN=${$pv.selectedModuleName}`;
 
 		const elem = document.getElementById('solarGraph');
 		if (elem) {
@@ -55,9 +68,6 @@
 		return url;
 	}
 
-	/**
-	 * @param {any} runMonthlySimButton
-	 */
 	function updateMonthlyTable(runMonthlySimButton: any) {
 		let url = PUBLIC_API_URL + jsonUrlBase;
 
@@ -67,7 +77,7 @@
 		let pwr = nominalPower / 1000.0;
 		url =
 			url +
-			`lat=${$lat}&lng=${$lng}&tilt=${elevation}&azimuth=${azimuth}&pwr=${nominalPower}&losses=${losses}&module_type=${selectedModuleType.id}&liters=${tankSize}&uef=${energyFactor}&startingTemp=${hotWaterOutTemp}&Rw=${wireResistance}&Re=${Re}&pps=${panelsPerString}&ps=${parallelStrings}&MN=${selectedModuleName}`;
+			`lat=${$pv.lat}&lng=${$pv.lng}&tilt=${$pv.elevation}&$pv.azimuth=${$pv.azimuth}&pwr=${nominalPower}&$pv.losses=${$pv.losses}&module_type=${$pv.selectedModuleTypeId}&liters=${$pv.tankSize}&uef=${$pv.energyFactor}&startingTemp=${$pv.hotWaterOutTemp}&Rw=${wireResistance}&Re=${Re}&pps=${$pv.panelsPerString}&ps=${$pv.parallelStrings}&MN=${$pv.selectedModuleName}`;
 
 		let newYearlySavings = 0;
 
@@ -115,114 +125,83 @@
 			});
 	}
 
-	let modules: any = [];
-	let selectedModule: any = null;
-	let selectedModuleName: any = null;
-
-	// cloudflare pages will compress .txt but not .csv, so we add a .txt to the file name
-	let cecModuleUrl = 'CECModules201920202023.csv.txt';
-	// cecModuleUrl = 'CECModules2023.csv';
-
-	/* Fetch and update the list of modules once */
-	async function loadModules() {
-		// dynamic import for this large js lib
-		const xlsx = (await import('xlsx')).default;
-		const f = await (await fetch(cecModuleUrl)).arrayBuffer();
-
-		const wb = xlsx.read(f); // parse the array buffer
-		modules = xlsx.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-		console.log('loaded modules ', modules.length);
-		// return modules;
-	}
-
 	function onModuleChange(newModule: any) {
 		if (newModule) {
-			$Vmp = newModule.V_mp_ref;
-			$Imp = newModule.I_mp_ref;
-			$Voc = newModule.V_oc_ref;
-			$Isc = newModule.I_sc_ref;
-			selectedModuleName = newModule.Name;
-			alllowNonMpptt = true;
+			$pv.Vmp = newModule.V_mp_ref;
+			$pv.Imp = newModule.I_mp_ref;
+			$pv.Voc = newModule.V_oc_ref;
+			$pv.Isc = newModule.I_sc_ref;
+			$pv.selectedModuleName = newModule.Name;
+			$pv.alllowNonMpptt = true;
 			console.log('moduleChanged!', newModule);
 		}
 	}
 
-	async function searchModule(keyword: string, nb_items_max: number) {
-		if (modules.length < 1) await loadModules();
-
-		// make searches like "Jinko 200" work
-		let query = new RegExp(keyword.toLowerCase().replace(" ",".*"));
-	
-		return modules
-			.filter((el: any) => query.test(el['Name'].toLowerCase()))
-			.slice(0, nb_items_max);
+	function resetToDefaults() {
+		// console.log("resetting to",defaultPrefs);
+		$pv = JSON.parse(JSON.stringify(defaultPrefs));
+		window.location.reload();
+		// const jsonState = JSON.stringify(defaultPrefs);
+		// localStorage.setItem('solarPrefs', jsonState);
 	}
 
-	let selectedWire = wireGuages[1];
-	let selectedModuleType = moduleTypes[1];
-	let panelsPerString = 3;
-	let parallelStrings = 1;
-	let azimuth = 180;
-	let elevation = 40;
-	let wireLength = 60;
-	let wireResistance = 2.1;
-	let peakPrice = 0.285;
-	let offPeakPrice = 0.0792;
-	let losses = 14;
+	async function searchModule(keyword: string, nb_items_max: number) {
+		if (modules.length < 1) await loadModules();
+		// make searches like "Jinko 200" work
+		let query = new RegExp(keyword.toLowerCase().replace(' ', '.*'));
+		return modules.filter((el: any) => query.test(el['Name'].toLowerCase())).slice(0, nb_items_max);
+	}
 
-	let selectedElement = elements[0];
-	let elementR = 0;
-	let alllowNonMpptt = false;
-	let nonMpptGraph = false;
-	// $: elementR = vpToR(elementV, elementP);
-	// let elementV = 120;
-	// let elementP = 2000;
+	// all user configurable values are stored in $pv, except these two objects
+	// hack to fix https://stackoverflow.com/questions/70331078/svelte-pre-selecting-a-select-input-option-when-using-objects-as-values
+	let selectedWire: any = wireGauges[$pv.selectedWireId];
+	$: selectedWire = wireGauges.find((o: any) => o.id === $pv.selectedWireId);
+	let selectedModuleType: any = moduleTypes[$pv.selectedModuleTypeId];
+	$: selectedModuleType = moduleTypes.find((o: any) => o.id === $pv.selectedModuleTypeId);
 
-	let tankSize = 189; //50 gal
-	let hotWaterOutTemp = 40;
-	let hotWaterPerPersonDay = 64; // l/person/day
-	let personsInHoushold = 4;
-	let groundTemp = 5;
-	let energyFactor = 0.91;
+	// these two are generated/downloaded
+	let monthData = getMonthData();
+	let modules: any = [];
+
+	//all values below this line are calculated
 	let powerPerPanel = 0;
 	let nominalPower = 0;
 	let energyToHeatOneTank = 0;
 	let tanksUsedPerDay = 0;
 	let dailyDemand = 0;
-
+	let elementR = 0;
 	let mismatch = 10;
 	let Rsource = 1;
 	let Rmp = 1;
-	let stringVoc = $Voc * panelsPerString;
-	let peakHours = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0];
 	let peakHourCount = 0;
 	let avgPowerPrice = 0;
-
+	let wireResistance = 2.1;
 	let yearlySavings = 0;
 	let dailyEnergyDemand = 0;
-
-	let monthData = getMonthData();
+	let stringVoc = 0;
+	let wireLosses = 0;
 
 	// the `$:` means 're-run whenever these values change'
 	// does not listen to changes happening inside components
-	$: peakHourCount = peakHours.reduce((accumulator, currentValue) => {
+	$: peakHourCount = $pv.peakHours.reduce((accumulator: number, currentValue: number) => {
 		return accumulator + currentValue;
 	}, 0);
 	$: avgPowerPrice =
-		(peakHourCount / 24.0) * peakPrice + ((24 - peakHourCount) / 24.0) * offPeakPrice;
-	$: wireResistance = (selectedWire.r * wireLength) / 1000;
+		(peakHourCount / 24.0) * $pv.peakPrice + ((24 - peakHourCount) / 24.0) * $pv.offPeakPrice;
+	$: wireResistance = (selectedWire.r * $pv.wireLength) / 1000;
 	$: energyToHeatOneTank =
-		(heatCapOfWater * tankSize * (hotWaterOutTemp - groundTemp) * 1) / energyFactor;
+		(heatCapOfWater * $pv.tankSize * ($pv.hotWaterOutTemp - $pv.groundTemp) * 1) / $pv.energyFactor;
 	$: costToHeatOneTank = round((avgPowerPrice * energyToHeatOneTank) / 3600e3);
-	$: tanksUsedPerDay = round((hotWaterPerPersonDay * personsInHoushold) / tankSize);
-	$: powerPerPanel = $Vmp * $Imp;
-	$: nominalPower = powerPerPanel * panelsPerString * parallelStrings;
-	$: stringVoc = $Voc * panelsPerString;
+	$: tanksUsedPerDay = round(($pv.hotWaterPerPersonDay * $pv.personsInHoushold) / $pv.tankSize);
+	$: powerPerPanel = $pv.Vmp * $pv.Imp;
+	$: nominalPower = powerPerPanel * $pv.panelsPerString * $pv.parallelStrings;
+	$: stringVoc = $pv.Voc * $pv.panelsPerString;
 	$: dailyDemand = round((tanksUsedPerDay * energyToHeatOneTank) / 3600e3);
-	$: Rmp = ($Vmp * panelsPerString) / $Imp / parallelStrings;
+	$: Rmp = ($pv.Vmp * $pv.panelsPerString) / $pv.Imp / $pv.parallelStrings;
 	$: Rsource = Rmp;
 	$: mismatch = Math.abs(100 - ((elementR + wireResistance) / Rsource) * 100.0);
 	$: dailyEnergyDemand = (tanksUsedPerDay * energyToHeatOneTank) / 3600e3;
+	$: wireLosses = $pv.Imp * $pv.parallelStrings * ($pv.Imp * $pv.parallelStrings) * wireResistance;
 </script>
 
 <svelte:head>
@@ -275,24 +254,31 @@
 				href="https://www3.epa.gov/ceampubl/learn2model/part-two/onsite/tempmap.html"
 				>this Ground Water Temperature Map.</a
 			>
+			<br />
+			<br />
+			<button on:click={(e) => resetToDefaults()}> Reset All To Defaults</button>
 		</span>
 		<span>
 			<Box>
 				<h2>Location Specs</h2>
-				<Input val={round($lat)} label="Latitude" units="°North" readonly />
-				<Input val={round($lng)} label="Longitude" units="°East" readonly />
-				<InputInt bind:val={groundTemp} label="GroundTemp" units="°C" min="1" max="30" />
-				<Input bind:val={offPeakPrice} label="Off Peak Price" units="$/kWh" />
-				<Input bind:val={peakPrice} label="Peak Price" units="$/kWh" />
+				<Input val={round($pv.lat)} label="Latitude" units="°North" readonly />
+				<Input val={round($pv.lng)} label="Longitude" units="°East" readonly />
+				<InputInt bind:val={$pv.groundTemp} label="GroundTemp" units="°C" min="1" max="30" />
+				<Input bind:val={$pv.offPeakPrice} label="Off Peak Price" units="$/kWh" />
+				<Input bind:val={$pv.peakPrice} label="Peak Price" units="$/kWh" />
 
 				<label>
-					PeakHours: <br />
+					Peak Hours: <br />
 					{#each Array(12) as _, i}
-						<input type="checkbox" bind:checked={peakHours[i]} title={indexToTime(i)} />
+						<input type="checkbox" bind:checked={$pv.peakHours[i]} title={indexToTime(i)} />
 					{/each}
 					<br />
 					{#each Array(12) as _, i}
-						<input type="checkbox" bind:checked={peakHours[i + 12]} title={indexToTime(i + 12)} />
+						<input
+							type="checkbox"
+							bind:checked={$pv.peakHours[i + 12]}
+							title={indexToTime(i + 12)}
+						/>
 					{/each}
 				</label>
 				<hr />
@@ -326,14 +312,14 @@
 			<Box>
 				<h2>Water Heater Specs</h2>
 				<InputInt
-					bind:val={personsInHoushold}
+					bind:val={$pv.personsInHoushold}
 					label="Persons In Houshold"
 					units=""
 					min="1"
 					max="20"
 				/>
 				<InputInt
-					bind:val={hotWaterPerPersonDay}
+					bind:val={$pv.hotWaterPerPersonDay}
 					label="Hot Water/Person/Day"
 					units="l"
 					min="10"
@@ -341,15 +327,15 @@
 				/>
 				<br />
 				<InputInt
-					bind:val={tankSize}
-					label="Tank Size ≈ {toGal(tankSize)}gal"
+					bind:val={$pv.tankSize}
+					label="Tank Size ≈ {toGal($pv.tankSize)}gal"
 					units="l"
 					min="50"
 					max="500"
 				/>
-				<Input bind:val={energyFactor} label="Energy Factor" units="UEF" />
+				<Input bind:val={$pv.energyFactor} label="Energy Factor" units="UEF" />
 				<InputInt
-					bind:val={hotWaterOutTemp}
+					bind:val={$pv.hotWaterOutTemp}
 					label="Desired Output Temp"
 					units="°C"
 					min="35"
@@ -360,7 +346,7 @@
 
 				<AutoComplete
 					items={elements}
-					bind:selectedItem={selectedElement}
+					bind:selectedItem={$pv.selectedElement}
 					bind:value={elementR}
 					labelFieldName="label"
 					valueFieldName="resistance"
@@ -396,7 +382,7 @@
 		<span>
 			<Box>
 				<p>
-					<b>TankSize</b> Most water heaters are 30-80 gallons (113-226 liters) in size. A bigger water
+					<b>Tank Size</b> Most water heaters are 30-80 gallons (113-226 liters) in size. A bigger water
 					heater can store more energy to bridge cloudy days.
 				</p>
 				<p>
@@ -407,7 +393,7 @@
 				<p>
 					<b>Energy Factor (UEF)</b> this is rating of how efficient your water heater is. Most
 					electric heaters have an <b>UEF</b> of about 0.9, which means they waste about 10% of the energy
-					used. The main losses are standby losses, where heat leaks through the insulation.
+					used. The main $pv.losses are standby $pv.losses, where heat leaks through the insulation.
 				</p>
 
 				<p>
@@ -426,8 +412,8 @@
 	<div class="smol-sidebar">
 		<span data-text>
 			<h2>Step 3</h2>
-			Set<b>Azimuth </b> and <b>Elevation</b> to match the roof where you plan to install the
-			panels. The ideal elevation is equal to your Latitude.
+			Set<b>Azimuth</b> and <b>Elevation</b> to match the roof where you plan to install the panels.
+			The ideal Elevation is equal to your Latitude.
 			<br /> <br />
 			Put in the rest of the specs for the solar panels you want to Simulate, or use
 			<b>Search for Panel by PN</b>
@@ -438,11 +424,17 @@
 		<span>
 			<Box>
 				<h2>Solar Panel Specs</h2>
-				<InputInt bind:val={azimuth} label="Azimuth  180=South" units="°" min="0" max="359" />
-				<InputInt bind:val={elevation} label="Elevation 0=Flat" units="°" min="0" max="90" />
-				<InputInt bind:val={panelsPerString} label="Panels per string" units="" min="1" max="100" />
+				<InputInt bind:val={$pv.azimuth} label="Azimuth 180=South" units="°" min="0" max="359" />
+				<InputInt bind:val={$pv.elevation} label="Elevation 0=Flat" units="°" min="0" max="90" />
 				<InputInt
-					bind:val={parallelStrings}
+					bind:val={$pv.panelsPerString}
+					label="Panels per string"
+					units=""
+					min="1"
+					max="100"
+				/>
+				<InputInt
+					bind:val={$pv.parallelStrings}
 					label="Parallel strings"
 					units=""
 					min="1"
@@ -451,9 +443,9 @@
 				/>
 				<br />
 				<label>
-					<select bind:value={selectedModuleType}>
+					<select bind:value={$pv.selectedModuleTypeId}>
 						{#each moduleTypes as mt}
-							<option value={mt}>
+							<option value={mt.id}>
 								{mt.text}
 							</option>
 						{/each}
@@ -461,15 +453,15 @@
 					Module Type
 				</label>
 				<br />
-				<Input bind:val={$Voc} label="Voc" units="V" />
-				<Input bind:val={$Isc} label="Isc" units="A" />
-				<Input bind:val={$Vmp} label="Vmp" units="V" />
-				<Input bind:val={$Imp} label="Imp" units="A" />
+				<Input bind:val={$pv.Voc} label="Voc" units="V" />
+				<Input bind:val={$pv.Isc} label="Isc" units="A" />
+				<Input bind:val={$pv.Vmp} label="Vmp" units="V" />
+				<Input bind:val={$pv.Imp} label="Imp" units="A" />
 				<br />
 				<label>
-					<select bind:value={selectedWire}>
-						{#each wireGuages as g}
-							<option value={g}>
+					<select bind:value={$pv.selectedWireId}>
+						{#each wireGauges as g}
+							<option value={g.id}>
 								{g.text}
 							</option>
 						{/each}
@@ -478,19 +470,23 @@
 				</label>
 				<br />
 
-				<InputInt bind:val={wireLength} label="Total wire length" units="m" min="3" max="300" />
+				<InputInt bind:val={$pv.wireLength} label="Total wire length" units="m" min="3" max="300" />
 
 				<hr />
 				<Output val={round(stringVoc)} label="Voc of full string" units="V" />
-				<Output val={round($Vmp * panelsPerString)} label="Vmp of full string" units="V" />
-				<Output val={round($Isc * parallelStrings)} label="Isc of parallel strings" units="A" />
+				<Output val={round($pv.Vmp * $pv.panelsPerString)} label="Vmp of full string" units="V" />
+				<Output
+					val={round($pv.Isc * $pv.parallelStrings)}
+					label="Isc of parallel strings"
+					units="A"
+				/>
 				<Output val={round(nominalPower)} label="Nominal Array Power" units="W" />
 				<br />
 				<Output val={round(Rsource)} label="Source Impedance" units="Ω" />
 				<Output val={round(mismatch)} label="Mismatch" units="%" />
 				<br />
 				<Output val={wireResistance} label="Resistance of wire" units="Ω" />
-				<Output val={round(($Imp * parallelStrings ) * ($Imp * parallelStrings ) * wireResistance)} label="Wire Losses at Mpp" units="W" />
+				<Output val={round(wireLosses)} label="Wire losses at Mpp" units="W" />
 			</Box>
 		</span>
 		<span>
@@ -499,7 +495,7 @@
 					<b>Search for Panel by PN:</b><br />
 					<AutoComplete
 						searchFunction={searchModule}
-						bind:selectedItem={selectedModule}
+						bind:selectedItem={$pv.selectedModule}
 						onChange={onModuleChange}
 						maxItemsToShowInList={100}
 						minCharactersToSearch={3}
@@ -544,8 +540,8 @@
 				</p>
 
 				<p>
-					<b>Wire Gauge</b> most solar installs use 10AWG 600V wire. You can reduce your losses a bit
-					if you use 8AWG wire.
+					<b>Wire Gauge</b> most solar installs use 10AWG 600V wire. You can reduce your $pv.losses a
+					bit if you use 8AWG wire.
 				</p>
 			</Box>
 		</span>
@@ -565,8 +561,8 @@
 			<hr />
 			<button on:click={(e) => updateMonthlyTable(e)}>Simulate Monthly Generation</button> with
 			<InputInt
-				bind:val={losses}
-				label="Losses (dirt, snow, aging, etc.) If your panels are shaded 1/3 of the day, then add 33% to losses."
+				bind:val={$pv.losses}
+				label="Losses (dirt, snow, aging, etc.) If your panels are shaded 1/3 of the day, then add 33%."
 				units="%"
 				min="1"
 				max="99"
@@ -637,9 +633,9 @@
 				<button on:click={(e) => makeGraphUrl(180, e)}> Graph random day in Q3</button>
 				<button on:click={(e) => makeGraphUrl(270, e)}> Graph random day in Q4</button>
 
-				{#if alllowNonMpptt}
+				{#if $pv.alllowNonMpptt}
 					<label>
-						<input type="checkbox" bind:checked={nonMpptGraph} />
+						<input type="checkbox" bind:checked={$pv.nonMpptGraph} />
 						Estimate Non-MPPT Power
 					</label>
 				{/if}
@@ -654,7 +650,7 @@
 		<p>Graph Assumptions:</p>
 
 		<ul>
-			{#if alllowNonMpptt}
+			{#if $pv.alllowNonMpptt}
 				<li>
 					Non-MPPT Power estimates are an experimental feature, do not expect high accuracy. This
 					uses the <a href="https://pvlib-python.readthedocs.io/en/v0.6.0/singlediode.html"
@@ -665,14 +661,14 @@
 			{/if}
 
 			<li>No hot water withdraws (aka nobody is home)</li>
-			<li>The tank water starts at your <b>Desired Output Temp</b> ({hotWaterOutTemp}℃)</li>
+			<li>The tank water starts at your <b>Desired Output Temp</b> ({$pv.hotWaterOutTemp}℃)</li>
 			<li>
 				<span class="blue"><b>Mean Tank Temperature</b></span> assumes fully mixed water. In the real
 				world the hottest water moves to the top of the tank and the coldest to the bottom.
 			</li>
 			<li>
 				The <span class="green"><b>Net Water Heating Power</b></span> will be negative when there is
-				no sun. These are the standby losses estimated from your UEF ({energyFactor})
+				no sun. These are the standby $pv.losses estimated from your UEF ({$pv.energyFactor})
 			</li>
 			<li>The top element is disconnected (no city power).</li>
 			<li>
