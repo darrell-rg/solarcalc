@@ -120,7 +120,7 @@
 	let selectedModuleName: any = null;
 
 	// cloudflare pages will compress .txt but not .csv, so we add a .txt to the file name
-	let cecModuleUrl = 'CECModules2019and2023.csv.txt';
+	let cecModuleUrl = 'CECModules201920202023.csv.txt';
 	// cecModuleUrl = 'CECModules2023.csv';
 
 	/* Fetch and update the list of modules once */
@@ -149,9 +149,12 @@
 
 	async function searchModule(keyword: string, nb_items_max: number) {
 		if (modules.length < 1) await loadModules();
-		let query = keyword.toLowerCase();
+
+		// make searches like "Jinko 200" work
+		let query = new RegExp(keyword.toLowerCase().replace(" ",".*"));
+	
 		return modules
-			.filter((el: any) => el['Name'].toLowerCase().includes(query))
+			.filter((el: any) => query.test(el['Name'].toLowerCase()))
 			.slice(0, nb_items_max);
 	}
 
@@ -512,7 +515,7 @@
 				<p>
 					<b>Vmp, Imp</b>, find these in the spec sheet of your solar panels (<a
 						target="_blank"
-						href="CS-Datasheet-BiHiKu7_CS7N-MB-AG_v2.4_EN.pdf">example</a
+						href="/pdf/CS-Datasheet-BiHiKu7_CS7N-MB-AG_v2.4_EN.pdf">example</a
 					>) , use the STC values. These are the volts and amps your panel will make with a Solar
 					irradiance of 1,000 W/m<sup>2</sup>, cell temperature of 25°C (77°F).
 				</p>

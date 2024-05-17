@@ -73,7 +73,7 @@ tmp_folder = "/tmp"
 
 #global to hold cached cec data
 panelData = None
-csvFileName = "CECModules2019and2023.csv"
+csvFileName = "CECModules201920202023.csv"
 
 
 def downloadTMYWeatherData(lat=40.57, lon=-105.07, year=2022):
@@ -303,10 +303,10 @@ def loadPanelData():
     global tmp_folder
     data = defaultdict()
 
-    cecInTmp = os.path.join(tmp_folder, csvFileName)
+    # cecInTmp = os.path.join(tmp_folder, csvFileName)
 
-    if not os.path.exists(cecInTmp):
-        copyStartupData()
+    # if not os.path.exists(cecInTmp):
+    #     copyStartupData()
 
     cecInData = os.path.join("data", csvFileName)    
 
