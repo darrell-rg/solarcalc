@@ -23,6 +23,7 @@
 		defaultPrefs
 	} from '$lib/components/util';
 	import { PUBLIC_API_URL } from '$env/static/public';
+	import Spinner from '$lib/components/Spinner.svelte';
 	let jsonUrlBase = '/json?';
 	let graphUrlBase = '/graph?';
 	// cloudflare pages will compress .txt but not .csv, so we add a .txt to the file name
@@ -44,9 +45,11 @@
 		//pick a random day in the season
 		let day = Math.floor(Math.random() * 90) + startDay;
 		let url = PUBLIC_API_URL + graphUrlBase;
+		graphLoading = true;
 
 		let reEnable = function () {
 			// console.log('reEnableing ', event.srcElement);
+			graphLoading = false;
 			event.srcElement.removeAttribute('disabled');
 		};
 		event.srcElement.setAttribute('disabled', true);
@@ -94,6 +97,7 @@
 
 		// console.log(runMonthlySimButton)
 		runMonthlySimButton.srcElement.setAttribute('disabled', true);
+		monthTableLoading = true;
 
 		document.getElementById('apiWarn')?.setAttribute('style', '');
 
@@ -101,6 +105,7 @@
 			.then((response) => response.json())
 			.then((data) => {
 				runMonthlySimButton.srcElement.removeAttribute('disabled');
+				document.getElementById('apiWarn')?.setAttribute('style', 'display:none;');
 				document.getElementById('apiWarn')?.setAttribute('style', 'display:none;');
 				months.forEach((month, index) => {
 					let m = {
@@ -122,6 +127,7 @@
 				});
 				monthData = newMonthData;
 				yearlySavings = newYearlySavings;
+				monthTableLoading = false;
 			});
 	}
 
@@ -162,6 +168,8 @@
 	// these two are generated/downloaded
 	let monthData = getMonthData();
 	let modules: any = [];
+	let graphLoading = false;
+	let monthTableLoading = false;
 
 	//all values below this line are calculated
 	let powerPerPanel = 0;
@@ -412,7 +420,7 @@
 	<div class="smol-sidebar">
 		<span data-text>
 			<h2>Step 3</h2>
-			Set<b>Azimuth</b> and <b>Elevation</b> to match the roof where you plan to install the panels.
+			Set <b>Azimuth</b> and <b>Elevation</b> to match the roof where you plan to install the panels.
 			The ideal Elevation is equal to your Latitude.
 			<br /> <br />
 			Put in the rest of the specs for the solar panels you want to Simulate, or use
@@ -547,18 +555,14 @@
 		</span>
 	</div>
 
-	<div class="sim-sidebar">
+	<div class="sim-sidebar" id="step4">
 		<span data-text>
-			<h2>Step 4</h2>
+			<h2>Step 4: Simulate 1 Year</h2>
 			<p>
 				Click <b>Simulate Monthly Generation</b> This will feed the simulator with the solar panel
 				data you entered above and Typical Meteorological Year Data (TMY-{year}) for your lat/lng.
 			</p>
-			<p>
-				If you are going much over 100% for <b>Solar Power Used</b> your array is bigger then it needs
-				to be.
-			</p>
-			<hr />
+
 			<button on:click={(e) => updateMonthlyTable(e)}>Simulate Monthly Generation</button> with
 			<InputInt
 				bind:val={$pv.losses}
@@ -573,7 +577,10 @@
 				again tomorrow if it is not working.
 			</p>
 			<div>
-				<!-- <TestSvg/> -->
+				{#if monthTableLoading}
+					<Spinner style="position: absolute; left:40%;" height="300px"></Spinner>
+				{/if}
+
 				<table class="monthTable">
 					<tr>
 						<th>Month</th>
@@ -604,9 +611,19 @@
 						</tr>
 					</tfoot>
 				</table>
-				<br />
 			</div>
-			<hr />
+			<p>
+				If you are going much over 100% for <b>Solar Power Used</b> your array is bigger then it needs
+				to be.
+			</p>
+			<hr>
+		</span>
+	</div>
+<br>
+<br>
+	<div class="sim-sidebar" id="step4">
+		<span data-text>
+			<h2>Step 5: Simulate 1 Day</h2>
 			<p>
 				This graph uses the TMY-{year} weather data to run a daily PV simulation to help you size your
 				array. <span class="blue"><b>Mean Tank Temperature</b></span> assumes fully mixed water. On most
@@ -642,6 +659,9 @@
 			</div>
 		</span>
 		<br />
+		{#if graphLoading}
+			<Spinner style="position: absolute; left:700px; padding-top:100px;" height="400px"></Spinner>
+		{/if}
 		<span>
 			<figure>
 				<img alt="SolarSimGraph" src="sampleGraph.png" id="solarGraph" style="padding-top:10px;" />
