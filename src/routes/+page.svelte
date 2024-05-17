@@ -119,11 +119,16 @@
 	let selectedModule: any = null;
 	let selectedModuleName: any = null;
 
+	// cloudflare pages will compress .txt but not .csv, so we add a .txt to the file name
+	let cecModuleUrl = 'CECModules2019and2023.csv.txt';
+	// cecModuleUrl = 'CECModules2023.csv';
+
 	/* Fetch and update the list of modules once */
 	async function loadModules() {
 		// dynamic import for this large js lib
 		const xlsx = (await import('xlsx')).default;
-		const f = await (await fetch('CECModules2023.csv')).arrayBuffer();
+		const f = await (await fetch(cecModuleUrl)).arrayBuffer();
+
 		const wb = xlsx.read(f); // parse the array buffer
 		modules = xlsx.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
 		console.log('loaded modules ', modules.length);
@@ -493,7 +498,7 @@
 						searchFunction={searchModule}
 						bind:selectedItem={selectedModule}
 						onChange={onModuleChange}
-						maxItemsToShowInList={15}
+						maxItemsToShowInList={100}
 						minCharactersToSearch={3}
 						delay={200}
 						localFiltering={false}

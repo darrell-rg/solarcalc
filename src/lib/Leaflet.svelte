@@ -11,6 +11,7 @@
 
 	let map: L.Map | undefined;
 	let mapElement: HTMLElement;
+	let showGroundTemps = false;
 
 	onMount(() => {
 		if (!bounds && (!view || !zoom)) {
@@ -28,6 +29,23 @@
 		L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
 			attribution: `&copy;<a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>,&copy;<a href="https://carto.com/attributions" target="_blank">CARTO</a>`
 		}).addTo(map);
+
+		if (showGroundTemps) {
+			var imageUrl = 'groundTempMapClearWithNumbers.png';
+			var altText =
+				'Average shallow ground water temperatures in the United States by Collins, 1925';
+
+			var latLngBounds = L.latLngBounds([
+				[50, -128.79],
+				[26.12, -62.75]
+			]);
+
+			var imageOverlay = L.imageOverlay(imageUrl, latLngBounds, {
+				opacity: 0.8,
+				alt: altText,
+				interactive: false
+			}).addTo(map);
+		}
 		// console.log("map mounted")
 	});
 

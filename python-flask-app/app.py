@@ -73,7 +73,7 @@ tmp_folder = "/tmp"
 
 #global to hold cached cec data
 panelData = None
-csvFileName = "CECModules2023.csv"
+csvFileName = "CECModules2019and2023.csv"
 
 
 def downloadTMYWeatherData(lat=40.57, lon=-105.07, year=2022):
