@@ -376,6 +376,21 @@
 			email <a href="mailto:darrell@pvh2o.com"> darrell@pvh2o.com </a>
 		</p>
 	</article>
+
+	<article class="faq">
+		<h2>What element and panels did you use?</h2>
+		<p>
+			My heating element is  Zoro #G1831724, 240V 2000W 28.8Ω. On the shed are SunPower SPR-P17-345-COM panels in 5S 1P.  
+		</p>
+	</article>
+
+	
+	<article class="faq">
+		<h2>What is MPPT?</h2>
+		<p>
+			MPPT is Maximum Power Point Tracking, a special case of impedance matching.   To get the most out of your solar panels, you need MPPT.  You can do the MPPT for the whole array in your thermostat or  you can do it with DC solar optimizers at the panel level. The downside of using MPPT is that it adds a lot of cost and electronics that can fail.  It is possible to run without using MPPT if you carefully match the source impedance of your panels to your heater element. Without MPPT you will only get around 2/3 of the power that MPPT can make.  If your solar panels are really cheap and/or you live in an area with few cloudy days, not using MPPT can make sense.  There is an "Estimate Non-MPPT Power" checkbox above the graph that will show if you select your panel by name/pn.    
+		</p>
+	</article>
 </div>
 
 <style>
