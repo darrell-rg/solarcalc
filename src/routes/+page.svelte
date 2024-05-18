@@ -548,8 +548,8 @@
 				</p>
 
 				<p>
-					<b>Wire Gauge</b> most solar installs use 10AWG 600V wire. You can reduce your $pv.losses a
-					bit if you use 8AWG wire.
+					<b>Wire Gauge</b> most solar installs use 10AWG 600V wire. You can reduce your <b>Wire Losses</b> a
+					bit if you use thicker 8AWG wire.
 				</p>
 			</Box>
 		</span>
