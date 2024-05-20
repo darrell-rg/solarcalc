@@ -399,9 +399,10 @@
 					thermostat should be set to this temperature.
 				</p>
 				<p>
-					<b>Energy Factor (UEF)</b> this is rating of how efficient your water heater is. Most
-					electric heaters have an <b>UEF</b> of about 0.9, which means they waste about 10% of the energy
-					used. The main $pv.losses are standby $pv.losses, where heat leaks through the insulation.
+					<b>Energy Factor (EF/UEF)</b> this is rating of how efficient your water heater is. Most
+					electric heaters have an <b>EF</b> of about 0.9, which means they waste about 10% of the energy
+					used. The primary standby loss comes from heat leaking through the tank's insulation. 
+					The second largest source of loss is pipe losses. 
 				</p>
 
 				<p>
