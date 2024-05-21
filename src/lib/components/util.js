@@ -203,7 +203,7 @@ export const defaultPrefs = {
 	hotWaterOutTemp: 40,
 	hotWaterPerPersonDay: 64, // l/person/day
 	personsInHoushold: 4,
-	groundTemp: 5,
+	groundTemp: 9,
 	energyFactor: 0.91,
 	alllowNonMpptt: false,
 	nonMpptGraph: false

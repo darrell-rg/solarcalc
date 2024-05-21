@@ -17,7 +17,7 @@
 	function fToC(fahrenheit:number){
 		let celsius = (fahrenheit - 32.0) * 5.0/9.0;
 		
-		return ""+Math.floor(celsius)+"C                                ";
+		return ""+Math.floor(celsius)+"°                                ";
 	}
 	
 	export const isoTherms = {
