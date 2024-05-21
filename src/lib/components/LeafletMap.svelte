@@ -34,33 +34,39 @@
 			bind:this={marker}
 			bind:lat={$pv.lat}
 			bind:lng={$pv.lng}
-			width={20}
-			height={20}
+			width={40}
+			height={40}
 			on:move={updatePos}
 		>
 			<!-- Solar Icon-->
-			<!-- License: CC0. Made by SVG Repo: https://www.svgrepo.com/svg/169795/solar-energy -->
+			<!-- License: CC0. Adapted from  SVG Repo: https://www.svgrepo.com/svg/169795/solar-energy -->
 			<svg
-				version="1.1"
-				id="Capa_1"
-				xmlns="http://www.w3.org/2000/svg"
-				xmlns:xlink="http://www.w3.org/1999/xlink"
 				x="0px"
 				y="0px"
 				class="solarMarker"
 				viewBox="0 0 106.583 106.583"
-				style="enable-background:new 0 0 106.583 106.583;"
+				style="isolation: isolate"
 				xml:space="preserve"
 			>
-				<g>
+				<g >
 					<g>
-						<polygon points="61.4,33.937 61.4,44.745 79.76,44.745 76.698,33.937 		" />
-						<polygon points="61.486,59.051 82.905,59.051 79.838,48.249 61.486,48.249 		" />
+
 						<path
 							d="M79.401,27.139H12.688c-1.934,0-3.511,1.273-3.511,2.828L0,77.449c0,1.561,1.572,2.83,3.511,2.83h5.314h4.603h65.575
        h4.292h7.727c1.938,0,3.512-1.27,3.512-2.83L82.905,29.967C82.905,28.412,81.334,27.139,79.401,27.139z M4.211,76.883
        l9.178-46.348h65.307l11.629,46.348H4.211z"
-						/>
+						class="frame"/>
+
+						<polygon
+						points="50.819,82.793 43.078,82.793 43.078,98.173 33.983,98.173 33.983,103.409 60.148,103.409 60.148,98.173 
+   50.819,98.173 " class="frame"
+					/>
+
+						<g class="solarPanel">
+
+							<polygon points="61.4,33.937 61.4,44.745 79.76,44.745 76.698,33.937 		" />
+							<polygon points="61.486,59.051 82.905,59.051 79.838,48.249 61.486,48.249 		" />
+						
 						<polygon points="33.048,33.937 16.529,33.937 13.466,44.745 33.048,44.745 		" />
 						<rect x="37.521" y="33.937" width="19.578" height="10.804" />
 						<polygon points="10.487,59.051 33.131,59.051 33.131,48.249 13.55,48.249 		" />
@@ -68,10 +74,11 @@
 						<polygon points="8.042,73.479 33.131,73.479 33.131,62.671 11.101,62.671 		" />
 						<rect x="37.594" y="62.671" width="19.583" height="10.808" />
 						<polygon points="61.486,62.671 61.486,73.479 85.964,73.479 82.905,62.671 		" />
-						<polygon
-							points="50.819,82.793 43.078,82.793 43.078,98.173 33.983,98.173 33.983,103.409 60.148,103.409 60.148,98.173 
-       50.819,98.173 		"
-						/>
+					</g>
+
+
+					<g class="sun">
+
 						<path
 							d="M81.557,24.858c1.93,0,3.504,1.268,3.504,2.829l3.271,13.352c3.196-2.658,5.28-6.617,5.28-11.099
        c0-8.001-6.484-14.487-14.492-14.487c-6.205,0-11.461,3.925-13.518,9.409h15.954V24.858z"
@@ -99,6 +106,7 @@
        C62.67,18.649,62.749,18.698,62.848,18.708z"
 						/>
 					</g>
+					</g>
 				</g>
 			</svg>
 			<Popup>Move this marker to set your lat/lng.</Popup>
@@ -111,8 +119,32 @@
 		height: 300px;
 	} */
 	.solarMarker {
-		height: 30px;
+		height: 40px;
 	}
+
+	.blue {
+		color: blue;
+	}
+
+	.solarPanel {
+		stroke-width: 1;
+		stroke: darkblue;
+		fill: blue;
+	}
+
+	.frame {
+		stroke-width: 1;
+		stroke: slategray;
+		fill: black;
+	}
+
+
+	.sun {
+		stroke-width: 1;
+		stroke: orange;
+		fill: yellow;
+	}
+
 
 	.leafletBox {
 		border: 1px solid #aaa;
