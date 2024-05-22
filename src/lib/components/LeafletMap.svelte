@@ -29,7 +29,7 @@
 <div class="leafletBox">
 	&nbsp; &nbsp; Move the solar panel icon to set your lat/lng. Or:
 	<button on:click={(e) => getCurrentPosition()}> Use Browser Location</button>
-	<Leaflet view={initialView} zoom={3}>
+	<Leaflet view={initialView} zoom={4}>
 		<Marker
 			bind:this={marker}
 			bind:lat={$pv.lat}
@@ -122,10 +122,6 @@
 		height: 40px;
 	}
 
-	.blue {
-		color: blue;
-	}
-
 	.solarPanel {
 		stroke-width: 1;
 		stroke: darkblue;
@@ -152,6 +148,7 @@
 		box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
 		padding: 0em;
 		margin: 1rem;
-		/* margin-top: 0rem; */
+		margin-top: 0rem; 
+		margin-bottom: 0rem; 
 	}
 </style>

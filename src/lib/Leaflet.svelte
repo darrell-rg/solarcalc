@@ -59,7 +59,7 @@
 		}).addTo(map);
 
 		var myStyle = {
-			"color": "gray",
+			"color": "red",
 			"weight": 1,
 			"opacity": 0.65,
 		};

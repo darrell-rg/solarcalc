@@ -20,7 +20,9 @@
 		elements,
 		getMonthData,
 		year,
-		defaultPrefs
+		defaultPrefs,
+		CToF
+
 	} from '$lib/components/util';
 	import { PUBLIC_API_URL } from '$env/static/public';
 	import Spinner from '$lib/components/Spinner.svelte';
@@ -138,7 +140,7 @@
 			$pv.Voc = newModule.V_oc_ref;
 			$pv.Isc = newModule.I_sc_ref;
 			$pv.selectedModuleName = newModule.Name;
-			$pv.alllowNonMpptt = true;
+			$pv.allowNonMpptt = true;
 			console.log('moduleChanged!', newModule);
 		}
 	}
@@ -248,7 +250,7 @@
 
 	<div class="smol-sidebar">
 		<span data-text>
-			<h2>Step 1</h2>
+			<h2>Step 1: Location</h2>
 			Fill in what you know about your Location and power price.<br /><br /> If you do not know your
 			exact power price,
 			<a
@@ -256,11 +258,11 @@
 				href="https://www.bls.gov/regions/midwest/data/averageenergyprices_selectedareas_table.htm"
 				>get an estimate here.</a
 			>
-			<br /><br /> You can measure your ground water temperature, or estimate it from
+			<br /><br /> You can measure your ground water temperature, or estimate it from the red isotherm lines on the 
 			<a
 				target="_blank"
 				href="https://www3.epa.gov/ceampubl/learn2model/part-two/onsite/tempmap.html"
-				>this Ground Water Temperature Map.</a
+				>map.</a
 			>
 			<br />
 			<br />
@@ -268,7 +270,6 @@
 		</span>
 		<span>
 			<Box>
-				<h2>Location Specs</h2>
 				<Input val={round($pv.lat)} label="Latitude" units="°North" readonly />
 				<Input val={round($pv.lng)} label="Longitude" units="°East" readonly />
 				<InputInt bind:val={$pv.groundTemp} label="GroundTemp" units="°C" min="1" max="30" />
@@ -303,7 +304,7 @@
 
 	<div class="smol-sidebar">
 		<span data-text>
-			<h2>Step 2</h2>
+			<h2>Step 2:Water Heater</h2>
 			Hot water Usage calculator, use this to estimate how much you are paying to heat water.
 
 			<br /> <br />
@@ -318,7 +319,7 @@
 		</span>
 		<span>
 			<Box>
-				<h2>Water Heater Specs</h2>
+				<!-- <h2>Water Heater Specs</h2> -->
 				<InputInt
 					bind:val={$pv.personsInHoushold}
 					label="Persons In Houshold"
@@ -341,10 +342,10 @@
 					min="50"
 					max="500"
 				/>
-				<Input bind:val={$pv.energyFactor} label="Energy Factor" units="UEF" />
+				<Input bind:val={$pv.energyFactor} label="Energy Factor" units="EF" />
 				<InputInt
 					bind:val={$pv.hotWaterOutTemp}
-					label="Desired Output Temp"
+					label="Desired Output Temp  ≈ {CToF($pv.hotWaterOutTemp)}°F"
 					units="°C"
 					min="35"
 					max="55"
@@ -388,14 +389,14 @@
 			</Box>
 		</span>
 		<span>
-			<Box>
+			<Box style="padding-top:0px; padding-bottom:0px;">
 				<p>
 					<b>Tank Size</b> Most water heaters are 30-80 gallons (113-226 liters) in size. A bigger water
 					heater can store more energy to bridge cloudy days.
 				</p>
 				<p>
-					<b>Desired Output Temp</b> 40°C(104°F) is good enough for showers, but for washing dishes it
-					helps to have it at 50°C(122°F). The thermostatic mixing valve and the top element (city power)
+					<b>Desired Output Temp</b> 40°C is good enough for showers, but for washing dishes it
+					helps to have it at 50°C. The thermostatic mixing valve and the top element (city power)
 					thermostat should be set to this temperature.
 				</p>
 				<p>
@@ -412,15 +413,14 @@
 				</p>
 
 				<p>
-					<b> Element</b> power rating must exceed <b>Nominal Array Power</b>. The voltage rating is
-					more flexible, you can go over this a bit.
+					Select a bottom water heater <b>Element</b> to match <b>Source Impedance</b> and exceed <b>Nominal Array Power</b>. 
 				</p>
 			</Box>
 		</span>
 	</div>
 	<div class="smol-sidebar">
 		<span data-text>
-			<h2>Step 3</h2>
+			<h2>Step 3: Solar Panels</h2>
 			Set <b>Azimuth</b> and <b>Elevation</b> to match the roof where you plan to install the panels.
 			The ideal Elevation is equal to your Latitude.
 			<br /> <br />
@@ -432,7 +432,7 @@
 		</span>
 		<span>
 			<Box>
-				<h2>Solar Panel Specs</h2>
+				<!-- <h2>Solar Panel Specs</h2> -->
 				<InputInt bind:val={$pv.azimuth} label="Azimuth 180=South" units="°" min="0" max="359" />
 				<InputInt bind:val={$pv.elevation} label="Elevation 0=Flat" units="°" min="0" max="90" />
 				<InputInt
@@ -495,11 +495,11 @@
 				<Output val={round(mismatch)} label="Mismatch" units="%" />
 				<br />
 				<Output val={wireResistance} label="Resistance of wire" units="Ω" />
-				<Output val={round(wireLosses)} label="Wire losses at Mpp" units="W" />
+				<Output val={round(wireLosses)} label="Wire losses at Imp" units="W" />
 			</Box>
 		</span>
 		<span>
-			<Box>
+			<Box style="padding-top:0px; padding-bottom:0px;">
 				<p>
 					<b>Search for Panel by PN:</b><br />
 					<AutoComplete
@@ -516,7 +516,6 @@
 						create={false}
 						hideArrow={true}
 					/>
-				</p>
 				<p>
 					<b>Vmp, Imp</b>, find these in the spec sheet of your solar panels (<a
 						target="_blank"
@@ -544,8 +543,7 @@
 
 				<p>
 					<b>Source Impedance</b> is the resistance value you want to match with your lower heating
-					element. I suggest a <b>Mismatch</b> below 15% is good; the heater elements are not made to
-					a very precise resistance anyway. MPPT will correct the mismatch(within reason).
+					element. I suggest a <b>Mismatch</b> below 15% is good enough. MPPT will correct the mismatch(within reason).
 				</p>
 
 				<p>
@@ -638,7 +636,7 @@
 				<button on:click={(e) => makeGraphUrl(180, e)}> Graph random day in Q3</button>
 				<button on:click={(e) => makeGraphUrl(270, e)}> Graph random day in Q4</button>
 
-				{#if $pv.alllowNonMpptt}
+				{#if $pv.allowNonMpptt}
 					<label>
 						<input type="checkbox" bind:checked={$pv.nonMpptGraph} />
 						Estimate Non-MPPT Power
@@ -669,7 +667,7 @@
 		<p>Graph Assumptions:</p>
 
 		<ul>
-			{#if $pv.alllowNonMpptt}
+			{#if $pv.allowNonMpptt}
 				<li>
 					Non-MPPT Power estimates are an experimental feature, do not expect high accuracy. This
 					uses the <a href="https://pvlib-python.readthedocs.io/en/v0.6.0/singlediode.html"

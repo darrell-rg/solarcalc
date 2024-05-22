@@ -1,4 +1,7 @@
-<div class="box">
+<script>
+	export let style = "";
+</script>
+<div class="box" style="{style}">
 	<slot>
 		<em>no content was provided</em>
 	</slot>
@@ -12,5 +15,6 @@
 		box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
 		padding: 1em;
 		margin: 1rem;
+		margin-top: 0rem;
 	}
 </style>

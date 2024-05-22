@@ -1,3 +1,6 @@
+/**
+ * @param {number} num
+ */
 export function round(num) {
 	var m = Number((Math.abs(num) * 100).toPrecision(15));
 	return (Math.round(m) / 100) * Math.sign(num);
@@ -5,16 +8,28 @@ export function round(num) {
 
 export const heatCapOfWater = 4186; // j/l/k
 
+/**
+ * @param {number} j
+ */
 export function tokWh(j) {
 	//converts joules to kwh
 	return j / 3600e3;
 }
 
+/**
+ * @param {number} v
+ * @param {number} pwr
+ */
 export function vpToR(v, pwr) {
 	//converts joules to kwh
 	return (v * v) / pwr;
 }
 
+/**
+ * @param {number} value
+ * @param {number} min
+ * @param {number} max
+ */
 export function clamp(value, min, max) {
 	if (value < min) return min;
 	if (value > max) return max;
@@ -46,6 +61,16 @@ export function daysInMonth(year, month) {
 export function toGal(liters) {
 	return Math.round(liters * 0.264172);
 }
+
+/**
+ * @param {number} celsius
+ */
+export function CToF(celsius){
+	let fahrenheit = (celsius * 9/5) + 32;
+	
+	return Math.round(fahrenheit);
+}
+
 
 /**
  * @param {number} i
@@ -172,6 +197,10 @@ function convertElements() {
 	return parts.map(parseHeaterElement);
 }
 
+/**
+ * @param {{ resistance: number; }} a
+ * @param {{ resistance: number; }} b
+ */
 function compareElements(a, b) {
 	return a.resistance - b.resistance;
 }
@@ -205,6 +234,6 @@ export const defaultPrefs = {
 	personsInHoushold: 4,
 	groundTemp: 9,
 	energyFactor: 0.91,
-	alllowNonMpptt: false,
+	allowNonMpptt: false,
 	nonMpptGraph: false
 };
