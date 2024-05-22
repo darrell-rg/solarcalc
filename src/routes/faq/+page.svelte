@@ -200,8 +200,8 @@
 
 	<article class="faq">
 		<figure>
-			<img alt="mixing valve" src="solarShed/mixValve1.jpg" class="rightSideImg" />
-			<figcaption>My Mixing Valve</figcaption>
+			<img alt="mixing valve" src="mixingValve.png" class="rightSideImg" />
+			<figcaption>The Magical Mixing Valve</figcaption>
 		</figure>
 		<h2>What is a thermostatic mixing valve?</h2>
 		<p>
