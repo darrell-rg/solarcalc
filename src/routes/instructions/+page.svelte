@@ -173,19 +173,24 @@
 	</figure>
 
 	<figure>
-		<img alt="DigDitch" src="solarShed/switch2.jpg" />
+		<img alt="Switch" src="solarShed/switch2.jpg" />
 		<figcaption>
 			Make sure you keep that switch turned off while you are messing with the wires!
 		</figcaption>
 	</figure>
 
 	<figure>
-		<img alt="DigDitch" src="solarShed/PanelsInSun.jpg" />
+		<img alt="Panels in the sun" src="solarShed/PanelsInSun.jpg" />
 		<figcaption>Collecting Photons? Yes. Cleaning yard before taking picture? No.</figcaption>
 	</figure>
 
 	<figure>
-		<img alt="DigDitch" src="solarShed/firstPower.jpg" />
+		<img alt="Mixing Valve" src="solarShed/mixValve1.jpg" />
+		<figcaption>Install a thermostatic mixing valve near the water heater</figcaption>
+	</figure>
+
+	<figure>
+		<img alt="First Power" src="solarShed/firstPower.jpg" />
 		<figcaption>Look at that Sweet Sweet HVDC power. (No Touching!)</figcaption>
 	</figure>
 </div>

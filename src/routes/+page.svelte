@@ -328,7 +328,7 @@
 				<!-- <h2>Water Heater Specs</h2> -->
 				<InputInt
 					bind:val={$pv.personsInHoushold}
-					label="Persons In Houshold"
+					label="Persons in Household"
 					units=""
 					min="1"
 					max="20"
