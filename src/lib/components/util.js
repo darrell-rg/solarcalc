@@ -17,6 +17,46 @@ export function tokWh(j) {
 }
 
 /**
+ * @param {number} degrees
+ */
+export function degreesToCompass(degrees) {
+    const directions = [
+        "North",
+        "Northeast",
+        "East",
+        "Southeast",
+        "South",
+        "Southwest",
+        "West",
+        "Northwest"
+    ];
+
+    const index = Math.round(degrees / 45) % 8;
+    return directions[index];
+}
+
+
+/**
+ * @param {number} degrees
+ */
+export function degreesToRoofPitch(degrees) {
+    // Convert degrees to radians
+    const radians = degrees * (Math.PI / 180);
+
+    // Calculate the rise (tangent of the angle)
+    const rise = Math.tan(radians);
+
+    // Typically, the run is expressed as 12 units in roof pitch notation
+    const run = 12;
+
+    // Calculate the roof pitch ratio
+    const pitch = rise * run;
+
+    return `${Math.round(pitch)}:${run}`;
+}
+
+
+/**
  * @param {number} v
  * @param {number} pwr
  */

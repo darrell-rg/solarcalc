@@ -21,7 +21,13 @@
 		getMonthData,
 		year,
 		defaultPrefs,
-		CToF
+		CToF,
+
+		degreesToCompass,
+
+		degreesToRoofPitch
+
+
 
 	} from '$lib/components/util';
 	import { PUBLIC_API_URL } from '$env/static/public';
@@ -251,14 +257,14 @@
 	<div class="smol-sidebar">
 		<span data-text>
 			<h2>Step 1: Location</h2>
-			Fill in what you know about your Location and power price.<br /><br /> If you do not know your
+			Fill in what you know about your location and power price.<br /><br /> If you do not know your
 			exact power price,
 			<a
 				target="_blank"
 				href="https://www.bls.gov/regions/midwest/data/averageenergyprices_selectedareas_table.htm"
 				>get an estimate here.</a
 			>
-			<br /><br /> You can measure your ground water temperature, or estimate it from the red isotherm lines on the 
+			<br /><br /> You can measure your ground water temperature with a thermometer, or estimate it from the red isotherm lines on the 
 			<a
 				target="_blank"
 				href="https://www3.epa.gov/ceampubl/learn2model/part-two/onsite/tempmap.html"
@@ -272,7 +278,7 @@
 			<Box>
 				<Input val={round($pv.lat)} label="Latitude" units="°North" readonly />
 				<Input val={round($pv.lng)} label="Longitude" units="°East" readonly />
-				<InputInt bind:val={$pv.groundTemp} label="GroundTemp" units="°C" min="1" max="30" />
+				<InputInt bind:val={$pv.groundTemp} label="Ground Water Temp" units="°C" min="1" max="30" />
 				<Input bind:val={$pv.offPeakPrice} label="Off Peak Price" units="$/kWh" />
 				<Input bind:val={$pv.peakPrice} label="Peak Price" units="$/kWh" />
 
@@ -433,8 +439,8 @@
 		<span>
 			<Box>
 				<!-- <h2>Solar Panel Specs</h2> -->
-				<InputInt bind:val={$pv.azimuth} label="Azimuth 180=South" units="°" min="0" max="359" />
-				<InputInt bind:val={$pv.elevation} label="Elevation 0=Flat" units="°" min="0" max="90" />
+				<InputInt bind:val={$pv.azimuth} label="Azimuth ≈ {degreesToCompass($pv.azimuth)}" units="°" min="0" max="359" />
+				<InputInt bind:val={$pv.elevation} label="Elevation ≈ {degreesToRoofPitch($pv.elevation)} Pitch" units="°" min="0" max="90" />
 				<InputInt
 					bind:val={$pv.panelsPerString}
 					label="Panels per string"
