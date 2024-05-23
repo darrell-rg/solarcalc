@@ -1,4 +1,4 @@
-SiteNumber, SiteName, SiteCategory, SiteAgency, SiteLongitude, SiteLatitude, SiteNWISURL
+SiteNumber,SiteName,SiteCategory,SiteAgency,SiteLongitude,SiteLatitude,SiteNWISURL
 "174303064484400","ADVENTURE 28 WELL, ST. CROIX, USVI","GW","USGS",-64.81181240,17.71553003,"https://waterdata.usgs.gov/nwis/inventory?agency_code=USGS&site_no=174303064484400"
 "175734066233300","ALOMAR OESTE WELL, SANTA ISABEL, PR","GW","USGS",-66.39216119,17.95780016,"https://waterdata.usgs.gov/nwis/inventory?agency_code=USGS&site_no=175734066233300"
 "175858066100200","JUA 5 WELL, GUAYAMA, PR","GW","USGS",-66.16683318,17.98079943,"https://waterdata.usgs.gov/nwis/inventory?agency_code=USGS&site_no=175858066100200"

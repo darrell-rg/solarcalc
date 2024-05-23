@@ -1,0 +1,797 @@
+{
+	"383930122494801": {
+		"type": "Feature",
+		"properties": {
+			"name": "009N009W02F001M",
+			"id": 383930122494801,
+			"temperature": 17.58538306451613
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-122.8299306,
+				38.6583583
+			]
+		}
+	},
+	"293559098284801": {
+		"type": "Feature",
+		"properties": {
+			"name": "AY-68-29-112 (Donella)",
+			"id": 293559098284801,
+			"temperature": 22.466475741239893
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-98.48,
+				29.5997222
+			]
+		}
+	},
+	"473423095053301": {
+		"type": "Feature",
+		"properties": {
+			"name": "WLN04     Bemidji Toxics Research 310D  0000273825",
+			"id": 473423095053301,
+			"temperature": 6.5
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-95.092825,
+				47.5729111
+			]
+		}
+	},
+	"293252098380801": {
+		"type": "Feature",
+		"properties": {
+			"name": "AY-68-27-610 (Parkwood Park)",
+			"id": 293252098380801,
+			"temperature": 22.2
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-98.6355556,
+				29.54777778
+			]
+		}
+	},
+	"455927095123101": {
+		"type": "Feature",
+		"properties": {
+			"name": "WLN03     129N36W15BBBB  02 Belle River 0000708358",
+			"id": 455927095123101,
+			"temperature": 8.714516129032258
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-95.2068444,
+				45.99095278
+			]
+		}
+	},
+	"364255108053202": {
+		"type": "Feature",
+		"properties": {
+			"name": "29N.12W.22.1321A BLM-15",
+			"id": 364255108053202,
+			"temperature": 15.755712365591398
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-108.0929722,
+				36.71538889
+			]
+		}
+	},
+	"473255122203401": {
+		"type": "Feature",
+		"properties": {
+			"name": "24N/04E-19P01  14D",
+			"id": 473255122203401,
+			"temperature": 14.51932123655914
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-122.343036,
+				47.54871667
+			]
+		}
+	},
+	"375936102023901": {
+		"type": "Feature",
+		"properties": {
+			"name": "24S 43W 04CBB 01  CO-KS STATELINE, 2.5 MI S, ARK R",
+			"id": 375936102023901,
+			"temperature": 15.9
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-102.0441389,
+				37.99330556
+			]
+		}
+	},
+	"473254122203401": {
+		"type": "Feature",
+		"properties": {
+			"name": "24N/04E-19Q01  45S",
+			"id": 473254122203401,
+			"temperature": 13.244119623655914
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-122.3427778,
+				47.54855556
+			]
+		}
+	},
+	"333145090261901": {
+		"type": "Feature",
+		"properties": {
+			"name": "083J0196  LEFLORE (Quiver River)",
+			"id": 333145090261901,
+			"temperature": 18.942103494623655
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-90.4386111,
+				33.52916667
+			]
+		}
+	},
+	"331915112400601": {
+		"type": "Feature",
+		"properties": {
+			"name": "C-01-04 21CDD1 [AZGFD4 WELL]",
+			"id": 331915112400601,
+			"temperature": 24.5
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-112.6683944,
+				33.32094444
+			]
+		}
+	},
+	"292943098354404": {
+		"type": "Feature",
+		"properties": {
+			"name": "AY-68-36-132 (Z DED)",
+			"id": 292943098354404,
+			"temperature": 22.0
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-98.5955556,
+				29.49527778
+			]
+		}
+	},
+	"474921093144001": {
+		"type": "Feature",
+		"properties": {
+			"name": "WLN01     062N23W26CDCDAB01 Togo        0000612778",
+			"id": 474921093144001,
+			"temperature": 7.869576897246474
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-93.2440694,
+				47.82246667
+			]
+		}
+	},
+	"320846080501709": {
+		"type": "Feature",
+		"properties": {
+			"name": "BFT-2245",
+			"id": 320846080501709,
+			"temperature": 20.8
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-80.8378872,
+				32.1463185
+			]
+		}
+	},
+	"332121112291501": {
+		"type": "Feature",
+		"properties": {
+			"name": "C-01-02 07ADD1 [JACKRABBIT BRIDGE WELL]",
+			"id": 332121112291501,
+			"temperature": 24.53279569892473
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-112.4873778,
+				33.35571667
+			]
+		}
+	},
+	"443535087345401": {
+		"type": "Feature",
+		"properties": {
+			"name": "KW-25/24E/34-0183",
+			"id": 443535087345401,
+			"temperature": 9.816935483870967
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-87.5816194,
+				44.5929722
+			]
+		}
+	},
+	"353229119050601": {
+		"type": "Feature",
+		"properties": {
+			"name": "027S027E32A001M",
+			"id": 353229119050601,
+			"temperature": 33.88293010752688
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-119.0850833,
+				35.54152778
+			]
+		}
+	},
+	"452012093412701": {
+		"type": "Feature",
+		"properties": {
+			"name": "WLN05     033N27W22BCD   01 ALUS-33     0000685849",
+			"id": 452012093412701,
+			"temperature": 11.367069892473118
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-93.6906944,
+				45.3364583
+			]
+		}
+	},
+	"253417080224301": {
+		"type": "Feature",
+		"properties": {
+			"name": "G  -3968",
+			"id": 253417080224301,
+			"temperature": 26.84465366509751
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-80.3786472,
+				25.57136667
+			]
+		}
+	},
+	"325817090464201": {
+		"type": "Feature",
+		"properties": {
+			"name": "125C2027  SHARKEY (Anguilla)",
+			"id": 325817090464201,
+			"temperature": 19.293279569892473
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-90.7783333,
+				32.97138889
+			]
+		}
+	},
+	"375327097285401": {
+		"type": "Feature",
+		"properties": {
+			"name": "25S 01W 07BCCC01  SMW-S11 NR CW36",
+			"id": 375327097285401,
+			"temperature": 20.961962365591397
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-97.4819872,
+				37.8908451
+			]
+		}
+	},
+	"402312109545701": {
+		"type": "Feature",
+		"properties": {
+			"name": "U(D- 1- 1)19aad- 1",
+			"id": 402312109545701,
+			"temperature": 13.275033602150538
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-109.9166389,
+				40.3865833
+			]
+		}
+	},
+	"434551089365001": {
+		"type": "Feature",
+		"properties": {
+			"name": "AD-15/07E/24-0407",
+			"id": 434551089365001,
+			"temperature": 10.14274193548387
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-89.61365,
+				43.76479167
+			]
+		}
+	},
+	"333904090123801": {
+		"type": "Feature",
+		"properties": {
+			"name": "083E0105  LEFLORE (Money)",
+			"id": 333904090123801,
+			"temperature": 18.9
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-90.2105556,
+				33.6511111
+			]
+		}
+	},
+	"474126096165301": {
+		"type": "Feature",
+		"properties": {
+			"name": "WLN06     149N44W27CDBB  01 G12-R       0000620672",
+			"id": 474126096165301,
+			"temperature": 6.563306451612903
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-96.2812889,
+				47.69038056
+			]
+		}
+	},
+	"293516098325501": {
+		"type": "Feature",
+		"properties": {
+			"name": "AY-68-28-211 (Shavano Park at Fawn Drive)",
+			"id": 293516098325501,
+			"temperature": 22.000977747808495
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-98.5486111,
+				29.58777778
+			]
+		}
+	},
+	"473255122203701": {
+		"type": "Feature",
+		"properties": {
+			"name": "24N/04E-19P03  19S",
+			"id": 473255122203701,
+			"temperature": 13.889247311827956
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-122.3435833,
+				47.5485833
+			]
+		}
+	},
+	"443053094591001": {
+		"type": "Feature",
+		"properties": {
+			"name": "LS-502    112N34W07CCCCBD01 LS-O01, recorder, LSIC",
+			"id": 443053094591001,
+			"temperature": 8.9
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-94.9861694,
+				44.5148111
+			]
+		}
+	},
+	"395223086214203": {
+		"type": "Feature",
+		"properties": {
+			"name": "USGS WELL SCHOOL BRANCH SNE AT BROWNSBURG, IN",
+			"id": 395223086214203,
+			"temperature": 9.581575342465754
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-86.3614917,
+				39.87319167
+			]
+		}
+	},
+	"253413080225301": {
+		"type": "Feature",
+		"properties": {
+			"name": "G  -3969",
+			"id": 253413080225301,
+			"temperature": 26.927999999999997
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-80.38146389,
+				25.5703972
+			]
+		}
+	},
+	"253335080213501": {
+		"type": "Feature",
+		"properties": {
+			"name": "G -3967",
+			"id": 253335080213501,
+			"temperature": 25.85077441077441
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-80.3597278,
+				25.5598361
+			]
+		}
+	},
+	"254344081095101": {
+		"type": "Feature",
+		"properties": {
+			"name": "MO - 216",
+			"id": 254344081095101,
+			"temperature": 23.96364247311828
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-81.16425,
+				25.72902778
+			]
+		}
+	},
+	"474428091594601": {
+		"type": "Feature",
+		"properties": {
+			"name": "WLN08     61N13W28ADBB01  Babbitt CRN  0000786137",
+			"id": 474428091594601,
+			"temperature": 7.981949458483754
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-91.9961167,
+				47.7412611
+			]
+		}
+	},
+	"330152090595601": {
+		"type": "Feature",
+		"properties": {
+			"name": "151S0194  WASHINGTON (Glen Allan)",
+			"id": 330152090595601,
+			"temperature": 19.4
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-90.9988889,
+				33.0311111
+			]
+		}
+	},
+	"334956090402201": {
+		"type": "Feature",
+		"properties": {
+			"name": "011H0210  BOLIVAR (Merigold)",
+			"id": 334956090402201,
+			"temperature": 16.1997311827957
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-90.6727778,
+				33.8322222
+			]
+		}
+	},
+	"432415088552601": {
+		"type": "Feature",
+		"properties": {
+			"name": "DG-11/13E/23-0081",
+			"id": 432415088552601,
+			"temperature": 10.0
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-88.9239444,
+				43.40425
+			]
+		}
+	},
+	"340841090134701": {
+		"type": "Feature",
+		"properties": {
+			"name": "119M0072 QUITMAN (Allen)",
+			"id": 340841090134701,
+			"temperature": 17.99516129032258
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-90.2296944,
+				34.1447222
+			]
+		}
+	},
+	"473256122203601": {
+		"type": "Feature",
+		"properties": {
+			"name": "24N/04E-19P04  43S",
+			"id": 473256122203601,
+			"temperature": 13.579200268817205
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-122.3434444,
+				47.5488333
+			]
+		}
+	},
+	"293405098394201": {
+		"type": "Feature",
+		"properties": {
+			"name": "AY-68-27-609 (Western Oak)",
+			"id": 293405098394201,
+			"temperature": 22.00224803297115
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-98.6616667,
+				29.56805556
+			]
+		}
+	},
+	"341210090343701": {
+		"type": "Feature",
+		"properties": {
+			"name": "027J2013  COAHOMA (Clarksdale)",
+			"id": 341210090343701,
+			"temperature": 21.747692307692308
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-90.5769444,
+				34.20277778
+			]
+		}
+	},
+	"395223086214204": {
+		"type": "Feature",
+		"properties": {
+			"name": "USGS WELL SCHOOL BRANCH DNE AT BROWNSBURG, IN",
+			"id": 395223086214204,
+			"temperature": 13.27623287671233
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-86.3614861,
+				39.87320278
+			]
+		}
+	},
+	"380117102023801": {
+		"type": "Feature",
+		"properties": {
+			"name": "23S 43W 28CBB 01  CO-KS STATELINE, 0.5 MI S, ARK R",
+			"id": 380117102023801,
+			"temperature": 14.268018931710616
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-102.0439444,
+				38.02141667
+			]
+		}
+	},
+	"473426095052401": {
+		"type": "Feature",
+		"properties": {
+			"name": "9015      Bemidji Toxics Research Site",
+			"id": 473426095052401,
+			"temperature": 10.6
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-95.0903917,
+				47.5737111
+			]
+		}
+	},
+	"435723092171801": {
+		"type": "Feature",
+		"properties": {
+			"name": "WLN10     106N12W29ACCC 01 Marion CRN   0000817784",
+			"id": 435723092171801,
+			"temperature": 10.435584677419355
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-92.2883611,
+				43.95628889
+			]
+		}
+	},
+	"435239095074801": {
+		"type": "Feature",
+		"properties": {
+			"name": "WLN07     105N36W23DCCCBC01 Windom D28  0000620728",
+			"id": 435239095074801,
+			"temperature": 11.52755376344086
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-95.1300972,
+				43.87730556
+			]
+		}
+	},
+	"395223086214202": {
+		"type": "Feature",
+		"properties": {
+			"name": "NAWQA AG WELL TP26 NEAR BROWNSBURG, IN",
+			"id": 395223086214202,
+			"temperature": 14.003116438356164
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-86.36168889,
+				39.87311389
+			]
+		}
+	},
+	"395223086214201": {
+		"type": "Feature",
+		"properties": {
+			"name": "USGS WELL SCHOOL BRANCH SNW AT BROWNSBURG, IN",
+			"id": 395223086214201,
+			"temperature": 12.053835616438356
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-86.3616806,
+				39.8731083
+			]
+		}
+	},
+	"473425095052602": {
+		"type": "Feature",
+		"properties": {
+			"name": "604B      Bemidji Toxics Research Site  0000273836",
+			"id": 473425095052602,
+			"temperature": 10.673118279569891
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-95.090875,
+				47.57360278
+			]
+		}
+	},
+	"473425095052302": {
+		"type": "Feature",
+		"properties": {
+			"name": "419C      Bemidji Toxics Research Site",
+			"id": 473425095052302,
+			"temperature": 8.898790322580645
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-95.0896778,
+				47.57373056
+			]
+		}
+	},
+	"332314112221801": {
+		"type": "Feature",
+		"properties": {
+			"name": "B-01-01 33BCA1 [ESTRELLA MOUNTAIN PARK WELL]",
+			"id": 332314112221801,
+			"temperature": 17.835618279569893
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-112.371636,
+				33.3873222
+			]
+		}
+	},
+	"323047090484401": {
+		"type": "Feature",
+		"properties": {
+			"name": "149B2023  WARREN (Redwood)",
+			"id": 323047090484401,
+			"temperature": 19.590490591397852
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-90.8122222,
+				32.51305556
+			]
+		}
+	},
+	"251457080395802": {
+		"type": "Feature",
+		"properties": {
+			"name": "G  -3777",
+			"id": 251457080395802,
+			"temperature": 25.28258521768478
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-80.6662611,
+				25.25255556
+			]
+		}
+	},
+	"333251090323801": {
+		"type": "Feature",
+		"properties": {
+			"name": "133O2058  SUNFLOWER (Sunflower)",
+			"id": 333251090323801,
+			"temperature": 19.0
+		},
+		"geometry": {
+			"type": "Point",
+			"coordinates": [
+				-90.5438889,
+				33.5475
+			]
+		}
+	}
+}
