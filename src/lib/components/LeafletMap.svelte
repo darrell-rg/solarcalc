@@ -6,6 +6,7 @@
 	import { pv } from '$lib/components/stores.ts';
 	import { round } from './util';
 	import SolarIcon from './SolarIcon.svelte';
+	import Box from './Box.svelte';
 
 	let marker: Marker;
 	const initialView: LatLngExpression = [$pv.lat, $pv.lng];
@@ -27,7 +28,7 @@
 	}
 </script>
 
-<div class="leafletBox">
+<Box style="padding: 0em;">
 	&nbsp; &nbsp; Move the solar panel icon to set your lat/lng. Or:
 	<button on:click={(e) => getCurrentPosition()}> Use Browser Location</button>
 	<Leaflet view={initialView} zoom={4}>
@@ -43,20 +44,4 @@
 			<Popup>Move this marker to set your lat/lng.</Popup>
 		</Marker>
 	</Leaflet>
-</div>
-
-<style>
-	/* :global(.map) {
-		height: 300px;
-	} */
-
-	.leafletBox {
-		border: 1px solid #aaa;
-		border-radius: 2px;
-		box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
-		padding: 0em;
-		margin: 1rem;
-		margin-top: 0rem;
-		margin-bottom: 0rem;
-	}
-</style>
+</Box>

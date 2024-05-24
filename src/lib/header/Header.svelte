@@ -1,6 +1,7 @@
 <script>
 	import { page } from '$app/stores';
 	import logo from './svelte-logo.svg';
+	import githubLogo from './github.svg';
 	export const prerender = true;
 </script>
 
@@ -38,7 +39,9 @@
 	</nav>
 
 	<div class="corner">
-		<!-- TODO put something else here? github link? -->
+		<a href="https://github.com/darrell-rg/solarcalc">
+			<img src={githubLogo} alt="Github Project" />
+		</a>
 	</div>
 </header>
 

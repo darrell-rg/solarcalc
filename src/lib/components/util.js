@@ -51,6 +51,9 @@ export function degreesToRoofPitch(degrees) {
 	// Calculate the roof pitch ratio
 	const pitch = rise * run;
 
+	if (degrees < 1) return 'Flat';
+	if (degrees > 89) return 'Vertical';
+
 	return `${Math.round(pitch)}:${run}`;
 }
 

@@ -71,7 +71,7 @@
 
 			// var imageUrl = 'groundTempMapClearWithNumbers.png';
 			// var altText =
-			// 	'Average shallow ground water Temperaturees in the United States by Collins, 1925';
+			// 	'Average shallow ground water Temperatures in the United States by Collins, 1925';
 		}
 		// console.log("map mounted")
 	});

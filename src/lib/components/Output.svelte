@@ -1,14 +1,12 @@
-<script>
-	export let val;
-	export let label;
-	export let units;
-	export let min = 0;
-	export let max = 1000;
+<script lang="ts">
+	export let val: any;
+	export let label: string;
+	export let units: string;
 	export let readonly = true;
 </script>
 
 <label>
-	<input {readonly} bind:value={val} {min} {max} />
+	<input {readonly} bind:value={val} />
 	{#if units}
 		({units})
 	{/if}

@@ -1,21 +1,11 @@
-<script>
-	/**
-	 * @type {any}
-	 */
-	export let val;
-	export let label;
-	export let units;
-	/**
-	 * @type {number|string}
-	 */
-	export let min = 0;
-	/**
-	 * @type {number|string}
-	 */
-	export let max = 100;
-	export let step = 1;
-	export let readonly = false;
-	// export let type = "number";
+<script lang="ts">
+	export let val: number;
+	export let label: string;
+	export let units: string;
+	export let min: any = 0;
+	export let max: any = 100;
+	export let step: any = 1;
+	export let readonly: boolean = false;
 </script>
 
 <label>
@@ -38,9 +28,14 @@
 <br />
 
 <style>
+	input {
+		border: 1px solid black;
+		box-shadow: none;
+		margin: 1px;
+		background-color: white;
+	}
 	input:read-only {
 		border: 2px solid white;
-		box-shadow: none;
 		background-color: whitesmoke;
 	}
 </style>

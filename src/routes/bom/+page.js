@@ -11,11 +11,11 @@ export const prerender = true;
 export const _bomData = [
 	{
 		PN: 'BiHiKu7N',
-		Desc: 'Canadian Solar 655w Solar Panel',
-		Qty: 3,
-		Price: 250,
-		ebayid: 325962859986,
-		link: 'https://www.ebay.com/itm/325962859986?amdata=enc%3AAQAJAAAAkJ%2BbdL71WTLKtmx0bfDCv6MBDRqADdzmGAN7Vyz6ZmjXicct00lmf6lZ7IIocCsqxgG47f%2BW9%2FfHqfjfhP3UEGWKiOXwx57SRQYA80UpdQwY6NEBLmKCgEPUkmRGuJMMhZAyfPuq01F63sIfCYESHte75djSAr4c2wArTqjKNwL4MKLkF1mxv4zGk09yXKD%2FQQ%3D%3D&mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=5339056755&customid=&toolid=10001&mkevt=1'
+		Desc: 'Jinko 540w Solar Panel',
+		Qty: 4,
+		Price: 189,
+		ebayid: null,
+		link: 'https://www.santansolar.com/product/new-jinko-bifacial-540w-solar-panel-jkm540m-72hl4tv/'
 	},
 	{
 		Desc: "4' Ground Rod With Clamp",

@@ -50,6 +50,12 @@
 	</p>
 
 	<p>
+		<a target="_blank" href="https://pvlib-python.readthedocs.io/en/stable/">pvlib python</a> A
+		solar panel modeling library that has single diode model and many other useful things.
+	</p>
+
+
+	<p>
 		<a target="_blank" href="https://diysolarforum.com/">DIY Solar Power Forum</a> a pretty good forum
 		for people who like to mess with solar panels.
 	</p>
