@@ -1,7 +1,8 @@
 <script>
-	export let style = "";
+	export let style = '';
 </script>
-<div class="box" style="{style}">
+
+<div class="box" {style}>
 	<slot>
 		<em>no content was provided</em>
 	</slot>

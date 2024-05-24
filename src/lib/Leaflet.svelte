@@ -25,7 +25,6 @@
 		return '' + Math.floor(celsius) + '°                            ';
 	}
 
-
 	onMount(() => {
 		if (!bounds && (!view || !zoom)) {
 			throw new Error('Must set either bounds, or view and zoom.');
@@ -73,8 +72,6 @@
 			// var imageUrl = 'groundTempMapClearWithNumbers.png';
 			// var altText =
 			// 	'Average shallow ground water Temperaturees in the United States by Collins, 1925';
-
-
 		}
 		// console.log("map mounted")
 	});

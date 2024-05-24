@@ -1,6 +1,5 @@
 <script>
 	import { onMount } from 'svelte';
-	import { read, utils, writeFileXLSX } from 'xlsx';
 	import { _bomData } from './+page';
 	import { round, tokWh, clamp } from '$lib/components/util';
 
@@ -17,7 +16,6 @@
 
 			if (itm.link.includes('santansolar')) return 'SanTan Solar';
 		}
-
 		return 'link';
 	}
 	/* Fetch and update the state once */
@@ -33,10 +31,11 @@
 	let tbl = {};
 
 	/* get state data and export to XLSX */
-	function exportFile() {
+	async function exportFile() {
 		// const elt = tbl.getElementsByTagName('TABLE')[0];
-		const wb = utils.table_to_book(tbl);
-		writeFileXLSX(wb, 'SolarHotWaterBOM.xlsx');
+		const xlsx = (await import('xlsx')).default;
+		const wb = xlsx.utils.table_to_book(tbl);
+		xlsx.writeFileXLSX(wb, 'SolarHotWaterBOM.xlsx');
 	}
 
 	// const ws = _bomSheet; // get the first worksheet

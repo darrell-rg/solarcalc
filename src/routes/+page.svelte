@@ -22,13 +22,8 @@
 		year,
 		defaultPrefs,
 		CToF,
-
 		degreesToCompass,
-
 		degreesToRoofPitch
-
-
-
 	} from '$lib/components/util';
 	import { PUBLIC_API_URL } from '$env/static/public';
 	import Spinner from '$lib/components/Spinner.svelte';
@@ -37,7 +32,7 @@
 	// cloudflare pages will compress .txt but not .csv, so we add a .txt to the file name
 	let cecModuleUrl = 'CECModules201920202023.csv.txt';
 
-	/* Fetch and update the list of modules once */
+	/* Fetch and update the list of solar panel modules once */
 	async function loadModules() {
 		// dynamic import for this large js lib
 		const xlsx = (await import('xlsx')).default;
@@ -45,8 +40,6 @@
 
 		const wb = xlsx.read(f); // parse the array buffer
 		modules = xlsx.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-		console.log('loaded modules ', modules.length);
-		// return modules;
 	}
 
 	function makeGraphUrl(startDay = 45, event: any) {
@@ -264,11 +257,11 @@
 				href="https://www.bls.gov/regions/midwest/data/averageenergyprices_selectedareas_table.htm"
 				>get an estimate here.</a
 			>
-			<br /><br /> You can measure your ground water temperature with a thermometer, or estimate it from the red isotherm lines on the 
+			<br /><br /> You can measure your ground water temperature with a thermometer, or estimate it
+			from the red isotherm lines on the
 			<a
 				target="_blank"
-				href="https://www3.epa.gov/ceampubl/learn2model/part-two/onsite/tempmap.html"
-				>map.</a
+				href="https://www3.epa.gov/ceampubl/learn2model/part-two/onsite/tempmap.html">map.</a
 			>
 			<br />
 			<br />
@@ -401,15 +394,15 @@
 					heater can store more energy to bridge cloudy days.
 				</p>
 				<p>
-					<b>Desired Output Temp</b> 40°C is good enough for showers, but for washing dishes it
-					helps to have it at 50°C. The thermostatic mixing valve and the top element (city power)
-					thermostat should be set to this temperature.
+					<b>Desired Output Temp</b> 40°C is good enough for showers, but for washing dishes it helps
+					to have it at 50°C. The thermostatic mixing valve and the top element (city power) thermostat
+					should be set to this temperature.
 				</p>
 				<p>
 					<b>Energy Factor (EF/UEF)</b> this is rating of how efficient your water heater is. Most
 					electric heaters have an <b>EF</b> of about 0.9, which means they waste about 10% of the energy
-					used. The primary standby loss comes from heat leaking through the tank's insulation. 
-					The second largest source of loss is pipe losses. 
+					used. The primary standby loss comes from heat leaking through the tank's insulation. The second
+					largest source of loss is pipe losses.
 				</p>
 
 				<p>
@@ -419,7 +412,8 @@
 				</p>
 
 				<p>
-					Select a bottom water heater <b>Element</b> to match <b>Source Impedance</b> and exceed <b>Nominal Array Power</b>. 
+					Select a bottom water heater <b>Element</b> to match <b>Source Impedance</b> and exceed
+					<b>Nominal Array Power</b>.
 				</p>
 			</Box>
 		</span>
@@ -427,7 +421,7 @@
 	<div class="smol-sidebar">
 		<span data-text>
 			<h2>Step 3: Solar Panels</h2>
-			Set <b>Azimuth</b> and <b>Elevation</b> to match the roof where you plan to install the panels.
+			Set<b>Azimuth</b> and <b>Elevation</b> to match the roof where you plan to install the panels.
 			The ideal Elevation is equal to your Latitude.
 			<br /> <br />
 			Put in the rest of the specs for the solar panels you want to Simulate, or use
@@ -439,8 +433,20 @@
 		<span>
 			<Box>
 				<!-- <h2>Solar Panel Specs</h2> -->
-				<InputInt bind:val={$pv.azimuth} label="Azimuth ≈ {degreesToCompass($pv.azimuth)}" units="°" min="0" max="359" />
-				<InputInt bind:val={$pv.elevation} label="Elevation ≈ {degreesToRoofPitch($pv.elevation)} Pitch" units="°" min="0" max="90" />
+				<InputInt
+					bind:val={$pv.azimuth}
+					label="Azimuth ≈ {degreesToCompass($pv.azimuth)}"
+					units="°"
+					min="0"
+					max="359"
+				/>
+				<InputInt
+					bind:val={$pv.elevation}
+					label="Elevation ≈ {degreesToRoofPitch($pv.elevation)} Pitch"
+					units="°"
+					min="0"
+					max="90"
+				/>
 				<InputInt
 					bind:val={$pv.panelsPerString}
 					label="Panels per string"
@@ -522,6 +528,7 @@
 						create={false}
 						hideArrow={true}
 					/>
+				</p>
 				<p>
 					<b>Vmp, Imp</b>, find these in the spec sheet of your solar panels (<a
 						target="_blank"
@@ -549,12 +556,13 @@
 
 				<p>
 					<b>Source Impedance</b> is the resistance value you want to match with your lower heating
-					element. I suggest a <b>Mismatch</b> below 15% is good enough. MPPT will correct the mismatch(within reason).
+					element. I suggest a <b>Mismatch</b> below 15% is good enough. MPPT will correct the mismatch(within
+					reason).
 				</p>
 
 				<p>
-					<b>Wire Gauge</b> most solar installs use 10AWG 600V wire. You can reduce your <b>Wire Losses</b> a
-					bit if you use thicker 8AWG wire.
+					<b>Wire Gauge</b> most solar installs use 10AWG 600V wire. You can reduce your
+					<b>Wire Losses</b> a bit if you use thicker 8AWG wire.
 				</p>
 			</Box>
 		</span>
@@ -621,19 +629,19 @@
 				If you are going much over 100% for <b>Solar Power Used</b> your array is bigger then it needs
 				to be.
 			</p>
-			<hr>
+			<hr />
 		</span>
 	</div>
-<br>
-<br>
+	<br />
+	<br />
 	<div class="sim-sidebar" id="step4">
 		<span data-text>
 			<h2>Step 5: Simulate 1 Day</h2>
 			<p>
 				Click a <b>Graph random day</b> button a few times until you find a nice sunny day (lots of
-				<b>Solar Radiation</b>). This graph uses the TMY-{year} weather data to run a daily PV simulation to help you size your
-				array.  The important thing to look at here is <span class="blue"> <b>Tank Temperature</b></span>.
-
+				<b>Solar Radiation</b>). This graph uses the TMY-{year} weather data to run a daily PV simulation
+				to help you size your array. The important thing to look at here is
+				<span class="blue"> <b>Tank Temperature</b></span>.
 			</p>
 
 			<div class="smol-css-grid">
@@ -683,11 +691,14 @@
 				</li>
 			{/if}
 
-			<li>No hot water withdraws (aka nobody is home). On most days you will be using hot water which will lower the <span class="blue"><b>Tank Temperature</b></span></li>
+			<li>
+				No hot water withdraws (aka nobody is home). On most days you will be using hot water which
+				will lower the <span class="blue"><b>Tank Temperature</b></span>
+			</li>
 			<li>The tank water starts at your <b>Desired Output Temp</b> ({$pv.hotWaterOutTemp}℃)</li>
 			<li>
-				<span class="blue"><b>Tank Temperature</b></span> assumes fully mixed water. In the real
-				world the hottest water moves to the top of the tank and the coldest to the bottom.
+				<span class="blue"><b>Tank Temperature</b></span> assumes fully mixed water. In the real world
+				the hottest water moves to the top of the tank and the coldest to the bottom.
 			</li>
 			<li>
 				The <span class="green"><b>Net Water Heating Power</b></span> will be negative when there is
