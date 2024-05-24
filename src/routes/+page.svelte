@@ -623,7 +623,7 @@
 </div>
 <br />
 <br />
-<div class="sim-sidebar" id="step4">
+<div class="sim-sidebar" id="step5">
 	<span data-text>
 		<h2>Step 5: Simulate 1 Day</h2>
 		<p>
@@ -710,6 +710,11 @@
 		padding-bottom: 1px !important;
 		font-size: 16px !important;
 	}
+
+	.sim-sidebar{
+		width: 100%;
+	}
+
 	h1,
 	figure {
 		margin: 0 auto;

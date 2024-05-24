@@ -1,6 +1,7 @@
 <script>
 	import { page } from '$app/stores';
 	import logo from './svelte-logo.svg';
+	import sun from './sun.svg';
 	import githubLogo from './github.svg';
 	export const prerender = true;
 </script>
@@ -10,7 +11,10 @@
 		<a href="https://kit.svelte.dev">
 			<img src={logo} alt="SvelteKit" />
 		</a>
+		
 	</div>
+
+	<img src={sun} alt="the sun" style="position:fixed; z-index:-1;"/>
 
 	<nav>
 		<svg viewBox="0 0 2 3" aria-hidden="true">

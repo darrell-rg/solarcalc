@@ -1,5 +1,11 @@
 <script>
 	import { onMount } from 'svelte';
+	import {
+		round,
+		clamp,
+	} from '$lib/components/util';
+	import { tweened } from 'svelte/motion';
+	import { linear, bounceOut, circOut, cubicOut, elasticOut, expoOut, quadOut, quartOut, quintOut, sineOut } from 'svelte/easing';
 	export let style;
 	let time = new Date();
 
@@ -7,18 +13,38 @@
 	let roofHeight = 80;
 	let wallHeight = 67;
 
+	function degToRad(deg){
+		return Math.abs(deg%360)/360.0 * 6.28;
+	}
+
+	
+	let isDaytime = false;
 	let showShowerPerson = true;
+
+	let hotPercent = 20;
+	let darkPercent = 80;
+
 
 	// these automatically update when `time`
 	// changes, because of the `$:` prefix
 	$: hours = time.getHours();
 	$: minutes = time.getMinutes();
-	$: seconds = time.getSeconds();
+	$: seconds =  (2*( time.getSeconds() + time.getMilliseconds()/1000.0 ))%60;
+
+	$: isDaytime = seconds < 40;
+
+	$: showShowerPerson = !isDaytime;
+
+	$: hotPercent = clamp(Math.sin(degToRad(seconds*6/4))*100.0 ,10,80);
+
+	$: darkPercent = clamp(Math.cos(degToRad(seconds*6/4))*100.0, 20,90);
+	//clamp(seconds*2,20,80);
+
 
 	onMount(() => {
 		const interval = setInterval(() => {
 			time = new Date();
-		}, 1000);
+		}, 50);
 
 		return () => {
 			clearInterval(interval);
@@ -40,12 +66,13 @@
 	<defs>
 		<linearGradient id="waterHeaterGradient" x1="0" x2="0" y1="0" y2="1">
 			<stop offset="0%" stop-color="red" />
+			<stop offset="{hotPercent}%" stop-color="red" />
 			<stop offset="100%" stop-color="blue" />
 		</linearGradient>
 
 		<linearGradient id="EarthAndSky">
-			<stop offset="0%" stop-color="lightblue" />
-			<stop offset="80%" stop-color="white" stop-opacity="0" />
+			<stop offset="0%" stop-color="hsl(230 80% {darkPercent}%)" />
+			<stop offset="80%" stop-color="white" />
 			<stop offset="100%" stop-color="green" />
 		</linearGradient>
 
@@ -64,10 +91,11 @@
 		fill="url(#EarthAndSky)"
 		transform="rotate(90)"
 	/>
-
-	<circle class="sun" r="8" fill="url('#sunGradient')" transform="translate(-36 -45.5) "
+	{#if isDaytime}
+	<circle class="sun" r="8" fill="url('#sunGradient')" cx="-36" cy="-35" transform="rotate({6 * (seconds - 10)})"
 		><title>The Sun</title></circle
 	>
+	{/if}
 
 	<polygon
 		class="wall"
@@ -91,6 +119,7 @@
 			<title>Water Heater</title></rect
 		>
 
+		{#if isDaytime}
 		<path
 			class="heatingElement"
 			d="
@@ -108,6 +137,19 @@
 				transform="translate(-20, 17) scale(0.9)"
 			/>
 		{/each}
+
+		{:else}
+
+		<path
+			class="heatingElementCold"
+			d="
+		M -20, 2 h 18
+		M -20,-2 h 18
+		q 2,2  0,4
+		"
+			transform="translate(-9 31.5) scale(0.9)"><title>Heating element</title></path
+		>
+		{/if}
 	</g>
 
 	<g id="waterPipes">
@@ -118,6 +160,8 @@
 		<g>
 			<polyline class="pipe" points="0,-10 22,-10 22,-8" fill="none"></polyline>
 			<ellipse class="shower" cx="22" cy="-8" rx="6" ry="3" />
+
+			{#if showShowerPerson}
 			{#each Array(10) as _, i}
 				<path
 					class="waterDrops"
@@ -125,6 +169,7 @@
 					transform="translate(18 -8) scale(0.9)"
 				/>
 			{/each}
+			{/if}
 			<title>Safe Temperature, Warm Water</title>
 		</g>
 		<g>
@@ -262,7 +307,7 @@
 		c-8.791,1.042-4.606,6.565-5.285,13.348C27.883,40.41,26.318,13.533,43.458,17.74z"
 			/>
 		</g>
-
+		{/if}
 		<g id="showerDoor" transform="translate(7 10) scale(1.25,1.34)">
 			<path
 				opacity=".75"
@@ -278,7 +323,7 @@
 			/><path fill="none" d="M0 0h24v24H0z" />
 			<title>Shower Door</title>
 		</g>
-	{/if}
+		<text x="-20" y="-25" class="small">darkPercent={Math.abs(Math.cos(degToRad((seconds)*3)))}</text>
 </svg>
 
 <style>
@@ -396,4 +441,14 @@
 		fill: none;
 		stroke-width: 1;
 	}
+	.heatingElementCold {
+		stroke: darkgrey;
+		fill: none;
+		stroke-width: 1;
+	}
+	.small {
+      font: italic 3px sans-serif;
+    }
+
+	
 </style>

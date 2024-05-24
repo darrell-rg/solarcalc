@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100px">
+    <title>Sol</title>
+    <defs>
+        <linearGradient id="sunGradient" gradientTransform="rotate(90)">
+            <stop offset="50%" stop-color="gold" />
+            <stop offset="85%" stop-color="orange" />
+        </linearGradient>
+    </defs>
+
+    <circle class="sun" r="80" fill="url('#sunGradient')" cx="0" cy="0" >
+        <title>The Sun</title>
+    </circle>
+</svg>
