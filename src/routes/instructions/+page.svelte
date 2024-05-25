@@ -11,7 +11,7 @@
 	<h1>Instructions</h1>
 	<figure class="floatRightBig">
 		<HousePic style="" />
-		<figcaption>Soon it will be you enjoying that shower</figcaption>
+		<figcaption>Mouseover schematic to show labels</figcaption>
 	</figure>
 	<ol type="i">
 		<li>

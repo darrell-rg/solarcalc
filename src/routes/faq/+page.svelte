@@ -11,7 +11,10 @@
 	<h1>FAQ</h1>
 	<figure class="floatRightBig">
 		<HousePic style="" />
-		<figcaption>This is the entire schematic, simple eh?</figcaption>
+		<!-- <figcaption>Those lazy trees get plenty of free solar power. Why not you?</figcaption> -->
+		<!-- <figcaption>Those lazy trees get plenty of free photons. Why not collect your share?</figcaption> -->
+		<!-- <figcaption>Those lazy trees stand around all day, getting fed free photons. Why not wet your beak?</figcaption> -->
+		<figcaption>Those lazy trees stand around all day, gorging themselves on free photons and farting out highly combustible gasses. If they can do it, so can you!</figcaption>
 	</figure>
 	<article class="faq">
 		<h2>What are we even doing here?</h2>

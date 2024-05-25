@@ -227,7 +227,7 @@
 	<li style="">
 		<figure>
 			<HousePic style="max-width: 350px;" />
-			<figcaption>Simple DC only heating (mouseover for labels)</figcaption>
+			<figcaption>A simple, direct current, grid optional water heater.</figcaption>
 		</figure>
 	</li>
 

@@ -4,8 +4,7 @@
 		round,
 		clamp,
 	} from '$lib/components/util';
-	import { tweened } from 'svelte/motion';
-	import { linear, bounceOut, circOut, cubicOut, elasticOut, expoOut, quadOut, quartOut, quintOut, sineOut } from 'svelte/easing';
+	// import { tweened } from 'svelte/motion';
 	export let style;
 	let time = new Date();
 
@@ -16,28 +15,19 @@
 	function degToRad(deg){
 		return deg/360.0 * 6.28;
 	}
-
 	
 	let isDaytime = true;
 	let showShowerPerson = true;
-
 	let hotPercent = 20;
-	let darkPercent = 80;
-
+	let sunAngle = 0;
 
 	// these automatically update when `time`
 	// changes, because of the `$:` prefix
-	$: hours = time.getHours();
-	$: minutes = time.getMinutes();
 	$: seconds =  time.getSeconds() + time.getMilliseconds()/1000.0 ;
-	$: isDaytime =  lightPercent > 16;
-	$: showShowerPerson = !isDaytime && sunAngle < 180;
-
-
-	let sunAngle = 0;
 	$: sunAngle = seconds*6;
 	$: lightPercent = clamp((Math.cos(degToRad(sunAngle))+0.95)*50.0, 15,65);
-
+	$: isDaytime =  lightPercent > 16;
+	$: showShowerPerson = !isDaytime && sunAngle < 190;
 
 	onMount(() => {
 		const interval = setInterval(() => {
@@ -81,9 +71,8 @@
 		</linearGradient>
 
 		<linearGradient id="Earth">
-			<stop offset="0%" stop-color="white" stop-opacity="0%" />
-			<stop offset="70%" stop-color="white" stop-opacity="0%"/>
-			<stop offset="80%" stop-color="lightblue" stop-opacity="100%"/>
+			<stop offset="10%" stop-color="white" stop-opacity="0%"/>
+			<stop offset="30%" stop-color="lightblue" stop-opacity="100%"/>
 			<stop offset="100%" stop-color="green" stop-opacity="100%"/>
 		</linearGradient>
 
@@ -108,13 +97,13 @@
 
 	<rect
 		class="background"
-		width="100"
+		width="30"
 		height="100"
-		x="-50"
+		x="20"
 		y="-50"
 		fill="url(#Earth)"
 		transform="rotate(90)"
-	/>
+	><title>The Cold Cold Ground</title></rect>
 
 
 	<polygon
@@ -248,6 +237,7 @@
 
 	{#if showShowerPerson}
 		<g id="showerUser" transform="translate(15 -0.5) scale(0.125)">
+			<title>Happy Customer</title>
 			<ellipse
 				transform="matrix(0.3947 -0.9188 0.9188 0.3947 6.9937 106.2129)"
 				style="fill-rule:evenodd;clip-rule:evenodd;fill:#FFDECC;"
