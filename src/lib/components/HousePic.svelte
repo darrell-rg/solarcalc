@@ -14,11 +14,11 @@
 	let wallHeight = 67;
 
 	function degToRad(deg){
-		return Math.abs(deg%360)/360.0 * 6.28;
+		return deg/360.0 * 6.28;
 	}
 
 	
-	let isDaytime = false;
+	let isDaytime = true;
 	let showShowerPerson = true;
 
 	let hotPercent = 20;
@@ -29,21 +29,24 @@
 	// changes, because of the `$:` prefix
 	$: hours = time.getHours();
 	$: minutes = time.getMinutes();
-	$: seconds =  (2*( time.getSeconds() + time.getMilliseconds()/1000.0 ))%60;
+	$: seconds =  time.getSeconds() + time.getMilliseconds()/1000.0 ;
+	$: isDaytime =  lightPercent > 16;
+	$: showShowerPerson = !isDaytime && sunAngle < 180;
 
-	$: isDaytime = seconds < 40;
 
-	$: showShowerPerson = !isDaytime;
-
-	$: hotPercent = clamp(Math.sin(degToRad(seconds*6/4))*100.0 ,10,80);
-
-	$: darkPercent = clamp(Math.cos(degToRad(seconds*6/4))*100.0, 20,90);
-	//clamp(seconds*2,20,80);
+	let sunAngle = 0;
+	$: sunAngle = seconds*6;
+	$: lightPercent = clamp((Math.cos(degToRad(sunAngle))+0.95)*50.0, 15,65);
 
 
 	onMount(() => {
 		const interval = setInterval(() => {
 			time = new Date();
+			if (lightPercent>34)
+				hotPercent += 0.1;
+			if (showShowerPerson)
+				hotPercent -= 0.2;
+			hotPercent = clamp(hotPercent,20,80);
 		}, 50);
 
 		return () => {
@@ -66,14 +69,22 @@
 	<defs>
 		<linearGradient id="waterHeaterGradient" x1="0" x2="0" y1="0" y2="1">
 			<stop offset="0%" stop-color="red" />
-			<stop offset="{hotPercent}%" stop-color="red" />
+			<stop offset="{hotPercent-10}%" stop-color="red" />
+			<stop offset="{hotPercent+10}%" stop-color="blue" />
 			<stop offset="100%" stop-color="blue" />
 		</linearGradient>
 
 		<linearGradient id="EarthAndSky">
-			<stop offset="0%" stop-color="hsl(230 80% {darkPercent}%)" />
-			<stop offset="80%" stop-color="white" />
+			<stop offset="0%" stop-color="hsl(230 80% {lightPercent}%)" />
+			<stop offset="80%" stop-color="lightblue" />
 			<stop offset="100%" stop-color="green" />
+		</linearGradient>
+
+		<linearGradient id="Earth">
+			<stop offset="0%" stop-color="white" stop-opacity="0%" />
+			<stop offset="70%" stop-color="white" stop-opacity="0%"/>
+			<stop offset="80%" stop-color="lightblue" stop-opacity="100%"/>
+			<stop offset="100%" stop-color="green" stop-opacity="100%"/>
 		</linearGradient>
 
 		<linearGradient id="sunGradient" gradientTransform="rotate(90)">
@@ -91,11 +102,20 @@
 		fill="url(#EarthAndSky)"
 		transform="rotate(90)"
 	/>
-	{#if isDaytime}
-	<circle class="sun" r="8" fill="url('#sunGradient')" cx="-36" cy="-35" transform="rotate({6 * (seconds - 10)})"
+	<circle class="sun" r="8" fill="url('#sunGradient')" cx="0" cy="-45" transform="rotate({sunAngle})"
 		><title>The Sun</title></circle
 	>
-	{/if}
+
+	<rect
+		class="background"
+		width="100"
+		height="100"
+		x="-50"
+		y="-50"
+		fill="url(#Earth)"
+		transform="rotate(90)"
+	/>
+
 
 	<polygon
 		class="wall"
@@ -323,7 +343,9 @@
 			/><path fill="none" d="M0 0h24v24H0z" />
 			<title>Shower Door</title>
 		</g>
-		<text x="-20" y="-25" class="small">darkPercent={Math.abs(Math.cos(degToRad((seconds)*3)))}</text>
+		<!-- <text x="-20" y="-30" class="small">lightPercent={lightPercent}</text>
+		<text x="-20" y="-25" class="small">hotPercent={hotPercent}</text>
+		<text x="-20" y="-20" class="small">sunAngle={sunAngle}</text> -->
 </svg>
 
 <style>
