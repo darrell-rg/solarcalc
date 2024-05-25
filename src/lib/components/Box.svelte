@@ -17,6 +17,6 @@
 		padding: 1em;
 		margin: 0.5rem;
 		margin-top: 0rem;
-		background-color: #ffffffe4;
+		background-color: #ffffff44;
 	}
 </style>
