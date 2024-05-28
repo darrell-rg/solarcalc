@@ -127,7 +127,8 @@
 					newMonthData.push(m);
 				});
 				monthData = newMonthData;
-				yearlySavings = newYearlySavings;
+				$pv.yearlySavings = newYearlySavings;
+				paybackYears = $pv.bomTotal / $pv.yearlySavings;
 				monthTableLoading = false;
 			});
 	}
@@ -185,7 +186,7 @@
 	let peakHourCount = 0;
 	let avgPowerPrice = 0;
 	let wireResistance = 0;
-	let yearlySavings = 0;
+	let paybackYears = 0;
 	let dailyEnergyDemand = 0;
 	let stringVoc = 0;
 	let wireLosses = 0;
@@ -610,7 +611,13 @@
 				<tfoot>
 					<tr>
 						<th scope="row" colspan="7">Estimated Value Of Generated Solar Power:</th>
-						<th colspan="1">${round(yearlySavings)}</th>
+						<th colspan="1">${round($pv.yearlySavings)}</th>
+					</tr>
+					<tr>
+						<th scope="row" colspan="7"
+							>Years to payback system <a href="/bom">BOM</a> cost (${round($pv.bomTotal)}):</th
+						>
+						<th colspan="1">{round(paybackYears)}</th>
 					</tr>
 				</tfoot>
 			</table>

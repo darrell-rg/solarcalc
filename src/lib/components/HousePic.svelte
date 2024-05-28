@@ -167,6 +167,14 @@
 			<polyline class="pipe" points="0,-10 22,-10 22,-8" fill="none"></polyline>
 			<ellipse class="shower" cx="22" cy="-8" rx="6" ry="3" />
 
+			{#each Array(10) as _, i}
+				<path
+					class="waterNozzle"
+					d="M {i}, {(i % 2) / 2} v 2 "
+					transform="translate(18 -9) scale(0.9)"
+				/>
+			{/each}
+
 			{#if showShowerPerson}
 				{#each Array(10) as _, i}
 					<path
@@ -176,6 +184,7 @@
 					/>
 				{/each}
 			{/if}
+
 			<title>Safe Temperature, Warm Water</title>
 		</g>
 		<g>
@@ -222,14 +231,20 @@
 			><title>Ground Wire</title></polyline
 		>
 
-		<g>
-			<!-- the switch -->
-			<rect class="conduit" x="-38" y="-11" width="10" height="9" rx="0.2" />
+		<g transform="translate(0, -5) ">
+			<rect class="conduit" x="-37.5" y="-11" width="9" height="9" rx="0.2" />
 			<line class="onOff" x1="-33" y1="-5" x2="-33" y2="-10.5" />
 			<circle class="onOff" r="3" transform="translate(-33, -6) "></circle>
-			<title>Disconnect Switch</title>
+			<title>Outdoor Disconnect Switch</title>
 		</g>
-		<line class="solarPanel" x1="-5" y1="-41" x2="-43" y2="-28"><title>Solar Panel</title></line>
+
+		<g transform="translate(0, 22) ">
+			<rect class="conduit" x="-37.5" y="-11" width="9" height="9" rx="0.2" />
+			<line class="onOff" x1="-33" y1="-5" x2="-33" y2="-10.5" />
+			<circle class="onOff" r="3" transform="translate(-33, -6) "></circle>
+			<title>Indoor Disconnect Switch</title>
+		</g>
+		<line class="solarPanel" x1="-5" y1="-41" x2="-43" y2="-28"><title>Solar Panels</title></line>
 	</g>
 
 	{#if showShowerPerson}
@@ -351,6 +366,11 @@
 		stroke: darkblue;
 		stroke-width: 0.25;
 		animation: dash 30s linear infinite;
+	}
+	.waterNozzle {
+		stroke-dasharray: 0.4 0.4;
+		stroke: black;
+		stroke-width: 0.25;
 	}
 	@keyframes dash {
 		to {

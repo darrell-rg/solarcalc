@@ -26,8 +26,8 @@
 					mixing valve.
 				</li>
 				<li>
-					Divide the BOM total by "Estimated Value Of Generated Solar Power" to calculate your
-					payback
+					You can use the spreadsheet under <a href="/bom">BOM</a> to pick out parts to order and calculate
+					your payback time.
 				</li>
 			</ol>
 		</li>

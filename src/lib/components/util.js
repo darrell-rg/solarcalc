@@ -275,5 +275,7 @@ export const defaultPrefs = {
 	groundTemp: 9,
 	energyFactor: 0.91,
 	allowNonMpptt: false,
-	nonMpptGraph: false
+	nonMpptGraph: false,
+	bomTotal: 2000,
+	yearlySavings: 0
 };
