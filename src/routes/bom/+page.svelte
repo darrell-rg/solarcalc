@@ -1,8 +1,12 @@
 <script>
 	import { onMount } from 'svelte';
-	import { bomData } from '$lib/components/bom.js';
+	import { bomData , headers, makeBomRow} from '$lib/components/bom.js';
 	import { round, tokWh, clamp } from '$lib/components/util';
 	import Table from '$lib/components/Table.svelte';
+	
+	import { defaultGridConfig} from '$lib/components/bom.js';
+	
+	
 
 	function getSourceUrl(itm) {
 		if (itm.link) return itm.link;
@@ -42,7 +46,7 @@
 	// const ws = _bomSheet; // get the first worksheet
 	// html = utils.sheet_to_html(ws); // generate HTML and update state
 
-	let data = bomData.map((r) => {
+	let dataOld = bomData.map((r) => {
 		return {
 			PN: '',
 			Desc: r.Desc,
@@ -55,8 +59,48 @@
 		};
 	});
 
-	$: totalPrice = data.reduce((accumulator, currentValue) => accumulator + currentValue.Total, 0);
+	$: totalPrice = dataOld.reduce((accumulator, currentValue) => accumulator + currentValue.Total, 0);
 	// console.log(data);
+  
+	const tableIdentifier = "bom";
+
+	let config = JSON.parse(JSON.stringify(defaultGridConfig));
+
+	//	The array of cells needs to be in sync with the rows/columns configuration
+	let data = {};
+	
+	onMount(() => {
+		if (typeof window !== 'undefined') {
+			let localStorageData = window.localStorage.getItem(tableIdentifier);
+			localStorageData = null;
+			if (localStorageData) {
+				data = JSON.parse(localStorageData);
+				console.log('data', data);
+			} else {
+				data[0] = headers;
+				for (let i = 0; i < bomData.length ; i++) {
+  					data[i+1]=makeBomRow(bomData[i]);
+				} 
+			}
+		}
+	});
+
+	
+	
+	let uid='Tbl-'+((Math.random()*999999999)|0);
+	
+	let currCell;
+	
+	function startEdit(e) {
+		console.log('startEdit',e.detail);
+	}
+	function onEdit(e) {
+		console.log('onEdit',e.detail);
+	}
+	function onSelectionChange(e) {
+		console.log('onSelectionChange',e.detail);
+		currCell=e.detail;
+	}
 </script>
 
 <svelte:head>
@@ -77,7 +121,7 @@
 			<th style="min-width:5em">Total</th>
 			<th style="min-width:15em">Source</th>
 		</tr>
-		{#each data as r}
+		{#each dataOld as r}
 			<tr>
 				<td>{r.PN}</td>
 				<td>{r.Desc}</td>
@@ -107,7 +151,7 @@
 		purchase parts.
 	</p>
 
-	<Table tableIdentifier="BOM"></Table>
+	<Table tableIdentifier="BOM" {data} {config} {uid} on:startedit={startEdit} on:endedit={onEdit} on:selChange={onSelectionChange}/>
 </div>
 
 <style>
