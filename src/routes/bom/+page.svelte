@@ -1,7 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
-	import { _bomData } from './+page';
+	import { bomData } from '$lib/components/bom.js';
 	import { round, tokWh, clamp } from '$lib/components/util';
+	import Table from '$lib/components/Table.svelte';
 
 	function getSourceUrl(itm) {
 		if (itm.link) return itm.link;
@@ -41,7 +42,7 @@
 	// const ws = _bomSheet; // get the first worksheet
 	// html = utils.sheet_to_html(ws); // generate HTML and update state
 
-	let data = _bomData.map((r) => {
+	let data = bomData.map((r) => {
 		return {
 			PN: '',
 			Desc: r.Desc,
@@ -105,6 +106,8 @@
 		This website may receive a small commission if you use the links in the "Source" column to
 		purchase parts.
 	</p>
+
+	<Table tableIdentifier="BOM"></Table>
 </div>
 
 <style>

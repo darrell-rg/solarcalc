@@ -1,7 +1,7 @@
 <script lang="ts">
 	export let val: any;
-	export let label:string;
-	export let units:string;
+	export let label: string;
+	export let units: string;
 	export let min = 0;
 	export let max = 100;
 	export let step = 'any';

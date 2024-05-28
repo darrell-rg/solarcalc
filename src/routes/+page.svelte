@@ -580,7 +580,8 @@
 		</p>
 		<div>
 			{#if monthTableLoading}
-				<Spinner style="position: absolute; margin-left:calc(50% - 200px);" height="300px"></Spinner>
+				<Spinner style="position: absolute; margin-left:calc(50% - 200px);" height="300px"
+				></Spinner>
 			{/if}
 
 			<table class="monthTable">
@@ -649,7 +650,10 @@
 	</span>
 	<br />
 	{#if graphLoading}
-		<Spinner style="position: absolute; margin-left:calc(50% - 200px); padding-top:100px;" height="300px"></Spinner>
+		<Spinner
+			style="position: absolute; margin-left:calc(50% - 200px); padding-top:100px;"
+			height="300px"
+		></Spinner>
 	{/if}
 	<span>
 		<figure>
@@ -711,7 +715,7 @@
 		font-size: 16px !important;
 	}
 
-	.sim-sidebar{
+	.sim-sidebar {
 		width: 100%;
 	}
 

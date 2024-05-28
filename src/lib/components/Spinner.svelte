@@ -5,7 +5,7 @@
 	//enable-background:new 0 0 496 496;
 </script>
 
-<svg {height} viewBox="0 0 496 496" style="{style}" xml:space="preserve">
+<svg {height} viewBox="0 0 496 496" {style} xml:space="preserve">
 	<g class="spin">
 		<path
 			style="fill:#76FFE5;"

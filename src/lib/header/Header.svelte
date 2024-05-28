@@ -11,10 +11,9 @@
 		<a href="https://kit.svelte.dev">
 			<img src={logo} alt="SvelteKit" />
 		</a>
-		
 	</div>
 
-	<img src={sun} alt="the sun" style="position:fixed; z-index:-1;"/>
+	<img src={sun} alt="the sun" style="position:fixed; z-index:-1;" />
 
 	<nav>
 		<svg viewBox="0 0 2 3" aria-hidden="true">
