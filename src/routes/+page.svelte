@@ -412,7 +412,7 @@
 <div class="smol-sidebar">
 	<span data-text>
 		<h2>Step 3: Solar Panels</h2>
-		Set<b>Azimuth</b> and <b>Elevation</b> to match the roof where you plan to install the panels.
+		Set <b>Azimuth</b> and <b>Elevation</b> to match the roof where you plan to install the panels.
 		The ideal Elevation is equal to your Latitude.
 		<br /> <br />
 		Put in the rest of the specs for the solar panels you want to Simulate, or use
