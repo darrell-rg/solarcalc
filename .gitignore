@@ -12,3 +12,4 @@ python-flask-app/tmp/*.csv
 python-flask-app/tmp/*.png
 python-flask-app/__pycache__/
 **/*.tif
+src/Hello,.txt

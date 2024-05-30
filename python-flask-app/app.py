@@ -18,6 +18,7 @@ from collections import defaultdict
 import glob
 import json
 import ast
+import math
 import shutil
 from flask import Flask, request, send_file
 from types import SimpleNamespace
@@ -332,7 +333,8 @@ def standbyLoss(ef=0.9, Ttank=40, Tamb=16):
     # add 22% for pipe losses per SS84_Panel5_Paper_06.pdf
     # append conversion from C to F
     return 1.22 * ua * ((Ttank - Tamb) * (9.0 / 5.0))
-
+def roundUp100(x):
+    return int(math.ceil(x / 100.0)) * 100
 
 # water heater search:  https://www.ahridirectory.org/NewSearch?programId=24&searchTypeId=3
 # https://www.centerpointenergy.com/en-us/SaveEnergyandMoney/Pages/CNP_Calculators/Thermal-Efficiency-Calculator.aspx?sa=MN&au=res
@@ -381,9 +383,16 @@ def nsrdb_plot(
         ax2 = fig.add_subplot(4, 1, (2, 4), sharex=ax)
         twin2 = ax2.twinx()
         ax2.set_ylim(-10, 100)
-        twin2.set_ylim(-200, 2000)
+        minPowerYlim = 500
+        twin2.set_ylim(-200, minPowerYlim)
+        maxPowerInYear = df["generation"].max()
+        # we need to keep the y scale more or less consistent for the whole year
+        if maxPowerInYear > minPowerYlim:
+            twin2.set_ylim(-200, maxPowerInYear+50)
 
         df["90 Degree Zenith"] = 90
+
+
 
         singleDay = df[:][i:j]
 
@@ -432,6 +441,10 @@ def nsrdb_plot(
         maxStandbyLoss = singleDay["standbyLoss"].max()
         maxSolarPower = singleDay["generation"].max()
         maxTankTemp = singleDay["Tank Temperature"].max()
+
+        # adjust lower bounds of graph
+        if maxStandbyLoss > 180:
+            twin2.set_ylim(-1*roundUp100(maxStandbyLoss), maxPowerInYear+50)
 
         total_kWh = jouleSum * 0.0000002778
         total_generation_kWh = (
