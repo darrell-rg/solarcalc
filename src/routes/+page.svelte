@@ -27,6 +27,7 @@
 	} from '$lib/components/util';
 	import { PUBLIC_API_URL } from '$env/static/public';
 	import Spinner from '$lib/components/Spinner.svelte';
+	import Accordion from '$lib/Accordion.svelte';
 	let jsonUrlBase = '/json?';
 	let graphUrlBase = '/graph?';
 	// cloudflare pages will compress .txt but not .csv, so we add a .txt to the file name
@@ -557,10 +558,107 @@
 		</Box>
 	</span>
 </div>
+<br>
+<div class="sim-sidebar" id="step5">
+	<span data-text>
+		<h2>Step 4: Simulate 1 Day</h2>
+		<p>
+			Click a <b>Graph random day</b> button a few times until you find a nice sunny day (lots of
+			<b>Solar Radiation</b>). This graph uses the TMY-{year} weather data to run a daily PV simulation
+			to help you size your array. The important thing to look at here is
+			<span class="blue"> <b>Tank Temperature</b></span>.
+		</p>
+		<p>
+			If your <b>Net Thermal Energy Gain</b> is more than
+			<b>Daily Energy Demand ({round(dailyEnergyDemand)}kWh)</b>
+			on a sunny day, then your solar array is oversized. If the
+			<span class="blue"><b>Tank Temperature</b></span>
+			is going over the
+			<span class="red"><b>Mixing Valve Limit</b></span>
+			and you still are making less then 2/3 of your <b>Daily Energy Demand</b>, then your tank is
+			undersized.
+		</p>
+
+		<div class="smol-css-grid">
+			<button on:click={(e) => makeGraphUrl(0, e)}> Graph random day in Q1</button>
+			<button on:click={(e) => makeGraphUrl(90, e)}> Graph random day in Q2</button>
+			<button on:click={(e) => makeGraphUrl(180, e)}> Graph random day in Q3</button>
+			<button on:click={(e) => makeGraphUrl(270, e)}> Graph random day in Q4</button>
+
+			{#if $pv.allowNonMpptt}
+				<label>
+					<input type="checkbox" bind:checked={$pv.nonMpptGraph} />
+					Estimate Non-MPPT Power
+				</label>
+			{/if}
+		</div>
+	</span>
+	<br />
+	{#if graphLoading}
+		<Spinner
+			style="
+			position: absolute; 
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			padding: 1rem;
+			width: 100%;
+			max-width: 1280px;
+			min-width: 800px;
+			margin: 0 auto;
+			box-sizing: border-box;
+			"
+		></Spinner>
+	{/if}
+	<span>
+		<figure>
+			<img alt="SolarSimGraph" src="sampleGraph.png" id="solarGraph" style="padding-top:10px;" />
+		</figure>
+	</span>
+	<Accordion open={false}>
+		<span slot="head">Graph Assumptions:</span>
+		<div slot="details">
+			<ul>
+				{#if $pv.allowNonMpptt}
+					<li>
+						Non-MPPT Power estimates are an experimental feature, do not expect high accuracy. This uses
+						the <a href="https://pvlib-python.readthedocs.io/en/v0.6.0/singlediode.html"
+							>lambertw single diode model</a
+						> to estimate power into a fixed load (your heater element). Notice that MPPT is most useful
+						when there are clouds. To use Non-MPPT you must select a panel by name/PN.
+					</li>
+				{/if}
+		
+				<li>
+					No hot water withdraws (aka nobody is home). On most days you will be using hot water which
+					will lower the <span class="blue"><b>Tank Temperature</b></span>
+				</li>
+				<li>The tank water starts at your <b>Desired Output Temp</b> ({$pv.hotWaterOutTemp}℃)</li>
+				<li>
+					<span class="blue"><b>Tank Temperature</b></span> assumes fully mixed water. In the real world
+					the hottest water moves to the top of the tank and the coldest to the bottom.
+				</li>
+				<li>
+					The <span class="green"><b>Net Water Heating Power</b></span> will be negative when there is
+					no sun. These are the standby $pv.losses estimated from your UEF ({$pv.energyFactor})
+				</li>
+				<li>The top element is disconnected (no city power).</li>
+				<li>
+					No thermostat is installed on the bottom element. If there was a thermostat the <span
+						class="blue"><b>Tank Temperature</b></span
+					>
+					would not exceed the <span class="red"><b>Mixing Valve Limit</b> </span>
+				</li>
+			</ul>
+		</div>
+	</Accordion>
+	<br />
+	<br />
+</div>
 
 <div class="sim-sidebar" id="step4">
 	<span data-text>
-		<h2>Step 4: Simulate 1 Year</h2>
+		<h2>Step 5: Simulate 1 Year</h2>
 		<p>
 			Click <b>Simulate Monthly Generation</b> This will feed the simulator with the solar panel
 			data you entered above and Typical Meteorological Year Data (TMY-{year}) for your lat/lng.
@@ -581,8 +679,20 @@
 		</p>
 		<div>
 			{#if monthTableLoading}
-				<Spinner style="position: absolute; margin-left:calc(50% - 200px);" height="300px"
-				></Spinner>
+			<Spinner
+			style= "
+			position: absolute; 
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			padding: 1rem;
+			width: 100%;
+			max-width: 1280px;
+			min-width: 800px;
+			margin: 0 auto;
+			box-sizing: border-box;
+			"
+		></Spinner>
 			{/if}
 
 			<table class="monthTable">
@@ -631,88 +741,7 @@
 </div>
 <br />
 <br />
-<div class="sim-sidebar" id="step5">
-	<span data-text>
-		<h2>Step 5: Simulate 1 Day</h2>
-		<p>
-			Click a <b>Graph random day</b> button a few times until you find a nice sunny day (lots of
-			<b>Solar Radiation</b>). This graph uses the TMY-{year} weather data to run a daily PV simulation
-			to help you size your array. The important thing to look at here is
-			<span class="blue"> <b>Tank Temperature</b></span>.
-		</p>
 
-		<div class="smol-css-grid">
-			<button on:click={(e) => makeGraphUrl(0, e)}> Graph random day in Q1</button>
-			<button on:click={(e) => makeGraphUrl(90, e)}> Graph random day in Q2</button>
-			<button on:click={(e) => makeGraphUrl(180, e)}> Graph random day in Q3</button>
-			<button on:click={(e) => makeGraphUrl(270, e)}> Graph random day in Q4</button>
-
-			{#if $pv.allowNonMpptt}
-				<label>
-					<input type="checkbox" bind:checked={$pv.nonMpptGraph} />
-					Estimate Non-MPPT Power
-				</label>
-			{/if}
-		</div>
-	</span>
-	<br />
-	{#if graphLoading}
-		<Spinner
-			style="position: absolute; margin-left:calc(50% - 200px); padding-top:100px;"
-			height="300px"
-		></Spinner>
-	{/if}
-	<span>
-		<figure>
-			<img alt="SolarSimGraph" src="sampleGraph.png" id="solarGraph" style="padding-top:10px;" />
-		</figure>
-	</span>
-	<p>
-		If your <b>Net Thermal Energy Gain</b> is more than
-		<b>Daily Energy Demand ({round(dailyEnergyDemand)}kWh)</b>
-		on a sunny day, then your solar array is oversized. If the
-		<span class="blue"><b>Tank Temperature</b></span>
-		is going over the
-		<span class="red"><b>Mixing Valve Limit</b></span>
-		and you still are making less then 2/3 of your <b>Daily Energy Demand</b>, then your tank is
-		undersized.
-	</p>
-
-	<p>Graph Assumptions:</p>
-
-	<ul>
-		{#if $pv.allowNonMpptt}
-			<li>
-				Non-MPPT Power estimates are an experimental feature, do not expect high accuracy. This uses
-				the <a href="https://pvlib-python.readthedocs.io/en/v0.6.0/singlediode.html"
-					>lambertw single diode model</a
-				> to estimate power into a fixed load (your heater element). Notice that MPPT is most useful
-				when there are clouds. To use Non-MPPT you must select a panel by name/PN.
-			</li>
-		{/if}
-
-		<li>
-			No hot water withdraws (aka nobody is home). On most days you will be using hot water which
-			will lower the <span class="blue"><b>Tank Temperature</b></span>
-		</li>
-		<li>The tank water starts at your <b>Desired Output Temp</b> ({$pv.hotWaterOutTemp}℃)</li>
-		<li>
-			<span class="blue"><b>Tank Temperature</b></span> assumes fully mixed water. In the real world
-			the hottest water moves to the top of the tank and the coldest to the bottom.
-		</li>
-		<li>
-			The <span class="green"><b>Net Water Heating Power</b></span> will be negative when there is
-			no sun. These are the standby $pv.losses estimated from your UEF ({$pv.energyFactor})
-		</li>
-		<li>The top element is disconnected (no city power).</li>
-		<li>
-			No thermostat is installed on the bottom element. If there was a thermostat the <span
-				class="blue"><b>Tank Temperature</b></span
-			>
-			would not exceed the <span class="red"><b>Mixing Valve Limit</b> </span>
-		</li>
-	</ul>
-</div>
 
 <style>
 	:global(.elementInput) {
@@ -745,7 +774,7 @@
 		margin: 0 0 0.5em 0;
 	}
 	figure {
-		margin: 0 0 1em 0;
+		margin: 0 0 0.1em 0;
 	}
 	#solarGraph {
 		min-width: 48em;

@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	export let style;
-	export let height = '300px';
+	export let height = '500px';
 	//enable-background:new 0 0 496 496;
 </script>
 
