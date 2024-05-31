@@ -386,7 +386,7 @@
 		return true;
 	}
 
-	function doOffsetCellRefs(value, rowDiff, colDiff, copyBuff){
+	function doOffsetCellRefs(value, rowDiff, colDiff, copyBuff) {
 		//TODO: fix this so it will change cell refs on copy/paste
 		return value;
 	}

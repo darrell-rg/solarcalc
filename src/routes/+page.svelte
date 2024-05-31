@@ -413,7 +413,7 @@
 <div class="smol-sidebar">
 	<span data-text>
 		<h2>Step 3: Solar Panels</h2>
-		Set <b>Azimuth</b> and <b>Elevation</b> to match the roof where you plan to install the panels.
+		Set<b>Azimuth</b> and <b>Elevation</b> to match the roof where you plan to install the panels.
 		The ideal Elevation is equal to your Latitude.
 		<br /> <br />
 		Put in the rest of the specs for the solar panels you want to Simulate, or use
@@ -558,7 +558,7 @@
 		</Box>
 	</span>
 </div>
-<br>
+<br />
 <div class="sim-sidebar" id="step5">
 	<span data-text>
 		<h2>Step 4: Simulate 1 Day</h2>
@@ -621,17 +621,17 @@
 			<ul>
 				{#if $pv.allowNonMpptt}
 					<li>
-						Non-MPPT Power estimates are an experimental feature, do not expect high accuracy. This uses
-						the <a href="https://pvlib-python.readthedocs.io/en/v0.6.0/singlediode.html"
+						Non-MPPT Power estimates are an experimental feature, do not expect high accuracy. This
+						uses the <a href="https://pvlib-python.readthedocs.io/en/v0.6.0/singlediode.html"
 							>lambertw single diode model</a
 						> to estimate power into a fixed load (your heater element). Notice that MPPT is most useful
 						when there are clouds. To use Non-MPPT you must select a panel by name/PN.
 					</li>
 				{/if}
-		
+
 				<li>
-					No hot water withdraws (aka nobody is home). On most days you will be using hot water which
-					will lower the <span class="blue"><b>Tank Temperature</b></span>
+					No hot water withdraws (aka nobody is home). On most days you will be using hot water
+					which will lower the <span class="blue"><b>Tank Temperature</b></span>
 				</li>
 				<li>The tank water starts at your <b>Desired Output Temp</b> ({$pv.hotWaterOutTemp}℃)</li>
 				<li>
@@ -639,8 +639,8 @@
 					the hottest water moves to the top of the tank and the coldest to the bottom.
 				</li>
 				<li>
-					The <span class="green"><b>Net Water Heating Power</b></span> will be negative when there is
-					no sun. These are the standby $pv.losses estimated from your UEF ({$pv.energyFactor})
+					The <span class="green"><b>Net Water Heating Power</b></span> will be negative when there
+					is no sun. These are the standby $pv.losses estimated from your UEF ({$pv.energyFactor})
 				</li>
 				<li>The top element is disconnected (no city power).</li>
 				<li>
@@ -679,8 +679,8 @@
 		</p>
 		<div>
 			{#if monthTableLoading}
-			<Spinner
-			style= "
+				<Spinner
+					style="
 			position: absolute; 
 			flex: 1;
 			display: flex;
@@ -692,7 +692,7 @@
 			margin: 0 auto;
 			box-sizing: border-box;
 			"
-		></Spinner>
+				></Spinner>
 			{/if}
 
 			<table class="monthTable">
@@ -741,7 +741,6 @@
 </div>
 <br />
 <br />
-
 
 <style>
 	:global(.elementInput) {

@@ -72,7 +72,7 @@ email = "darrell@pvh2o.com"
 
 tmp_folder = "/tmp"
 
-#global to hold cached cec data
+# global to hold cached cec data
 panelData = None
 csvFileName = "CECModules201920202023.csv"
 
@@ -289,6 +289,7 @@ def convert_day_of_year(day_of_year, year=2022):
 
     # returns standby loss in watts
 
+
 def convert_to_float_if_possible(d):
     for key, value in d.items():
         try:
@@ -298,6 +299,7 @@ def convert_to_float_if_possible(d):
             # If the conversion fails, leave the value as is
             pass
     return d
+
 
 def loadPanelData():
     global csvFileName
@@ -309,7 +311,7 @@ def loadPanelData():
     # if not os.path.exists(cecInTmp):
     #     copyStartupData()
 
-    cecInData = os.path.join("data", csvFileName)    
+    cecInData = os.path.join("data", csvFileName)
 
     with open(cecInData, newline="") as csvfile:
         reader = csv.DictReader(csvfile)
@@ -333,8 +335,11 @@ def standbyLoss(ef=0.9, Ttank=40, Tamb=16):
     # add 22% for pipe losses per SS84_Panel5_Paper_06.pdf
     # append conversion from C to F
     return 1.22 * ua * ((Ttank - Tamb) * (9.0 / 5.0))
+
+
 def roundUp100(x):
     return int(math.ceil(x / 100.0)) * 100
+
 
 # water heater search:  https://www.ahridirectory.org/NewSearch?programId=24&searchTypeId=3
 # https://www.centerpointenergy.com/en-us/SaveEnergyandMoney/Pages/CNP_Calculators/Thermal-Efficiency-Calculator.aspx?sa=MN&au=res
@@ -354,7 +359,7 @@ def nsrdb_plot(
     elementR=9.9,
     stringLen=3,
     parallelStrings=1,
-    nominalPower = 1000,
+    nominalPower=1000,
     losses=14,
     panelParams=None,
 ):
@@ -388,12 +393,9 @@ def nsrdb_plot(
         maxPowerInYear = df["generation"].max()
         # we need to keep the y scale more or less consistent for the whole year
         if maxPowerInYear > minPowerYlim:
-            twin2.set_ylim(-200, maxPowerInYear+50)
+            twin2.set_ylim(-200, maxPowerInYear + 50)
 
         df["90 Degree Zenith"] = 90
-
-
-
         singleDay = df[:][i:j]
 
         # heat capacity Cp of water is 4.186kJ/kg-K
@@ -444,14 +446,13 @@ def nsrdb_plot(
 
         # adjust lower bounds of graph
         if maxStandbyLoss > 180:
-            twin2.set_ylim(-1*roundUp100(maxStandbyLoss), maxPowerInYear+50)
+            twin2.set_ylim(-1 * roundUp100(maxStandbyLoss), maxPowerInYear + 50)
 
         total_kWh = jouleSum * 0.0000002778
         total_generation_kWh = (
             singleDay["generation"] * 60 * float(interval)
         ).sum() * 0.0000002778
 
-        # tpoa, poa = (Transmitted) plane of array irradiance [W/m2]
 
         d = convert_day_of_year(day)
         ax.set_title(
@@ -460,9 +461,9 @@ def nsrdb_plot(
 
         fixedRTitle = f" "
         heaterElementTitle = f"Using MPPT"
-        # pass in a positive elementR to estimate non-mppt
 
-        pprint.pp(panelParams)
+        # pprint.pp(panelParams)
+        # pass in a positive elementR to estimate non-mppt
         if elementR > 0 and panelParams:
             # pvlib is a bit more optimistic then pvwatts, so we scale with a fudge factor
             heaterElementTitle = f"  Element≈{elementR:.1f}Ω"
@@ -471,10 +472,11 @@ def nsrdb_plot(
             singleDay["Sans-MPPT"] = (
                 pvLibTest.getPowerAtLoad(
                     panelParams,
+                    # tpoa, poa = (Transmitted) plane of array irradiance [W/m2]
                     singleDay["tpoa"].to_numpy(),
                     singleDay["tcell"].to_numpy(),
                     elementR / stringLen,
-                    parallelStrings
+                    parallelStrings,
                 )
                 * stringLen
                 * (1.0 - (losses / 100.0))
@@ -500,7 +502,7 @@ def nsrdb_plot(
             size="xx-large",
         )
 
-        nomPanelPower = nominalPower/(stringLen*parallelStrings)
+        nomPanelPower = nominalPower / (stringLen * parallelStrings)
         panelName = f"{stringLen}S {parallelStrings}P {nomPanelPower:0.0f}W Generic"
         if panelParams:
             panelName = f"{stringLen}S {parallelStrings}P {panelParams['Name']}"
@@ -596,7 +598,7 @@ def getGraph():
         stringLen=string_length,
         parallelStrings=parallelStrings,
         losses=losses,
-        nominalPower = power_kW,
+        nominalPower=power_kW,
         panelParams=panelParams,
     )
 
@@ -679,7 +681,7 @@ def copyStartupData():
         # Get the base name of the file (i.e., the file name without the directory)
         file_name = os.path.basename(file)
         destination_file = os.path.join(tmp_folder, file_name)
-        
+
         # Check if the file already exists in the destination folder
         if not os.path.exists(destination_file):
             shutil.copy(file, tmp_folder)

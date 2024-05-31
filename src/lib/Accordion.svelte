@@ -27,7 +27,7 @@
 		border-radius: 2px;
 		box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
 		padding: 0.5rem;
-		margin: 0.0rem;
+		margin: 0rem;
 		margin-top: 0rem;
 		background-color: #ffffff44;
 	}
@@ -41,8 +41,8 @@
 		flex: 1;
 		margin-right: 5px;
 		display: inline-block;
-        line-height: 24px;
-        font-size: larger;
+		line-height: 24px;
+		font-size: larger;
 	}
 
 	div.details {
