@@ -35,6 +35,7 @@ import json
 import urllib.request
 import os
 import csv
+import re
 
 # import additional module for SAM simulation:
 # import site
@@ -341,6 +342,98 @@ def roundUp100(x):
     return int(math.ceil(x / 100.0)) * 100
 
 
+def simulate_single_day(
+    df,
+    day,
+    filename,
+    tankSize=189,
+    startingTemp=40,
+    uef=0.9,
+    elementR=9.9,
+    stringLen=3,
+    parallelStrings=1,
+    nominalPower=1000,
+    losses=14,
+    panelParams=None,
+):
+    timeSteps = 24
+
+    if int(interval) < 59:
+        timeSteps = 48
+    i = day * timeSteps
+    j = i + timeSteps
+    singleDay = df[:][i:j]
+
+    # heat capacity Cp of water is 4.186kJ/kg-K
+    heatCapOfWater = 4186
+    # j/l/k
+    singleDay["Mixing Valve Limit"] = 85
+    singleDay["T&P Valve Limit"] = 98
+    singleDay["Desired Output Temp"] = startingTemp
+
+    # do a rough first pass with rough standby losses
+    singleDay["standbyLoss"] = 60
+    if uef > 0.92:
+        singleDay["standbyLoss"] = 40
+    if uef > 0.94:
+        singleDay["standbyLoss"] = 20
+
+    singleDay["Net Power"] = singleDay["generation"] - singleDay["standbyLoss"]
+    singleDay["energyFlux"] = singleDay["Net Power"] * 60 * float(interval)
+    singleDay["Tank Temperature"] = (
+        singleDay["energyFlux"].cumsum() / (heatCapOfWater * tankSize)
+    ) + startingTemp
+
+    # now do a better calculation with more accurate standby loss
+    singleDay["Ambient Temperature"] = 16
+    singleDay["standbyLoss"] = standbyLoss(
+        uef, singleDay["Tank Temperature"], singleDay["Ambient Temperature"]
+    )
+    singleDay["Net Power"] = singleDay["generation"] - singleDay["standbyLoss"]
+    singleDay["energyFlux"] = singleDay["Net Power"] * 60 * float(interval)
+    singleDay["Tank Temperature"] = (
+        singleDay["energyFlux"].cumsum() / (heatCapOfWater * tankSize)
+    ) + startingTemp
+
+    # one more round to converge better
+    singleDay["standbyLoss"] = standbyLoss(
+        uef, singleDay["Tank Temperature"], singleDay["Ambient Temperature"]
+    )
+    singleDay["Net Power"] = singleDay["generation"] - singleDay["standbyLoss"]
+    singleDay["energyFlux"] = singleDay["Net Power"] * 60 * float(interval)
+    singleDay["Tank Temperature"] = (
+        singleDay["energyFlux"].cumsum() / (heatCapOfWater * tankSize)
+    ) + startingTemp
+
+    # pprint.pp(panelParams)
+    # pass in a positive elementR to estimate non-mppt
+    if elementR > 0 and panelParams:
+        # pvlib is a bit more optimistic then pvwatts, so we scale with a fudge factor
+        conversion_factor = 0.95
+
+        singleDay["Sans-MPPT"] = (
+            pvLibTest.getPowerAtLoad(
+                panelParams,
+                # tpoa, poa = (Transmitted) plane of array irradiance [W/m2]
+                singleDay["tpoa"].to_numpy(),
+                singleDay["tcell"].to_numpy(),
+                elementR / stringLen,
+                parallelStrings,
+            )
+            * stringLen
+            * (1.0 - (losses / 100.0))
+        )
+        # calc percents without the standby loss so dark days work
+        singleDay["Sans-MPPT"] = singleDay["Sans-MPPT"] * conversion_factor
+
+        # now add in standby loss for graphing
+        singleDay["Sans-MPPT"] = (
+            singleDay["Sans-MPPT"] * conversion_factor
+        ) - singleDay["standbyLoss"]
+
+    return singleDay
+
+
 # water heater search:  https://www.ahridirectory.org/NewSearch?programId=24&searchTypeId=3
 # https://www.centerpointenergy.com/en-us/SaveEnergyandMoney/Pages/CNP_Calculators/Thermal-Efficiency-Calculator.aspx?sa=MN&au=res
 # 98%, 100BTU/hr = 0.93 EF  = 29.3 w
@@ -370,9 +463,15 @@ def nsrdb_plot(
         timeSteps = 48
     i = day * timeSteps
     j = i + timeSteps
+    nomPanelPower = nominalPower / (stringLen * parallelStrings)
+    panelName = f"{stringLen}S {parallelStrings}P {nomPanelPower:0.0f}W Generic"
+    if panelParams:
+        panelName = f"{stringLen}S {parallelStrings}P {panelParams['Name']}"
+    panelName = re.sub(r"\W+", "", panelName)
+
     filename = filename.replace(
         ".csv",
-        f"_{tankSize}_{startingTemp}_{uef}_{day}_{elementR}_{stringLen}_{losses}_{parallelStrings}_{nominalPower}.png",
+        f"_{tankSize}_{startingTemp}_{uef}_{day}_{elementR}_{stringLen}_{losses}_{panelName}.png",
     )
     filenameCsv = filename.replace(".png", f"_data.csv")
 
@@ -396,48 +495,21 @@ def nsrdb_plot(
             twin2.set_ylim(-200, maxPowerInYear + 50)
 
         df["90 Degree Zenith"] = 90
-        singleDay = df[:][i:j]
 
-        # heat capacity Cp of water is 4.186kJ/kg-K
-        heatCapOfWater = 4186
-        # j/l/k
-        singleDay["Mixing Valve Limit"] = 85
-        singleDay["T&P Valve Limit"] = 98
-        singleDay["Desired Output Temp"] = startingTemp
-
-        # do a rough first pass with rough standby losses
-        singleDay["standbyLoss"] = 60
-        if uef > 0.92:
-            singleDay["standbyLoss"] = 40
-        if uef > 0.94:
-            singleDay["standbyLoss"] = 20
-
-        singleDay["Net Power"] = singleDay["generation"] - singleDay["standbyLoss"]
-        singleDay["energyFlux"] = singleDay["Net Power"] * 60 * float(interval)
-        singleDay["Tank Temperature"] = (
-            singleDay["energyFlux"].cumsum() / (heatCapOfWater * tankSize)
-        ) + startingTemp
-
-        # now do a better calculation with more accurate standby loss
-        singleDay["Ambient Temperature"] = 16
-        singleDay["standbyLoss"] = standbyLoss(
-            uef, singleDay["Tank Temperature"], singleDay["Ambient Temperature"]
+        singleDay = simulate_single_day(
+            df,
+            day,
+            filename,
+            tankSize,
+            startingTemp,
+            uef,
+            elementR,
+            stringLen,
+            parallelStrings,
+            nominalPower,
+            losses,
+            panelParams,
         )
-        singleDay["Net Power"] = singleDay["generation"] - singleDay["standbyLoss"]
-        singleDay["energyFlux"] = singleDay["Net Power"] * 60 * float(interval)
-        singleDay["Tank Temperature"] = (
-            singleDay["energyFlux"].cumsum() / (heatCapOfWater * tankSize)
-        ) + startingTemp
-
-        # one more round to converge better
-        singleDay["standbyLoss"] = standbyLoss(
-            uef, singleDay["Tank Temperature"], singleDay["Ambient Temperature"]
-        )
-        singleDay["Net Power"] = singleDay["generation"] - singleDay["standbyLoss"]
-        singleDay["energyFlux"] = singleDay["Net Power"] * 60 * float(interval)
-        singleDay["Tank Temperature"] = (
-            singleDay["energyFlux"].cumsum() / (heatCapOfWater * tankSize)
-        ) + startingTemp
 
         jouleSum = singleDay["energyFlux"].sum()
         maxStandbyLoss = singleDay["standbyLoss"].max()
@@ -452,7 +524,6 @@ def nsrdb_plot(
         total_generation_kWh = (
             singleDay["generation"] * 60 * float(interval)
         ).sum() * 0.0000002778
-
 
         d = convert_day_of_year(day)
         ax.set_title(
