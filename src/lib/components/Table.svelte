@@ -1,5 +1,7 @@
 <script>
 	// @ts-nocheck
+	// this file is adapted from:
+	// https://github.com/keithj2780/svelte-spreadsheet-frontend
 
 	import { createEventDispatcher, onMount, tick } from 'svelte';
 

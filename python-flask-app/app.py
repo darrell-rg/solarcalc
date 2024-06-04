@@ -113,7 +113,7 @@ def downloadWeatherData(lat=40.57, lon=-105.07, year=2022):
     # print(url)
 
     hash = hashlib.shake_128(url.encode()).hexdigest(8)
-    filename = os.path.join(tmp_folder, "weather_" + hash + ".csv")
+    filename = os.path.join(tmp_folder, f"weather_{lat}_{lon}_{hash}.csv")
     if not os.path.exists(filename):
         urllib.request.urlretrieve(url, filename)
 
@@ -267,9 +267,9 @@ def runSim(
 
     print(f"total_energy = {total_energy}")
 
-    filename_sim = os.path.join(tmp_folder, "daily_" + hash + ".csv")
+    filename_sim = os.path.join(tmp_folder, f"daily_{lat}_{lon}_{hash}.csv")
     df.to_csv(filename_sim)
-    filename_json = os.path.join(tmp_folder, "monthly_" + hash + ".json")
+    filename_json = os.path.join(tmp_folder, f"monthly_{lat}_{lon}_{hash}.json")
 
     jOut = {"outputs": monthly}
     with open(filename_json, "w") as fp:
@@ -345,14 +345,12 @@ def roundUp100(x):
 def simulate_single_day(
     df,
     day,
-    filename,
     tankSize=189,
     startingTemp=40,
     uef=0.9,
     elementR=9.9,
     stringLen=3,
     parallelStrings=1,
-    nominalPower=1000,
     losses=14,
     panelParams=None,
 ):
@@ -404,33 +402,6 @@ def simulate_single_day(
     singleDay["Tank Temperature"] = (
         singleDay["energyFlux"].cumsum() / (heatCapOfWater * tankSize)
     ) + startingTemp
-
-    # pprint.pp(panelParams)
-    # pass in a positive elementR to estimate non-mppt
-    if elementR > 0 and panelParams:
-        # pvlib is a bit more optimistic then pvwatts, so we scale with a fudge factor
-        conversion_factor = 0.95
-
-        singleDay["Sans-MPPT"] = (
-            pvLibTest.getPowerAtLoad(
-                panelParams,
-                # tpoa, poa = (Transmitted) plane of array irradiance [W/m2]
-                singleDay["tpoa"].to_numpy(),
-                singleDay["tcell"].to_numpy(),
-                elementR / stringLen,
-                parallelStrings,
-            )
-            * stringLen
-            * (1.0 - (losses / 100.0))
-        )
-        # calc percents without the standby loss so dark days work
-        singleDay["Sans-MPPT"] = singleDay["Sans-MPPT"] * conversion_factor
-
-        # now add in standby loss for graphing
-        singleDay["Sans-MPPT"] = (
-            singleDay["Sans-MPPT"] * conversion_factor
-        ) - singleDay["standbyLoss"]
-
     return singleDay
 
 
@@ -496,20 +467,7 @@ def nsrdb_plot(
 
         df["90 Degree Zenith"] = 90
 
-        singleDay = simulate_single_day(
-            df,
-            day,
-            filename,
-            tankSize,
-            startingTemp,
-            uef,
-            elementR,
-            stringLen,
-            parallelStrings,
-            nominalPower,
-            losses,
-            panelParams,
-        )
+        singleDay = simulate_single_day( df, day, tankSize, startingTemp, uef, elementR, stringLen, parallelStrings,  losses, panelParams)
 
         jouleSum = singleDay["energyFlux"].sum()
         maxStandbyLoss = singleDay["standbyLoss"].max()
@@ -524,11 +482,6 @@ def nsrdb_plot(
         total_generation_kWh = (
             singleDay["generation"] * 60 * float(interval)
         ).sum() * 0.0000002778
-
-        d = convert_day_of_year(day)
-        ax.set_title(
-            f"{d},  Net Thermal Energy Gain = {total_kWh:.2f} (kWh)", size="xx-large"
-        )
 
         fixedRTitle = f" "
         heaterElementTitle = f"Using MPPT"
@@ -568,8 +521,11 @@ def nsrdb_plot(
             twin2.plot("Sans-MPPT", "g.", data=singleDay)
             fixedRTitle = f"    Sans-MPPT ≈ {kWh_NoMPPT:.1f}(kWh net) ≈ ({nonMpptPercent:.0f}% gross)"
 
+        d = convert_day_of_year(day)
+        lat = filename.split('_')[1]
+        lon = filename.split('_')[2]
         ax.set_title(
-            f"{d},  Net Thermal Energy Gain = {total_kWh:.2f} (kWh) {fixedRTitle}",
+            f"{d} [{lat}°N {lon}°E] Net Thermal Energy Gain = {total_kWh:.2f} (kWh) {fixedRTitle}",
             size="xx-large",
         )
 
@@ -596,9 +552,22 @@ def nsrdb_plot(
         twin1.set_ylabel("Outside Air(℃)")
         twin1.tick_params(axis="y", colors="k", **tkw)
 
+        #ensure we do not run past the beginning or end of the year
+        offset = 0
+        if day < 16:
+            offset = 15
+        if day > 349:
+            offset = -15
+        # this will plot the tank temp over a month  as white background lines
+        for d in range(day+offset-15,day+offset+15):
+            sd = simulate_single_day( df, d, tankSize, startingTemp, uef, elementR, stringLen, parallelStrings,losses )
+            tt = sd["Tank Temperature"].to_numpy(copy=True)
+            ax2.plot(singleDay.index, tt, "-w")
+
         ax2.plot("T&P Valve Limit", "r-", data=singleDay)
         ax2.plot("Mixing Valve Limit", "r--", data=singleDay)
         ax2.plot("Tank Temperature", "b-o", data=singleDay)
+
         ax2.plot("Desired Output Temp", "k-.", data=singleDay)
         ax2.set_ylabel("Mean Water Tank Temperature (℃)")
         ax2.yaxis.label.set_color("b")

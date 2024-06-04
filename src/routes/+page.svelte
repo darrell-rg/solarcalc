@@ -413,8 +413,8 @@
 <div class="smol-sidebar">
 	<span data-text>
 		<h2>Step 3: Solar Panels</h2>
-		Set<b>Azimuth</b> and <b>Elevation</b> to match the roof where you plan to install the panels.
-		The ideal Elevation is equal to your Latitude.
+		Set&nbsp;<b>Azimuth</b> and <b>Elevation</b> to match the roof where you plan to install the
+		panels. The ideal Elevation is equal to your Latitude.
 		<br /> <br />
 		Put in the rest of the specs for the solar panels you want to Simulate, or use
 		<b>Search for Panel by PN</b>
@@ -616,19 +616,9 @@
 		</figure>
 	</span>
 	<Accordion open={false}>
-		<span slot="head">Graph Assumptions:</span>
+		<span slot="head">Graph Explanation:</span>
 		<div slot="details">
 			<ul>
-				{#if $pv.allowNonMpptt}
-					<li>
-						Non-MPPT Power estimates are an experimental feature, do not expect high accuracy. This
-						uses the <a href="https://pvlib-python.readthedocs.io/en/v0.6.0/singlediode.html"
-							>lambertw single diode model</a
-						> to estimate power into a fixed load (your heater element). Notice that MPPT is most useful
-						when there are clouds. To use Non-MPPT you must select a panel by name/PN.
-					</li>
-				{/if}
-
 				<li>
 					No hot water withdraws (aka nobody is home). On most days you will be using hot water
 					which will lower the <span class="blue"><b>Tank Temperature</b></span>
@@ -649,6 +639,19 @@
 					>
 					would not exceed the <span class="red"><b>Mixing Valve Limit</b> </span>
 				</li>
+				<li>
+					The white background lines are <span class="blue"><b>Tank Temperature</b></span> for ±15 days
+					around the plotted date.
+				</li>
+				{#if $pv.allowNonMpptt}
+					<li>
+						Non-MPPT Power estimates are an experimental feature, do not expect high accuracy. This
+						uses the <a href="https://pvlib-python.readthedocs.io/en/v0.6.0/singlediode.html"
+							>lambertw single diode model</a
+						> to estimate power into a fixed load (your heater element). Notice that MPPT is most useful
+						when there are clouds. To use Non-MPPT you must select a panel by name/PN.
+					</li>
+				{/if}
 			</ul>
 		</div>
 	</Accordion>
