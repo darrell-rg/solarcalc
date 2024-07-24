@@ -147,7 +147,8 @@ export const months = [
 
 // 2022 is the latest tmy available at
 // https://developer.nrel.gov/docs/solar/nsrdb/psm3-2-2-tmy-download/
-export const year = 2022;
+// 2019 has more global data
+export const year = 2019;
 
 export function getMonthData() {
 	return months.map((month, index) => {

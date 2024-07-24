@@ -78,11 +78,11 @@ panelData = None
 csvFileName = "CECModules201920202023.csv"
 
 
-def downloadTMYWeatherData(lat=40.57, lon=-105.07, year=2022):
+def downloadTMYWeatherData(lat=40.57, lng=-105.07, year=2019):
 
     global tmp_folder
     # Declare all variables as strings. Spaces must be replaced with '+', i.e., change 'John Smith' to 'John+Smith'.
-    # "weather_data_source":"NSRDB PSM V3 GOES tmy-2022 3.2.0"
+    # "weather_data_source":"NSRDB PSM V3 GOES tmy-2019 3.2.0"
 
     # Declare url string, docs at
     # https://developer.nrel.gov/docs/solar/nsrdb/psm3-2-2-tmy-download/
@@ -90,7 +90,7 @@ def downloadTMYWeatherData(lat=40.57, lon=-105.07, year=2022):
     # TMY seems to only have 60 min intervals
 
     weather_dataset_name = f"tmy-{year}"
-    url = f"https://developer.nrel.gov/api/nsrdb/v2/solar/psm3-2-2-tmy-download.csv?wkt=POINT({lon:.2f}+{lat:.2f})&names={weather_dataset_name}&utc={utc}&email={email}&reason={reason_for_use}&api_key={api_key}"
+    url = f"https://developer.nrel.gov/api/nsrdb/v2/solar/psm3-2-2-tmy-download.csv?wkt=POINT({lng:.2f}+{lat:.2f})&names={weather_dataset_name}&utc={utc}&email={email}&reason={reason_for_use}&api_key={api_key}"
 
     hash = hashlib.shake_128(url.encode()).hexdigest(8)
     filename = os.path.join(tmp_folder, "weather_" + hash + ".csv")
@@ -100,20 +100,20 @@ def downloadTMYWeatherData(lat=40.57, lon=-105.07, year=2022):
     return filename, hash
 
 
-def downloadWeatherData(lat=40.57, lon=-105.07, year=2022):
+def downloadWeatherData(lat=40.57, lng=-105.07, year=2019):
     global tmp_folder
     # Declare all variables as strings. Spaces must be replaced with '+', i.e., change 'John Smith' to 'John+Smith'.
-    # "weather_data_source":"NSRDB PSM V3 GOES tmy-2022 3.2.0"
+    # "weather_data_source":"NSRDB PSM V3 GOES tmy-2019 3.2.0"
 
     # Declare url string, docs at
     # https://developer.nrel.gov/docs/solar/nsrdb/psm3-2-2-download/
 
-    url = f"https://developer.nrel.gov/api/nsrdb/v2/solar/psm3-2-2-download.csv?wkt=POINT({lon:.2f}+{lat:.2f})&names={year}&utc={utc}&email={email}&reason={reason_for_use}&api_key={api_key}&interval={interval}"
+    url = f"https://developer.nrel.gov/api/nsrdb/v2/solar/psm3-2-2-download.csv?wkt=POINT({lng:.2f}+{lat:.2f})&names={year}&utc={utc}&email={email}&reason={reason_for_use}&api_key={api_key}&interval={interval}"
 
-    # print(url)
+    print(url)
 
     hash = hashlib.shake_128(url.encode()).hexdigest(8)
-    filename = os.path.join(tmp_folder, f"weather_{lat}_{lon}_{hash}.csv")
+    filename = os.path.join(tmp_folder, f"weather_{lat}_{lng}_{hash}.csv")
     if not os.path.exists(filename):
         urllib.request.urlretrieve(url, filename)
 
@@ -122,8 +122,8 @@ def downloadWeatherData(lat=40.57, lon=-105.07, year=2022):
 
 def runMonthlySimJson(
     lat=40.57,
-    lon=-105.07,
-    year=2022,
+    lng=-105.07,
+    year=2019,
     power_kW=1,
     tilt=40,
     azimuth=180,
@@ -135,7 +135,7 @@ def runMonthlySimJson(
     # this will run PvWatts V8 on nrel's api
     # https://developer.nrel.gov/docs/solar/pvwatts/v8/
 
-    url = f"https://developer.nrel.gov/api/pvwatts/v8.json?api_key={api_key}&azimuth={azimuth}&system_capacity={power_kW:.2f}&losses={losses}&array_type=1&module_type={module_type}&gcr=0.4&dc_ac_ratio=1.2&inv_eff=96.0&radius=0&dataset=nsrdb&tilt={tilt}&lat={lat:.2f}&lon={lon:.2f}&year={year}"
+    url = f"https://developer.nrel.gov/api/pvwatts/v8.json?api_key={api_key}&azimuth={azimuth}&system_capacity={power_kW:.2f}&losses={losses}&array_type=1&module_type={module_type}&gcr=0.4&dc_ac_ratio=1.2&inv_eff=96.0&radius=0&dataset=nsrdb&tilt={tilt}&lat={lat:.2f}&lng={lng:.2f}&year={year}"
 
     # print(url)
     hash = hashlib.shake_128(url.encode()).hexdigest(8)
@@ -146,7 +146,7 @@ def runMonthlySimJson(
         # urllib.request.urlretrieve(url, filename_api_json)
 
         df, filename, filename_monthly = runSim(
-            lat, lon, year, power_kW, tilt, azimuth, module_type, losses, panelParams
+            lat, lng, year, power_kW, tilt, azimuth, module_type, losses, panelParams
         )
 
     return filename_monthly, hash
@@ -154,8 +154,8 @@ def runMonthlySimJson(
 
 def runSim(
     lat=40.57,
-    lon=-105.07,
-    year=2022,
+    lng=-105.07,
+    year=2019,
     power_kW=1,
     tilt=40,
     azimuth=180,
@@ -164,9 +164,9 @@ def runSim(
     panelParams=None,
 ):
     global tmp_folder
-    filename, hash = downloadWeatherData(lat=lat, lon=lon, year=year)
+    filename, hash = downloadWeatherData(lat=lat, lng=lng, year=year)
 
-    extraVars = "hash={hash}&azimuth={azimuth}&system_capacity={power_kW}&losses={losses}&array_type=1&module_type={module_type}&gcr=0.4&dc_ac_ratio=1.2&inv_eff=96.0&radius=0&dataset=nsrdb&tilt={tilt}&lat={lat}&lon={lon}"
+    extraVars = "hash={hash}&azimuth={azimuth}&system_capacity={power_kW}&losses={losses}&array_type=1&module_type={module_type}&gcr=0.4&dc_ac_ratio=1.2&inv_eff=96.0&radius=0&dataset=nsrdb&tilt={tilt}&lat={lat}&lng={lng}"
 
     hash = hashlib.shake_128(extraVars.encode()).hexdigest(8)
 
@@ -194,7 +194,7 @@ def runSim(
     # Must be byte strings
     wfd = ssc.data_create()
     ssc.data_set_number(wfd, b"lat", lat)
-    ssc.data_set_number(wfd, b"lon", lon)
+    ssc.data_set_number(wfd, b"lng", lng)
     ssc.data_set_number(wfd, b"tz", timezone)
     ssc.data_set_number(wfd, b"elev", elevation)
     ssc.data_set_array(wfd, b"year", df.index.year)
@@ -252,7 +252,7 @@ def runSim(
 
     # simData = pvLibTest.ssc_table_to_dict(mod, dat)
     # pprint.pp(simData.keys())
-    # dict_keys(['gen', 'annual_energy_distribution_time', 'solar_resource_data', 'albedo_default', 'albedo_default_snow', 'use_wf_albedo', 'system_use_lifetime_output', 'system_capacity', 'module_type', 'dc_ac_ratio', 'bifaciality', 'array_type', 'tilt', 'azimuth', 'gcr', 'rotlim', 'losses', 'enable_wind_stow', 'stow_wspd', 'wind_stow_angle', 'en_snowloss', 'inv_eff', 'xfmr_nll', 'xfmr_ll', 'shading_en_string_option', 'shading_string_option', 'shading_en_timestep', 'shading_en_mxh', 'shading_en_azal', 'shading_en_diff', 'batt_simple_enable', 'gh', 'dn', 'df', 'tamb', 'wspd', 'snow', 'alb', 'soiling_f', 'sunup', 'shad_beam_factor', 'ss_beam_factor', 'ss_sky_diffuse_factor', 'ss_gnd_diffuse_factor', 'aoi', 'poa', 'tpoa', 'tcell', 'dcsnowderate', 'dc', 'ac', 'ac_pre_adjust', 'inv_eff_output', 'poa_monthly', 'solrad_monthly', 'dc_monthly', 'ac_monthly', 'monthly_energy', 'solrad_annual', 'ac_annual', 'ac_annual_pre_adjust', 'annual_energy', 'capacity_factor', 'capacity_factor_ac', 'kwh_per_kw', 'location', 'city', 'state', 'lat', 'lon', 'tz', 'elev', 'inverter_efficiency', 'ts_shift_hours', 'percent_complete', 'adjust_constant', 'adjust_en_timeindex', 'adjust_en_periods'])
+    # dict_keys(['gen', 'annual_energy_distribution_time', 'solar_resource_data', 'albedo_default', 'albedo_default_snow', 'use_wf_albedo', 'system_use_lifetime_output', 'system_capacity', 'module_type', 'dc_ac_ratio', 'bifaciality', 'array_type', 'tilt', 'azimuth', 'gcr', 'rotlim', 'losses', 'enable_wind_stow', 'stow_wspd', 'wind_stow_angle', 'en_snowloss', 'inv_eff', 'xfmr_nll', 'xfmr_ll', 'shading_en_string_option', 'shading_string_option', 'shading_en_timestep', 'shading_en_mxh', 'shading_en_azal', 'shading_en_diff', 'batt_simple_enable', 'gh', 'dn', 'df', 'tamb', 'wspd', 'snow', 'alb', 'soiling_f', 'sunup', 'shad_beam_factor', 'ss_beam_factor', 'ss_sky_diffuse_factor', 'ss_gnd_diffuse_factor', 'aoi', 'poa', 'tpoa', 'tcell', 'dcsnowderate', 'dc', 'ac', 'ac_pre_adjust', 'inv_eff_output', 'poa_monthly', 'solrad_monthly', 'dc_monthly', 'ac_monthly', 'monthly_energy', 'solrad_annual', 'ac_annual', 'ac_annual_pre_adjust', 'annual_energy', 'capacity_factor', 'capacity_factor_ac', 'kwh_per_kw', 'location', 'city', 'state', 'lat', 'lng', 'tz', 'elev', 'inverter_efficiency', 'ts_shift_hours', 'percent_complete', 'adjust_constant', 'adjust_en_timeindex', 'adjust_en_periods'])
 
     # free the memory
     ssc.data_free(dat)
@@ -267,9 +267,9 @@ def runSim(
 
     print(f"total_energy = {total_energy}")
 
-    filename_sim = os.path.join(tmp_folder, f"daily_{lat}_{lon}_{hash}.csv")
+    filename_sim = os.path.join(tmp_folder, f"daily_{lat}_{lng}_{hash}.csv")
     df.to_csv(filename_sim)
-    filename_json = os.path.join(tmp_folder, f"monthly_{lat}_{lon}_{hash}.json")
+    filename_json = os.path.join(tmp_folder, f"monthly_{lat}_{lng}_{hash}.json")
 
     jOut = {"outputs": monthly}
     with open(filename_json, "w") as fp:
@@ -278,7 +278,7 @@ def runSim(
     return df, filename_sim, filename_json
 
 
-def convert_day_of_year(day_of_year, year=2022):
+def convert_day_of_year(day_of_year, year=2019):
     # Create a date object for the first day of the year
     start_date = datetime(year, 1, 1)
 
@@ -523,9 +523,9 @@ def nsrdb_plot(
 
         d = convert_day_of_year(day)
         lat = filename.split('_')[1]
-        lon = filename.split('_')[2]
+        lng = filename.split('_')[2]
         ax.set_title(
-            f"{d} [{lat}°N {lon}°E] Net Thermal Energy Gain = {total_kWh:.2f} (kWh) {fixedRTitle}",
+            f"{d} [{lat}°N {lng}°E] Net Thermal Energy Gain = {total_kWh:.2f} (kWh) {fixedRTitle}",
             size="xx-large",
         )
 
@@ -597,8 +597,8 @@ def nsrdb_plot(
 def getGraph():
 
     lat = float(request.args.get("lat", "40.57"))
-    lon = float(request.args.get("lon", "-105.07"))
-    year = int(request.args.get("year", "2022"))
+    lng = float(request.args.get("lng", "-105.07"))
+    year = int(request.args.get("year", "2019"))
     day = int(request.args.get("day", "180"))
     power_kW = float(request.args.get("pwr", "1000"))
     tilt = float(request.args.get("tilt", "40"))
@@ -617,7 +617,7 @@ def getGraph():
 
     df, filename, filenameJson = runSim(
         lat,
-        lon,
+        lng,
         year,
         power_kW,
         tilt,
@@ -654,8 +654,8 @@ def getGraph():
 def getCsv():
 
     lat = float(request.args.get("lat", "40.57"))
-    lon = float(request.args.get("lon", "-105.07"))
-    year = int(request.args.get("year", "2022"))
+    lng = float(request.args.get("lng", "-105.07"))
+    year = int(request.args.get("year", "2019"))
     power_kW = float(request.args.get("pwr", "1000"))
     tilt = float(request.args.get("tilt", "40"))
     azimuth = float(request.args.get("azimuth", "180"))
@@ -663,7 +663,7 @@ def getCsv():
     module_type = int(request.args.get("module_type", "0"))
 
     df, filename, filename_json = runSim(
-        lat, lon, year, power_kW, tilt, azimuth, module_type, losses
+        lat, lng, year, power_kW, tilt, azimuth, module_type, losses
     )
 
     if os.path.exists(filename):
@@ -678,16 +678,16 @@ def getCsv():
 def getJson():
 
     lat = float(request.args.get("lat", "40.57"))
-    lon = float(request.args.get("lon", "-105.07"))
+    lng = float(request.args.get("lng", "-105.07"))
     power_kW = float(request.args.get("pwr", "1000"))
     tilt = float(request.args.get("tilt", "40"))
     azimuth = float(request.args.get("azimuth", "180"))
     losses = float(request.args.get("losses", "14"))
     module_type = int(request.args.get("module_type", "0"))
-    year = int(request.args.get("year", "2022"))
+    year = int(request.args.get("year", "2019"))
 
     filename, hash = runMonthlySimJson(
-        lat, lon, year, power_kW, tilt, azimuth, module_type, losses
+        lat, lng, year, power_kW, tilt, azimuth, module_type, losses
     )
 
     if os.path.exists(filename):

@@ -63,7 +63,7 @@
 		let pwr = nominalPower / 1000.0;
 		url =
 			url +
-			`day=${day}&lat=${$pv.lat}&lng=${$pv.lng}&tilt=${$pv.elevation}&azimuth=${$pv.azimuth}&pwr=${nominalPower}&losses=${$pv.losses}&module_type=${$pv.selectedModuleTypeId}&liters=${$pv.tankSize}&uef=${$pv.energyFactor}&startingTemp=${$pv.hotWaterOutTemp}&Rw=${wireResistance}&Re=${Re}&pps=${$pv.panelsPerString}&ps=${$pv.parallelStrings}&MN=${$pv.selectedModuleName}`;
+			`day=${day}&lat=${round($pv.lat)}&lng=${round($pv.lng)}&tilt=${$pv.elevation}&azimuth=${$pv.azimuth}&pwr=${nominalPower}&losses=${$pv.losses}&module_type=${$pv.selectedModuleTypeId}&liters=${$pv.tankSize}&uef=${$pv.energyFactor}&startingTemp=${$pv.hotWaterOutTemp}&Rw=${wireResistance}&Re=${Re}&pps=${$pv.panelsPerString}&ps=${$pv.parallelStrings}&MN=${$pv.selectedModuleName}`;
 
 		const elem = document.getElementById('solarGraph');
 		if (elem) {
