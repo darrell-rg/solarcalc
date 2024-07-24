@@ -194,7 +194,7 @@ def runSim(
     # Must be byte strings
     wfd = ssc.data_create()
     ssc.data_set_number(wfd, b"lat", lat)
-    ssc.data_set_number(wfd, b"lng", lng)
+    ssc.data_set_number(wfd, b"lon", lng)
     ssc.data_set_number(wfd, b"tz", timezone)
     ssc.data_set_number(wfd, b"elev", elevation)
     ssc.data_set_array(wfd, b"year", df.index.year)
