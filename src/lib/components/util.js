@@ -1,4 +1,5 @@
 /**
+ * Rounds to two decimal places
  * @param {number} num
  */
 export function round(num) {

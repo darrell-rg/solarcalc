@@ -82,7 +82,7 @@
 		let pwr = nominalPower / 1000.0;
 		url =
 			url +
-			`lat=${$pv.lat}&lng=${$pv.lng}&tilt=${$pv.elevation}&azimuth=${$pv.azimuth}&pwr=${nominalPower}&losses=${$pv.losses}&module_type=${$pv.selectedModuleTypeId}&liters=${$pv.tankSize}&uef=${$pv.energyFactor}&startingTemp=${$pv.hotWaterOutTemp}&Rw=${wireResistance}&Re=${Re}&pps=${$pv.panelsPerString}&ps=${$pv.parallelStrings}&MN=${$pv.selectedModuleName}`;
+			`lat=${round($pv.lat)}&lng=${round($pv.lng)}&tilt=${$pv.elevation}&azimuth=${$pv.azimuth}&pwr=${nominalPower}&losses=${$pv.losses}&module_type=${$pv.selectedModuleTypeId}&liters=${$pv.tankSize}&uef=${$pv.energyFactor}&startingTemp=${$pv.hotWaterOutTemp}&Rw=${wireResistance}&Re=${Re}&pps=${$pv.panelsPerString}&ps=${$pv.parallelStrings}&MN=${$pv.selectedModuleName}`;
 
 		let newYearlySavings = 0;
 
