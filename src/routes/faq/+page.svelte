@@ -33,7 +33,7 @@
 		<h2>What is the payback period?</h2>
 		<p>
 			This depends a lot on how expensive your power is and how much hot water you use. In my case,
-			it was costing me a bit over buck day to heat water. I was able to build a PV system for less
+			it was costing me a bit over a buck a day to heat water. I was able to build a PV system for less
 			then $2000. Even with cheap power in Colorado my payback was around 5 years. If you are using
 			expensive California power, your payback could be closer to 2 years.
 		</p>
