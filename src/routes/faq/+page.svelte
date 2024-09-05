@@ -33,9 +33,9 @@
 		<h2>What is the payback period?</h2>
 		<p>
 			This depends a lot on how expensive your power is and how much hot water you use. In my case,
-			it was costing me a bit over a buck a day to heat water. I was able to build a PV system for less
-			then $2000. Even with cheap power in Colorado my payback was around 5 years. If you are using
-			expensive California power, your payback could be closer to 2 years.
+			it was costing me a bit over a buck a day to heat water. I was able to build a PV system for
+			less then $2000. Even with cheap power in Colorado my payback was around 5 years. If you are
+			using expensive California power, your payback could be closer to 2 years.
 		</p>
 	</article>
 
@@ -47,8 +47,8 @@
 			experience it would be good to find an experienced person to help with the wiring part. That
 			said, this is a very simple circuit we are building. Be sure to install all the wires in
 			conduit to reduce fire risk. Bond the solar rails and negative side of the array to a ground
-			rod in case of lightning. Turn the switch off and check for voltage 
-			before messing with the wires (or work at night).
+			rod in case of lightning. Turn the switch off and check for voltage before messing with the
+			wires (or work at night).
 		</p>
 	</article>
 
@@ -75,11 +75,11 @@
 	<article class="faq">
 		<h2>How much energy can I store in my water heater?</h2>
 		<p>
-			If you assume the water starts off warm, heating 50 gallons from 40°C to 85°C, stores 9.89kWh. If you
-			assume you are pulling water from the cold ground, heating 50 gallons from 5°C(ground temp) to
-			85°C stores 17.5kWh. A Tesla Powerwall, stores about 13.5kWh. For both the water heater and
-			the Powerwall, you can expect an efficiency of about 90%. The powerwall cost around $9,300,
-			and you should be able to DIY this system for around $2,000.
+			If you assume the water starts off warm, heating 50 gallons from 40°C to 85°C, stores 9.89kWh.
+			If you assume you are pulling water from the cold ground, heating 50 gallons from 5°C(ground
+			temp) to 85°C stores 17.5kWh. A Tesla Powerwall, stores about 13.5kWh. For both the water
+			heater and the Powerwall, you can expect an efficiency of about 90%. The powerwall cost around
+			$9,300, and you should be able to DIY this system for around $2,000.
 		</p>
 	</article>
 
@@ -143,8 +143,9 @@
 			Few or no permits are required since there is no connection to the grid. This is a major
 			benefit! In my county, the permits would double the install cost. Off grid also means there
 			are no delays waiting for approvals to turn on your system. Mounting the panels on a shed
-			instead of your house roof can avoid the need for permits, this was the case in my locale.
-			You should still follow the local electrical and building codes even if you don't get a permit though. 
+			instead of your house roof can avoid the need for permits, this was the case in my locale. You
+			should still follow the local electrical and building codes even if you don't get a permit
+			though.
 		</p>
 	</article>
 
@@ -183,8 +184,8 @@
 			they always manage to start beeping at 3am). They cost more and are less reliable then the old
 			fashioned electric water heater. They steal heat from the indoor air and dump it to the water,
 			which is great in summer but less great in winter. If you already have a heat pump water
-			heater, you may be able to hook up the bottom/backup element to solar, but I have not tried this
-			myself.
+			heater, you may be able to hook up the bottom/backup element to solar, but I have not tried
+			this myself.
 		</p>
 	</article>
 
@@ -219,15 +220,14 @@
 			<img alt="mixing valve" src="mixingValve.png" class="rightSideImg" />
 			<figcaption>The Magical Mixing Valve</figcaption>
 		</figure>
-		<h2>What is a thermostatic mixing valve?</h2>
+		<h2>What is a thermostatic mixing valve (TMV)?</h2>
 		<p>
 			A mixing valve mixes some cold water in with the hot to maintain a set output temperature. In
 			the summer,the water will get hotter then is safe so you definitely need a thermostatic mixing
-			valve to prevent scalds. The extra hot water in the tank increases the amount of energy you
-			can store. I have made it through three cloudy days in a row before I need to use city power
-			to heat the water. You install it at the output from the water heater where the hot water is
-			piped to the rest of the house. Adding this valve prevents excessively hot water from burning
-			you, and allows you to store more energy. An example is the <a
+			valve to prevent scalds. The extra-hot water in the tank increases the amount of energy you
+			can store. I have made it as long as three cloudy days before I needed to use city power to
+			heat water. Install the TMV at the output from the water heater where the hot water is piped
+			to the rest of the house. Adding this valve is important for safety. An example is the <a
 				href="https://www.nibco.com/nibco-products/system-management/temperature-control/thermostatic-mixing-valves/h-tmv-131"
 				>Webstone TMV</a
 			> which costs $115 and handles hot water up to 85C.
@@ -277,6 +277,14 @@
 			heater with bad insulation (high standby losses), and I have trees that shade the solar panels
 			for about 1/2 of the day. So my 1.7kW becomes more like 0.8kW. If ever replace the water
 			heater, or the trees fall down, I will get a thermostat.
+		</p>
+	</article>
+
+	<article class="faq">
+		<h2>Ain't you seen that MythBusters exploding water heater episode?</h2>
+		<p>
+			Yes I have seen it, great episode. The T&P valve is there to prevent overpressure, and the
+			MythBusters replaced that valve with a steel plug. Don't do that.
 		</p>
 	</article>
 
