@@ -10,8 +10,9 @@
 <div class="text-column">
 	<h1>Instructions</h1>
 	<figure class="floatRightBig">
+		<small>Mouseover For Labels</small>
 		<HousePic style="" />
-		<figcaption>Mouseover schematic to show labels</figcaption>
+		<figcaption>I spent way too much time on this animation, so I am using it wherever I can. You're welcome.</figcaption>
 	</figure>
 	<ol type="i">
 		<li>
@@ -20,7 +21,7 @@
 				<li>Design your system using the simulator.</li>
 				<li>Fill in what you know, leave the rest on defaults.</li>
 				<li>Simulate your design to figure out the minium number of panels required.</li>
-				<li>The sim will estimate the yearly cost of power used for water heating</li>
+				<li>The sim will estimate the yearly cost of power used for water heating.</li>
 				<li>
 					Look at your water heater and figure out what kind of fittings you will need to install
 					mixing valve.

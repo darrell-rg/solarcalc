@@ -63,7 +63,7 @@
 		let pwr = nominalPower / 1000.0;
 		url =
 			url +
-			`day=${day}&lat=${round($pv.lat)}&lng=${round($pv.lng)}&tilt=${$pv.elevation}&azimuth=${$pv.azimuth}&pwr=${nominalPower}&losses=${$pv.losses}&module_type=${$pv.selectedModuleTypeId}&liters=${$pv.tankSize}&uef=${$pv.energyFactor}&startingTemp=${$pv.hotWaterOutTemp}&Rw=${wireResistance}&Re=${Re}&pps=${$pv.panelsPerString}&ps=${$pv.parallelStrings}&MN=${$pv.selectedModuleName}`;
+			`day=${day}&lat=${round($pv.lat)}&lng=${round($pv.lng)}&tilt=${$pv.elevation}&azimuth=${$pv.azimuth}&pwr=${nominalPower}&losses=${$pv.losses}&module_type=${$pv.selectedModuleTypeId}&liters=${$pv.tankSize}&uef=${$pv.energyFactor}&startingTemp=${$pv.hotWaterOutTemp}&Rw=${wireResistance}&Re=${Re}&pps=${$pv.panelsPerString}&ps=${$pv.parallelStrings}&MN=${$pv.selectedModuleName}&demand=${dailyEnergyDemand}`;
 
 		const elem = document.getElementById('solarGraph');
 		if (elem) {
@@ -114,7 +114,7 @@
 						month: months[index],
 						days: daysInMonth(year, index),
 						insolation: data.outputs.solrad_monthly[index],
-						Edemand: dailyDemand * daysInMonth(year, index),
+						Edemand: dailyEnergyDemand * daysInMonth(year, index),
 						Esolar: data.outputs.dc_monthly[index] / 1000.0,
 						savings: (data.outputs.dc_monthly[index] / 1000.0) * avgPowerPrice,
 						Epercent: 0,
@@ -179,7 +179,7 @@
 	let nominalPower = 0;
 	let energyToHeatOneTank = 0;
 	let tanksUsedPerDay = 0;
-	let dailyDemand = 0;
+	let dailyEnergyDemand = 0;
 	let elementR = 0;
 	let mismatch = 0;
 	let Rsource = 0;
@@ -188,7 +188,6 @@
 	let avgPowerPrice = 0;
 	let wireResistance = 0;
 	let paybackYears = 0;
-	let dailyEnergyDemand = 0;
 	let stringVoc = 0;
 	let wireLosses = 0;
 
@@ -207,11 +206,10 @@
 	$: powerPerPanel = $pv.Vmp * $pv.Imp;
 	$: nominalPower = powerPerPanel * $pv.panelsPerString * $pv.parallelStrings;
 	$: stringVoc = $pv.Voc * $pv.panelsPerString;
-	$: dailyDemand = round((tanksUsedPerDay * energyToHeatOneTank) / 3600e3);
+	$: dailyEnergyDemand = round((tanksUsedPerDay * energyToHeatOneTank) / 3600e3);
 	$: Rmp = ($pv.Vmp * $pv.panelsPerString) / $pv.Imp / $pv.parallelStrings;
 	$: Rsource = Rmp;
 	$: mismatch = Math.abs(100 - ((elementR + wireResistance) / Rsource) * 100.0);
-	$: dailyEnergyDemand = (tanksUsedPerDay * energyToHeatOneTank) / 3600e3;
 	$: wireLosses = $pv.Imp * $pv.parallelStrings * ($pv.Imp * $pv.parallelStrings) * wireResistance;
 </script>
 
@@ -228,6 +226,7 @@
 	</li>
 	<li style="">
 		<figure>
+			<small>Mouseover For Labels</small>
 			<HousePic style="max-width: 350px;" />
 			<figcaption>A simple, direct current, grid optional water heater.</figcaption>
 		</figure>
@@ -561,22 +560,67 @@
 <br />
 <div class="sim-sidebar" id="step5">
 	<span data-text>
-		<h2>Step 4: Simulate 1 Day</h2>
+		<h2>Step 4: Simulate 1 Day <small>(Check Tank Sizing)</small></h2>
 		<p>
-			Click a <b>Graph random day</b> button a few times until you find a nice sunny day (lots of
-			<b>Solar Radiation</b>). This graph uses the TMY-{year} weather data to run a daily PV simulation
-			to help you size your array. The important thing to look at here is
-			<span class="blue"> <b>Tank Temperature</b></span>.
+			Click a <b>Graph random day</b> button a few times until you find a nice sunny day, with lots
+			of
+			<span class="red"
+				><b
+					>DNI(<img
+						alt="Red Squares"
+						src="DNI_Squares.png"
+						style="height: 20px; width:40px; margin:0;"
+					/>)</b
+				></span
+			>. This graph simulates your PV system at 30min intervals using weather data from
+			{year}. The important thing to look at here is
+			<span class="blue">
+				<b>Tank Temperature</b>(<img
+					alt="Blue Circles"
+					src="TankTempCircles.png"
+					style="height: 20px; width:40px; margin:0;"
+				/>)</span
+			>.
 		</p>
 		<p>
-			If your <b>Net Thermal Energy Gain</b> is more than
-			<b>Daily Energy Demand ({round(dailyEnergyDemand)}kWh)</b>
-			on a sunny day, then your solar array is oversized. If the
-			<span class="blue"><b>Tank Temperature</b></span>
-			is going over the
-			<span class="red"><b>Mixing Valve Limit</b></span>
-			and you still are making less then 2/3 of your <b>Daily Energy Demand</b>, then your tank is
-			undersized.
+			If the
+			<span class="blue"
+				><b>Tank Temperature</b>(<img
+					alt="Blue Circles"
+					src="TankTempCircles.png"
+					style="height: 20px; width:40px; margin:0;"
+				/>)</span
+			>
+			is going way over the
+			<span class="red"
+				><b>Mixing Valve Limit</b>(<img
+					alt="Red Dash"
+					src="MixingValveLimitDashLine.png"
+					style="height: 20px; width:40px; margin:0;"
+				/>)</span
+			>
+			and you still are making less than 70 <b>% of DED</b> (Daily Energy Demand), then your
+			tank is undersized. 
+		</p>
+		<p>
+			If, on a sunny day, your <b>% of DED</b> is between 75 and 150, AND your
+			<span class="blue"
+				><b>Tank Temperature</b>(<img
+					alt="Blue Circles"
+					src="TankTempCircles.png"
+					style="height: 20px; width:40px; margin:0;"
+				/>)</span
+			>
+			is not going over the
+			<span class="red"><b>T&P Valve Limit</b>(<img
+				alt="Red Line"
+				src="TPValveLimitRedLine.png"
+				style="height: 20px; width:40px; margin:0;"
+			/>) </span>
+			then your sizing is near optimal.
+		</p>
+		<p>
+			On the days when you collect more then 100 <b>% of DED</b>, the tank can store energy overnight in case the next day is cloudy.
 		</p>
 
 		<div class="smol-css-grid">
@@ -661,10 +705,10 @@
 
 <div class="sim-sidebar" id="step4">
 	<span data-text>
-		<h2>Step 5: Simulate 1 Year</h2>
+		<h2>Step 5: Simulate 1 Year (Estimate ROI)</h2>
 		<p>
 			Click <b>Simulate Monthly Generation</b> This will feed the simulator with the solar panel
-			data you entered above and Typical Meteorological Year Data (TMY-{year}) for your lat/lng.
+			data you entered above and Typical Meteorological Year Data ({year}) at 30min intervals for your location. We then summarize the results by month.
 		</p>
 
 		<button on:click={(e) => updateMonthlyTable(e)}>Simulate Monthly Generation</button> with

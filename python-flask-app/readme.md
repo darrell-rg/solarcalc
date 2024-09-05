@@ -20,7 +20,7 @@ pip install -r requirements.txt
 
 set NRDSBAPIKEY = "your api key from NREL"
 
-flask run dev
+flask run --debug
 
 curl -X GET <endpoint-url>/
 

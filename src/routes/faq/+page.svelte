@@ -10,12 +10,13 @@
 <div class="text-column">
 	<h1>FAQ</h1>
 	<figure class="floatRightBig">
+		<small>Mouseover For Labels</small>
 		<HousePic style="" />
 		<!-- <figcaption>Those lazy trees get plenty of free solar power. Why not you?</figcaption> -->
 		<!-- <figcaption>Those lazy trees get plenty of free photons. Why not collect your share?</figcaption> -->
 		<!-- <figcaption>Those lazy trees stand around all day, getting fed free photons. Why not wet your beak?</figcaption> -->
 		<figcaption>
-			Those lazy trees stand around all day, gorging themselves on free photons and farting out
+			Those lazy trees stand around all day, gorging themselves on free solar power and farting out
 			highly combustible gasses. If they can do it, so can you!
 		</figcaption>
 	</figure>
@@ -46,7 +47,7 @@
 			experience it would be good to find an experienced person to help with the wiring part. That
 			said, this is a very simple circuit we are building. Be sure to install all the wires in
 			conduit to reduce fire risk. Bond the solar rails and negative side of the array to a ground
-			rod in case of lightning. Turn the switch off and check for current with a DC clamp meter
+			rod in case of lightning. Turn the switch off and check for voltage 
 			before messing with the wires (or work at night).
 		</p>
 	</article>
@@ -74,7 +75,7 @@
 	<article class="faq">
 		<h2>How much energy can I store in my water heater?</h2>
 		<p>
-			If you assume the water starts off warm, heating from 40°C to 85°C, stores 9.89kWh. If you
+			If you assume the water starts off warm, heating 50 gallons from 40°C to 85°C, stores 9.89kWh. If you
 			assume you are pulling water from the cold ground, heating 50 gallons from 5°C(ground temp) to
 			85°C stores 17.5kWh. A Tesla Powerwall, stores about 13.5kWh. For both the water heater and
 			the Powerwall, you can expect an efficiency of about 90%. The powerwall cost around $9,300,
@@ -143,6 +144,7 @@
 			benefit! In my county, the permits would double the install cost. Off grid also means there
 			are no delays waiting for approvals to turn on your system. Mounting the panels on a shed
 			instead of your house roof can avoid the need for permits, this was the case in my locale.
+			You should still follow the local electrical and building codes even if you don't get a permit though. 
 		</p>
 	</article>
 
@@ -181,7 +183,7 @@
 			they always manage to start beeping at 3am). They cost more and are less reliable then the old
 			fashioned electric water heater. They steal heat from the indoor air and dump it to the water,
 			which is great in summer but less great in winter. If you already have a heat pump water
-			heater, you may be able to hook up the bottom element to solar, but I have not tried this
+			heater, you may be able to hook up the bottom/backup element to solar, but I have not tried this
 			myself.
 		</p>
 	</article>
@@ -197,7 +199,7 @@
 			panels. This is so firefighters/electricians/plumbers/etc can turn your panels off while they
 			are working. Search for "Solar Disconnect Switch" or "Solar Circuit Breaker Waterproof
 			Isolator". You can get a combo unit that is both a switch and a circuit breaker. You should
-			also mount a second shutoff switch near the water heater to make working on it safer.
+			also mount a second shutoff switch indoors near the water heater to make working on it safer.
 		</p>
 	</article>
 

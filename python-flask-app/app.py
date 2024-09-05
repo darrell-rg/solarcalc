@@ -426,6 +426,7 @@ def nsrdb_plot(
     nominalPower=1000,
     losses=14,
     panelParams=None,
+    demand=5.55
 ):
     global tmp_folder
     timeSteps = 24
@@ -524,8 +525,10 @@ def nsrdb_plot(
         d = convert_day_of_year(day)
         lat = filename.split('_')[1]
         lng = filename.split('_')[2]
+
+        percent_from_solar = (total_kWh / demand) * 100
         ax.set_title(
-            f"{d} [{lat}°N {lng}°E] Net Thermal Energy Gain = {total_kWh:.2f} (kWh) {fixedRTitle}",
+            f"{d} [{lat}°N {lng}°E] Net Thermal Energy Gain = {total_kWh:.2f} (kWh) {fixedRTitle} {percent_from_solar:.2f}% of DED",
             size="xx-large",
         )
 
@@ -612,6 +615,7 @@ def getGraph():
     parallelStrings = int(request.args.get("ps", "1"))
     elementR = float(request.args.get("Re", "10.2"))
     moduleName = request.args.get("MN", "fake test panel")
+    demand = float(request.args.get("demand", "10.00"))
 
     panelParams = findPanelByName(moduleName)
 
@@ -640,6 +644,7 @@ def getGraph():
         losses=losses,
         nominalPower=power_kW,
         panelParams=panelParams,
+        demand=demand
     )
 
     if os.path.exists(graph):
