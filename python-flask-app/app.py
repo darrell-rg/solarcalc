@@ -520,7 +520,8 @@ def nsrdb_plot(
                 singleDay["Sans-MPPT"] * 60 * float(interval)
             ).sum() * 0.0000002778
             twin2.plot("Sans-MPPT", "g.", data=singleDay)
-            fixedRTitle = f"    Sans-MPPT ≈ {kWh_NoMPPT:.1f}(kWh net) ≈ ({nonMpptPercent:.0f}% gross)"
+            fixedRTitle = f"  Non-MPPT ≈ {kWh_NoMPPT:.1f}(kWh net)"
+            #" ≈ ({nonMpptPercent:.0f}% gross)""
 
         d = convert_day_of_year(day)
         lat = filename.split('_')[1]
@@ -528,7 +529,7 @@ def nsrdb_plot(
 
         percent_from_solar = (total_kWh / demand) * 100
         ax.set_title(
-            f"{d} [{lat}°N {lng}°E] Net Thermal Energy Gain = {total_kWh:.2f} (kWh) {fixedRTitle} {percent_from_solar:.2f}% of DED",
+            f"{d} [{lat}°N {lng}°E]   Energy Gain={total_kWh:.2f}(kWh net)   {percent_from_solar:.2f}% of DED  {fixedRTitle}",
             size="xx-large",
         )
 
