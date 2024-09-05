@@ -485,7 +485,7 @@ def nsrdb_plot(
         ).sum() * 0.0000002778
 
         fixedRTitle = f" "
-        heaterElementTitle = f"Using MPPT"
+        heaterElementTitle = f" Using MPPT"
 
         # pprint.pp(panelParams)
         # pass in a positive elementR to estimate non-mppt
