@@ -270,7 +270,7 @@
 		<Box>
 			<Input val={round($pv.lat)} label="Latitude" units="°North" readonly />
 			<Input val={round($pv.lng)} label="Longitude" units="°East" readonly />
-			<InputInt bind:val={$pv.groundTemp} label="Ground Water Temp" units="°C" min="1" max="30" />
+			<InputInt bind:val={$pv.groundTemp} label="Ground Water Temp ≈ {CToF($pv.groundTemp)}°F" units="°C" min="1" max="30" />
 			<Input bind:val={$pv.offPeakPrice} label="Off Peak Price" units="$/kWh" />
 			<Input bind:val={$pv.peakPrice} label="Peak Price" units="$/kWh" />
 
