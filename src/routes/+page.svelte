@@ -270,7 +270,13 @@
 		<Box>
 			<Input val={round($pv.lat)} label="Latitude" units="°North" readonly />
 			<Input val={round($pv.lng)} label="Longitude" units="°East" readonly />
-			<InputInt bind:val={$pv.groundTemp} label="Ground Water Temp ≈ {CToF($pv.groundTemp)}°F" units="°C" min="1" max="30" />
+			<InputInt
+				bind:val={$pv.groundTemp}
+				label="Ground Water Temp ≈ {CToF($pv.groundTemp)}°F"
+				units="°C"
+				min="1"
+				max="30"
+			/>
 			<Input bind:val={$pv.offPeakPrice} label="Off Peak Price" units="$/kWh" />
 			<Input bind:val={$pv.peakPrice} label="Peak Price" units="$/kWh" />
 
@@ -397,8 +403,8 @@
 			</p>
 
 			<p>
-				<b>Daily Energy Demand (DED)</b> this is how much power your solar panels will need to make each
-				day to completely replace city power. Every day you meet this target you will save the
+				<b>Daily Energy Demand (DED)</b> this is how much power your solar panels will need to make
+				each day to completely replace city power. Every day you meet this target you will save the
 				amount in <b>Hot water cost per day</b>
 			</p>
 
@@ -573,14 +579,16 @@
 					/>)</b
 				></span
 			>. This graph simulates your PV system at 30min intervals using weather data from
-			{year}. The important thing to look at here is
+			{year}. 
+			This sim does not include any hot water withdraws, so on days when
+			you are at home and using hot water the
 			<span class="blue">
 				<b>Tank Temperature</b>(<img
 					alt="Blue Circles"
 					src="TankTempCircles.png"
 					style="height: 20px; width:40px; margin:0;"
 				/>)</span
-			>.
+			>. will not get as high as the graph shows
 		</p>
 		<p>
 			If the
@@ -599,8 +607,8 @@
 					style="height: 20px; width:40px; margin:0;"
 				/>)</span
 			>
-			and you still are making less than 70 <b>% of DED</b> (Daily Energy Demand), then your
-			tank is undersized. 
+			and you still are making less than 70 <b>% of DED</b> (Daily Energy Demand), then your tank is
+			undersized.
 		</p>
 		<p>
 			If, on a sunny day, your <b>% of DED</b> is between 75 and 150, AND your
@@ -612,15 +620,18 @@
 				/>)</span
 			>
 			is not going over the
-			<span class="red"><b>T&P Valve Limit</b>(<img
-				alt="Red Line"
-				src="TPValveLimitRedLine.png"
-				style="height: 20px; width:40px; margin:0;"
-			/>) </span>
+			<span class="red"
+				><b>T&P Valve Limit</b>(<img
+					alt="Red Line"
+					src="TPValveLimitRedLine.png"
+					style="height: 20px; width:40px; margin:0;"
+				/>)
+			</span>
 			then your sizing is near optimal.
 		</p>
 		<p>
-			On the days when you collect more then 100 <b>% of DED</b>, the tank can store energy overnight in case the next day is cloudy.
+			On the days when you collect more then 100 <b>% of DED</b>, the tank can store energy
+			overnight in case the next day is cloudy.
 		</p>
 
 		<div class="smol-css-grid">
@@ -708,7 +719,8 @@
 		<h2>Step 5: Simulate 1 Year (Estimate ROI)</h2>
 		<p>
 			Click <b>Simulate Monthly Generation</b> This will feed the simulator with the solar panel
-			data you entered above and Typical Meteorological Year Data ({year}) at 30min intervals for your location. We then summarize the results by month.
+			data you entered above and Typical Meteorological Year Data ({year}) at 30min intervals for
+			your location. We then summarize the results by month.
 		</p>
 
 		<button on:click={(e) => updateMonthlyTable(e)}>Simulate Monthly Generation</button> with
