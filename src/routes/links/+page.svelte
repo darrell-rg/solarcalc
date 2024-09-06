@@ -60,7 +60,7 @@
 	</p>
 
 	<p>
-		<a target="_blank" href="https://https://hackaday.com/">HACKADAY</a> A DIY projects blog featuring fresh hacks every day.
+		<a target="_blank" href="https://hackaday.com/">HACKADAY</a> A DIY projects blog featuring fresh hacks every day.
 	</p>
 
 
