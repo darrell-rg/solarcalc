@@ -60,6 +60,11 @@
 	</p>
 
 	<p>
+		<a target="_blank" href="https://https://hackaday.com/">HACKADAY</a> A DIY projects blog featuring fresh hacks every day.
+	</p>
+
+
+	<p>
 		<a
 			target="_blank"
 			href="https://help-center.helioscope.com/hc/en-us/articles/13804165205395-Modeling-101/"

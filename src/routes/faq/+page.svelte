@@ -199,8 +199,22 @@
 			You need to mount the solar disconnect switch outside in a readily accessible place near the
 			panels. This is so firefighters/electricians/plumbers/etc can turn your panels off while they
 			are working. Search for "Solar Disconnect Switch" or "Solar Circuit Breaker Waterproof
-			Isolator". You can get a combo unit that is both a switch and a circuit breaker. You should
-			also mount a second shutoff switch indoors near the water heater to make working on it safer.
+			Isolator". You should also mount a second shutoff switch indoors near the water heater to make
+			working on it safer.
+		</p>
+	</article>
+
+	<article class="faq">
+		<h2>What about fuses/breakers?</h2>
+		<p>
+			Solar panels are inherently current limited. When shorted they will never make more then the
+			rated Isc, which is only about 10% more then the current they will make when running at MPP.
+			Therefore, unlike with city power, a fuse is of limited utility with DC solar. The only
+			situation I can think of where a fuse would help you is if you somehow managed to cross some
+			city power AC wires with your solar DC wires and shorted out the city power. A fuse will not
+			help with lighting, that is what your grounding system is for. Many systems have a fuse anyway
+			and some codes require it because reasons? I started out using a fuse but then the fuse holder
+			melted and so now I do not have one.
 		</p>
 	</article>
 
@@ -342,6 +356,13 @@
 			Commercial panels are bigger and often have shorter wires. Residential panels are small enough
 			to be handled by one person and have longer wires to make the install a bit easier. Either one
 			will work, I got some used commercial panels because they were the cheapest option.
+		</p>
+	</article>
+
+	<article class="faq">
+		<h2>What is the difference between commercial and residential water heaters?</h2>
+		<p>
+			On a commercial heater, the Maximum Temperature setting of the thermostats is higher.  Water heater thermostats also have a thermal safety breaker that will pop and disable the heater element if it gets too hot.   The thermal breaker limit is higher on a commercial heater vs a residential one.  This is why you often see residential max temperature spec at 150F and commercial at 170F.    The insulation and everything else is pretty much the same on commercial and residential.   The thermal breaker is a little button on the thermostat, you can push it back in to reset it after things cool down.  You will not melt the insulation by exceeding the max temperature spec of your water heater.  You would have to boil off all the water first to do that. 
 		</p>
 	</article>
 

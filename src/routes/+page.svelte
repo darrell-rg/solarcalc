@@ -381,7 +381,7 @@
 	<span>
 		<Box style="padding-top:0px; padding-bottom:0px;">
 			<p>
-				<b>Tank Size</b> Most water heaters are 30-80 gallons (113-226 liters) in size. A bigger water
+				<b>Tank Size</b> Most water heaters are 30-80 gallons (113-302 liters) in size. A bigger water
 				heater can store more energy to bridge cloudy days.
 			</p>
 			<p>
@@ -397,7 +397,7 @@
 			</p>
 
 			<p>
-				<b> Daily Energy Demand</b> this is how much power your solar panels will need to make each
+				<b>Daily Energy Demand (DED)</b> this is how much power your solar panels will need to make each
 				day to completely replace city power. Every day you meet this target you will save the
 				amount in <b>Hot water cost per day</b>
 			</p>

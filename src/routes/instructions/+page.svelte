@@ -12,7 +12,7 @@
 	<figure class="floatRightBig">
 		<small>Mouseover For Labels</small>
 		<HousePic style="" />
-		<figcaption>I spent way too much time on this animation, so I am using it wherever I can. You're welcome.</figcaption>
+		<figcaption>I spent way too much time on this animation, so I am using it on as many pages as possible. You're welcome.</figcaption>
 	</figure>
 	<ol type="i">
 		<li>
@@ -30,6 +30,7 @@
 					You can use the spreadsheet under <a href="/bom">BOM</a> to pick out parts to order and calculate
 					your payback time.
 				</li>
+				<li>Don't get stuck in Analysis paralysis, even hooking panels directly to the heater element with no MPPT can work.</li>
 			</ol>
 		</li>
 		<li>Order Materials</li>
@@ -40,10 +41,9 @@
 				all match.
 			</li>
 			<li>
-				The panels are tough on the glass side, but easily damaged on the plastic covered side. A
-				damaged panel will limit the current of the entire array, so you may want to buy a spare.
-				Make sure to wear clothes with no buttons when you lift the panels so they do not get
-				scratched.
+				The panels are quite tough on the front glass side, but easily damaged on the back plastic covered side. A
+				damaged cell will limit the current of the entire array, so you may want to buy a spare panel.
+				Make sure to wear clothes with no buttons and no belt buckle when moving/installing the panels. 
 			</li>
 			<li>
 				Special Tools you may need:
@@ -66,7 +66,7 @@
 				<li>Trench in plastic conduit from panels to house.</li>
 				<li>Pull wire through conduit and connect it to the outdoor disconnect switch</li>
 				<li>Turn off disconnect switch, lock it out and/or finish wiring at night</li>
-				<li>Solar wiring is safe at night, just don't fall off the roof in the dark</li>
+				<li>Working on solar wiring is safe at night, just don't fall off the roof in the dark</li>
 			</ol>
 		</li>
 		<li>Indoor Work</li>
@@ -110,7 +110,7 @@
 
 	<figure>
 		<img alt="BrokenPanel" src="solarShed/BrokenPanel.jpg" />
-		<figcaption>Check for broken Cells, Don't use panel if it has broken cells.</figcaption>
+		<figcaption>Check for broken Cells, Don't use panel if it has broken cells. Scraping the back of a panel on your belt buckle will easily break a cell.</figcaption>
 	</figure>
 
 	<figure>
