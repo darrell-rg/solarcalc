@@ -436,6 +436,13 @@
 			SPR-P17-345-COM panels in 5S 1P.
 		</p>
 	</article>
+
+	<article class="faq">
+		<h2>How does the simulator work?</h2>
+		<p>
+			A python backend first fetches historical weather data for you location from the <a target="_blank" href="https://developer.nrel.gov/docs/solar/nsrdb/">NSRDB</a>.  It then feeds the 30min interval weather data, solar panel data, and your water heater data 
+			to a simulator based on <a target="_blank" href="https://pvwatts.nrel.gov/">pvWatts</a>.   From this it generates the fancy graphs and spreadsheets.  Thank you to the the <a target="_blank" href="https://www.nrel.gov/">NREL</a> for making all this possible. 
+	</article>
 </div>
 
 <style>
