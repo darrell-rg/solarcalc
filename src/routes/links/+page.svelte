@@ -41,6 +41,15 @@
 	</p>
 
 	<h2>MISC Related Sites</h2>
+
+	<p>
+		<a target="_blank" href="https://www.construction-physics.com/p/understanding-solar-energy">
+			Understaing Solar Energy
+		</a>
+	</p>
+
+	https://www.construction-physics.com/p/understanding-solar-energy
+
 	<p>
 		<a target="_blank" href="https://pvwatts.nrel.gov/">NREL pvWatts</a> The simulator uses data
 		from
