@@ -48,7 +48,6 @@
 		</a>
 	</p>
 
-	https://www.construction-physics.com/p/understanding-solar-energy
 
 	<p>
 		<a target="_blank" href="https://pvwatts.nrel.gov/">NREL pvWatts</a> The simulator uses data
