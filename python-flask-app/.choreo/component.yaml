@@ -1,0 +1,12 @@
+schemaVersion: "1.1"
+endpoints:
+    - name: solar-sim-30a
+      displayName: Solar Sim
+      service:
+        basePath: /sim
+        port: 5000
+      type: REST
+      networkVisibilities:
+        - Project
+        - Public
+      schemaFilePath: openapi.yaml
